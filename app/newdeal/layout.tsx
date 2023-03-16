@@ -1,11 +1,10 @@
-import './global.css';
+import '../global.css';
 import clsx from 'clsx';
 import localFont from '@next/font/local';
-import App from './app';
 
 
 const kaisei = localFont({
-  src: '../public/fonts/kaisei-tokumin-latin-700-normal.woff2',
+  src: '../../public/fonts/kaisei-tokumin-latin-700-normal.woff2',
   weight: '700',
   variable: '--font-kaisei',
   display: 'swap',
@@ -73,9 +72,7 @@ export default function RootLayout({
       )}
     >
       <body className="antialiased max-w-4xl mb-40 flex flex-col md:flex-row mx-4 mt-8 md:mt-20 lg:mt-32 lg:mx-auto">
-        <App>
           {children}
-        </App>
       </body>
     </html>
   );
