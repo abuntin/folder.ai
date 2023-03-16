@@ -31,7 +31,7 @@ const nextConfig = {
         headers: securityHeaders,
       },
     ];
-  },
+  }
 };
 
 // https://nextjs.org/docs/advanced-features/security-headers
