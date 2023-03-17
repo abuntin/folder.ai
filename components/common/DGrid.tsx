@@ -5,7 +5,7 @@ import * as React from 'react'
 import { Box, Button, ButtonProps, Grid } from '@mui/material'
 import { margin, padding } from 'lib/magic'
 import { FormOptionType } from 'lib/types'
-import { DText } from '../../common/DText'
+import { DText } from './DText'
 
 
 interface DGridProps {
@@ -20,8 +20,8 @@ export const DGrid: React.FC<DGridProps> = (props) => {
     const [selected, setSelected] = React.useState<FormOptionType>(options[0]);
 
     const handleClick = (e: any, option: FormOptionType) => {
-        if (onChange) onChange(e, selected)
         setSelected(option)
+        if (onChange) onChange(e, option)
     }
 
     interface OptionButtonProps extends ButtonProps {
@@ -46,7 +46,7 @@ export const DGrid: React.FC<DGridProps> = (props) => {
                 <Button
                     variant={variant}
                     onClick={e => handleClick(e, option)}
-                    sx={{ maxWidth: 200 }}
+                    sx={{ maxWidth: 200, padding }}
                 >
                     <DText text={option.label} variant='caption' color='primary' />
                 </Button>
