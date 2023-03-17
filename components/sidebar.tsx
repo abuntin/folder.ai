@@ -150,7 +150,7 @@ export default function Navbar() {
                     }
                   )}
                 >
-                  {name}
+                  nameLabel
                 </Link>
               );
             })}

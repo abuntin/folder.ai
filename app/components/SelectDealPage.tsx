@@ -6,48 +6,36 @@ import { margin, padding } from 'lib/magic'
 import { DGrid, DBox, DText } from 'components'
 import { FormOptionType } from 'lib/types'
 import * as React from 'react' 
-import { heading, options, subheading } from './text'
+import { headings, options } from './text'
+import { NewDealContext } from '.'
 
 
 
 interface SelectDealPageProps {
-    
 } 
+
+const key = 'selectDealPage'
+
+const { selectDealPage: { heading, subheading } } = headings;
 
 export const SelectDealPage: React.FC<SelectDealPageProps> = (props) => {
 
-    const [selected, setSelected] = React.useState<FormOptionType>(options[0]);
-
-    const [fields, setFields] = React.useState({
-        selectDeal: {
-            selected: ''
-        },
-        primaryParty: {
-            name: '',
-            country: ''
-        }
-    })
+    const { save } = React.useContext(NewDealContext)
     
     const handleChange = (e: any, option: FormOptionType) => {
-        setSelected(option)
+        save(key, option.value)
     }
 
-
-    const renderOptions = () => (
-
-        <DGrid options={options} onChange={handleChange} />
-    )
-
     return (
-        <Box>
+        <>
             <DText text={heading} variant='h5' sx={{ marginBottom: margin * 2 }}/>
             <DText text={subheading} variant='body1' />
             <FormGroup>
                 <DBox sx={{ padding }}>
-                    {renderOptions()}
+                    <DGrid options={options} onChange={handleChange} />
                 </DBox>
             </FormGroup> 
-        </Box>
+        </>
     )
 }
 

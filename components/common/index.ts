@@ -1,5 +1,6 @@
 'use client'
 export * from './DBox'
+export * from './DGrid'
 export * from './DText'
 export * from './DButton'
 export * from './DealEngineLogo'
