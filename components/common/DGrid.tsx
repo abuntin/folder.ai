@@ -11,13 +11,14 @@ import { DText } from './DText'
 interface DGridProps {
     options: FormOptionType[]
     onChange?: (e: any, selected: FormOptionType) => void
+    defaultIndex?: number
 } 
 
 export const DGrid: React.FC<DGridProps> = (props) => {
     
-    const { options, onChange } = props;
+    const { options, onChange, defaultIndex } = props;
 
-    const [selected, setSelected] = React.useState<FormOptionType>(options[0]);
+    const [selected, setSelected] = React.useState<FormOptionType>(options[defaultIndex ?? 0]);
 
     const handleClick = (e: any, option: FormOptionType) => {
         setSelected(option)
@@ -29,9 +30,9 @@ export const DGrid: React.FC<DGridProps> = (props) => {
     }
     
     
-    const OptionButton: React.FC<OptionButtonProps> = ({ option }) => {
+    const OptionButton: React.FC<OptionButtonProps> = ({ option, ...props }) => {
     
-        const [variant, setVariant] = React.useState<'text' | 'outlined'>('text');
+        const [variant, setVariant] = React.useState(props.variant ?? 'text');
 
         React.useEffect(() => {
 
@@ -62,7 +63,7 @@ export const DGrid: React.FC<DGridProps> = (props) => {
                     {
                         options.map((option, i) => (
                             <Grid item xs={2} sm={4} md={4} key={i}>
-                                <OptionButton key={i} option={option}  />
+                                <OptionButton key={i} option={option} variant={i === 0 || (defaultIndex && i === defaultIndex) ? 'outlined' : 'text'}/>
                             </Grid>
                             
                         ))

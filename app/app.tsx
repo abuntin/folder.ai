@@ -3,6 +3,10 @@
 import * as React from 'react' 
 import { Color } from '@mui/material';
 import { createTheme, Theme, ThemeProvider } from '@mui/material/styles'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/en-gb';
+
 
 import Sidebar from '../components/sidebar';
 import AnalyticsWrapper from '../components/analytics';
@@ -50,13 +54,15 @@ interface AppProps {
 
 const App: React.FC<AppProps> = (props) => {
     return (
-        <ThemeProvider theme={theme}>
-            {/* <Sidebar /> */}
-            <main className="flex-auto min-w-0 mt-2 md:mt-0 flex flex-col px-2 md:px-0"> 
-                {props.children}
-                <AnalyticsWrapper />
-            </main>
-        </ThemeProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+            <ThemeProvider theme={theme}>
+                {/* <Sidebar /> */}
+                <main className="flex-auto min-w-0 mt-2 md:mt-0 flex flex-col px-2 md:px-0">
+                    {props.children}
+                    <AnalyticsWrapper />
+                </main>
+            </ThemeProvider>
+        </LocalizationProvider>
     )
 } 
  

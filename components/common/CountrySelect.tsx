@@ -1,17 +1,17 @@
 import * as React from 'react'
-import { Autocomplete, TextField, Box, InputAdornment, AutocompleteProps } from '@mui/material'
+import { Autocomplete, TextField, Box, UseAutocompleteProps, InputAdornment } from '@mui/material'
 import PublicIcon from '@mui/icons-material/Public';
 import { margin } from 'lib/magic'
 import { DText } from './DText'
 import { CountryType } from 'lib/types'
 
-interface CountrySelectProps<T> extends AutocompleteProps<T, false, false, false> {}
+interface CountrySelectProps<T> extends UseAutocompleteProps<T, false, false, false> {}
 
 export const CountrySelect: React.FC<CountrySelectProps<CountryType>> = (props) => {
 
   const { value } = props;
   const [leading, setLeading] = React.useState<React.ReactNode>(
-    value != null ?
+    (value && value.code) ?
       <img
         loading="eager"
         width="20"

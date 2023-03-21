@@ -2,26 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-.fade-enter {
-  opacity: 0.5;
-  transform: translateX(-100%);
+.hideshow-enter {
+  opacity: 0;
+  transform: translateY(-100%);
 }
-.fade-enter-active {
+.hideshow-enter-active {
   opacity: 1;
-  transform: translateX(0%);
+  transform: translateY(0%);
+  transition: opacity 600ms, transform 600ms;
 }
-.fade-exit {
+.hideshow-exit {
   opacity: 1;
-  transform: translateX(0%);
+  transform: translateY(100%);
 }
-.fade-exit-active {
+.hideshow-exit-active {
+  opacity: 0;
+  transform: translateY(0%);
+  transition: opacity 600ms, transform 600ms;
+}
+
+.hideshow-enter-active,
+.hideshow-exit-active {
+  transition: opacity 500ms, transform 500ms;
+}
+
+.nav-enter {
   opacity: 0.5;
   transform: translateX(100%);
 }
-.fade-enter-active,
-.fade-exit-active {
+.nav-enter-active {
+  opacity: 1;
+  transform: translateX(0%);
+}
+.nav-exit {
+  opacity: 1;
+  transform: translateX(0%);
+}
+.nav-exit-active {
+  opacity: 0.5;
+  transform: translateX(-100%);
+}
+.nav-enter-active,
+.nav-exit-active {
   transition: opacity 250ms, transform 250ms;
 }
 
