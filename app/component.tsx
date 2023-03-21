@@ -2,64 +2,70 @@
 
 
 import { Box, FormControl, FormGroup } from '@mui/material'
-import { CSSTransition, SwitchTransition } from 'react-transition-group'
-import * as React from 'react' 
 import { DButton } from 'components'
-import { padding, margin } from 'lib/magic'
-import { PrimaryPartyPage, SelectDealPage, SecondaryPartyPage, NewDealContext } from './components'
-import { FormValueType } from 'lib/types'
+import { isCompleted } from 'lib/functions'
+import { margin } from 'lib/magic'
+import * as React from 'react'
+import { CSSTransition, SwitchTransition } from 'react-transition-group'
+import { AssetTypePage, CosignPage, LoanDetailsPage, NewDealProvider, PartyTypePage, PrimaryPartyPage, SecondaryPartyPage, SelectDealPage, TermDetailsPage, useNewDealSelector } from './formPages'
 
 
 interface NewDealProps {}
 
 const NewDeal: React.FC<NewDealProps> = () => {
 
-    const children = [<SelectDealPage />, <PrimaryPartyPage />, <SecondaryPartyPage />]
+    const children = [<SelectDealPage />, <PrimaryPartyPage />, <SecondaryPartyPage />, <PartyTypePage />, <AssetTypePage />, <CosignPage />, <LoanDetailsPage />, <TermDetailsPage />]
 
     const [index, setIndex] = React.useState(0)
+
+    const [disabled, setDisabled] = React.useState(false)
 
     const refs = children.map(child => React.useRef<HTMLDivElement>(null))
 
     const ref = refs[index]
 
-    const [fields, setFields] = React.useState({
-        selectDealPage: '',
-        primaryPartyPage: {
-            name: '',
-            country: ''
-        },
-        secondaryPartyPage: {
-            name: '',
-            country: ''
-        }
-    })
+    const state = useNewDealSelector(state => state);
+
+    let required = ['selectDealPage', 'primaryPartyPage', 'secondaryPartyPage', 'assetTypePage', 'loanDetailsPage']
 
     React.useEffect(() => {
-        console.log(fields);
-    }, [fields])
+        console.log(state, 'state');
+    }, [state, index])
 
-    const goForward = (e: any) => { setIndex(index + 1)}
+    // React.useEffect(() => {
+    //     const [key, formValue] = Object.entries(state)[index]
+
+    //     if (required.includes(key)) {
+    //         setDisabled(isCompleted(formValue))
+    //     }
+
+    //     else setDisabled(false);
+    // }, [state])
+
+    const goForward = (e: any) => setIndex(index + 1)
 
     const goBack = (e: any) => setIndex(index - 1);
-
-    const save = (key: string, value: FormValueType) => {
-        setFields({ ...fields, [key]: value})
-    }
 
     const onSubmit = (e: any) => {}
 
     const renderNavigation = () => {
 
         return (
-            <Box display='flex' flexDirection='row' sx={{ padding, margin: margin * 3 }} justifyContent='space-between'>
+            <Box display='flex' flexDirection='row' sx={{ mt: margin * 4 }} justifyContent='space-between'>
                 <DButton direction='back' disabled={index === 0} onClick={goBack}> Back </DButton>
-                <DButton direction='forward' disabled={index === children.length - 1} onClick={index === children.length - 1 ? onSubmit : goForward}> Next </DButton>
+                <DButton
+                    direction='forward'
+                    disabled={disabled}
+                    onClick={index === children.length - 1 ? onSubmit : goForward}
+                >
+                    {index === children.length - 1 ? "Let's Go!" : 'Next'}
+                </DButton>
             </Box>
         )
     }
 
     return (
-        <NewDealContext.Provider value={{ save }}>
+        <NewDealProvider>
             <Box component='form' onSubmit={onSubmit}>
                 <FormControl>
                     <FormGroup row>
@@ -67,8 +73,9 @@ const NewDeal: React.FC<NewDealProps> = () => {
                             <CSSTransition
                                 key={index}
                                 nodeRef={ref}
+                                unmountOnExit
                                 addEndListener={done => ref?.current?.addEventListener('transitionend', done, false)}
-                                classNames='fade'
+                                classNames='nav'
                             >
                                 <div ref={ref}>
                                     {
@@ -83,7 +90,7 @@ const NewDeal: React.FC<NewDealProps> = () => {
                 </FormControl>
                 {renderNavigation()}
             </Box>
-        </NewDealContext.Provider>
+        </NewDealProvider>
     )
 }
  

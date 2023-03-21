@@ -4,7 +4,7 @@ import { ContractType } from "../deals";
 export interface FormOptionType {
     value: keyof ContractType | string,
     label: ValueOf<ContractType> | string,
-    description: string
+    description?: string
 }
 
 export interface FormQuestionType {
