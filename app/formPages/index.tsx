@@ -1,5 +1,5 @@
 import React from 'react';
-import dayjs from 'dayjs'
+
 export * from './common';
 export * from './iou'
 
@@ -31,9 +31,15 @@ const initialState = {
         interest: {
             rate: 0,
             type: 'fixed' as ('compound' | 'fixed'),
-            frequency: 'annually' as ('monthly' | 'quarterly' | 'annually' | 'weekly' | 'daily' | 'full' | string),
+            frequency: {
+                value: 'annually' as ('monthly' | 'quarterly' | 'annually' | 'weekly' | 'daily' | 'full' | string),
+                label: 'Annually'
+            }
         },
-        repaymentFrequency: 'annually' as ('monthly' | 'quarterly' | 'annually' | 'weekly' | 'daily' | 'full' | string),
+        repaymentFrequency: {
+            value: 'annually' as ('monthly' | 'quarterly' | 'annually' | 'weekly' | 'daily' | 'full' | string),
+            label: 'Annually'
+        }
     },
     cosignPage: {
         isCosigned: false,
@@ -71,8 +77,6 @@ export const useNewDealDispatch = () => {
 
     return dispatch;
 }
-
-
 
 const newDealReducer: React.Reducer<FormState, Partial<FormState>> = (state, newState) => {    
     return { ...state, ...newState }
