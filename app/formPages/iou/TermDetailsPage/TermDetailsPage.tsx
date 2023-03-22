@@ -50,19 +50,19 @@ export const TermDetailsPage: React.FC<TermDetailsPageProps> = (props) => {
             <Grid item xs={12}>
                 <DText text={signDateLabel} variant='body1' />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin }}>
+            <Grid item xs={12}>
                 <DateInput onAccept={value => handleChange(null, signDateKey, value?.toISOString() ?? '')} value={dayjs(signDate)} />
             </Grid>
             <Grid item xs={12}>
                 <DText text={endDateLabel} variant='body1' />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin }}>
+            <Grid item xs={12}>
                 <DateInput onAccept={value => handleChange(null, termDateKey, value?.toISOString() ?? '')} value={dayjs(termDate)} minDate={dayjs(signDate === '' ? undefined : signDate)} />
             </Grid>
             <Grid item xs={12}>
                 <DText text={specialClauseLabel} variant='body1' />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin }}>
+            <Grid item xs={12}>
                 <DInput
                     placeholder='Your best writing please!'
                     value={specialClause}

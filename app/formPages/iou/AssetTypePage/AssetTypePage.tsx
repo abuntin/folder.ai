@@ -57,7 +57,7 @@ export const AssetTypePage: React.FC<AssetTypePageProps> = () => {
             <Grid item xs={12}>
                 <DText text={amountLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin * 2 }}>
+            <Grid item xs={12}>
                 <DInput
                     placeholder={amountLabel}
                     value={amount}
@@ -66,7 +66,10 @@ export const AssetTypePage: React.FC<AssetTypePageProps> = () => {
                     InputProps={{ startAdornment: <InputAdornment position="start"><DText text='£' /> </InputAdornment>}}
                 />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin }}>
+            <Grid item xs={12}>
+                <DText text={detailsLabel} variant='body2' />
+            </Grid>
+            <Grid item xs={12}>
                 <DInput
                     placeholder='(E.g. Plot no. 13579, Alphabet Class A shares)'
                     value={details}
