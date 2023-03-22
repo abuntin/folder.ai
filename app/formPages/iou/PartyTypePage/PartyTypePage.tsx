@@ -39,7 +39,7 @@ export const PartyTypePage: React.FC<PartyTypePageProps> = () => {
                 <DText text={subheading} variant='body1' />
             </Grid>
           }
-            <Grid item xs={12} sx={{ mb: margin }}>
+            <Grid item xs={12}>
                 <RadioGroup>
                     <Grid container spacing={4}>
                         {options.map((option, i) => {

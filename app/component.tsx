@@ -2,11 +2,11 @@
 
 
 import { Box, FormControl, FormGroup } from '@mui/material'
-import { DButton } from 'components'
+import { DButton, NavAnimation } from 'components'
 import { isCompleted } from 'lib/functions'
 import { margin } from 'lib/magic'
 import * as React from 'react'
-import { CSSTransition, SwitchTransition } from 'react-transition-group'
+import { AnimatePresence } from "framer-motion";
 import { AssetTypePage, CosignPage, LoanDetailsPage, NewDealProvider, PartyTypePage, PrimaryPartyPage, SecondaryPartyPage, SelectDealPage, TermDetailsPage, useNewDealSelector } from './formPages'
 
 
@@ -20,13 +20,7 @@ const NewDeal: React.FC<NewDealProps> = () => {
 
     const [disabled, setDisabled] = React.useState(false)
 
-    const refs = children.map(child => React.useRef<HTMLDivElement>(null))
-
-    const ref = refs[index]
-
     const state = useNewDealSelector(state => state);
-
-    let required = ['selectDealPage', 'primaryPartyPage', 'secondaryPartyPage', 'assetTypePage', 'loanDetailsPage']
 
     React.useEffect(() => {
         console.log(state, 'state');
@@ -69,23 +63,13 @@ const NewDeal: React.FC<NewDealProps> = () => {
             <Box component='form' onSubmit={onSubmit}>
                 <FormControl>
                     <FormGroup row>
-                        <SwitchTransition mode='out-in'>
-                            <CSSTransition
-                                key={index}
-                                nodeRef={ref}
-                                unmountOnExit
-                                addEndListener={done => ref?.current?.addEventListener('transitionend', done, false)}
-                                classNames='nav'
-                            >
-                                <div ref={ref}>
-                                    {
-                                        children.map((child, i) => (
-                                            index === i && <React.Fragment key={i}> {child} </React.Fragment>
-                                        ))
-                                    }
-                                </div>
-                            </CSSTransition>
-                        </SwitchTransition>
+                        {
+                            children.map((child, i) => (
+                                index === i ? (
+                                    <NavAnimation key={i}> {child} </NavAnimation>
+                                ) : null
+                            ))
+                        }
                     </FormGroup>
                 </FormControl>
                 {renderNavigation()}
