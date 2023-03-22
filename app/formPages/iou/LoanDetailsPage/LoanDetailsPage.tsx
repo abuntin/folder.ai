@@ -1,15 +1,14 @@
 'use client'
 
 
-import { Grid, InputAdornment, Radio, RadioGroup, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Grid, InputAdornment, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { AppearAnimation, DateInput, DAutocomplete, DInput, DText } from 'components';
 import { margin } from 'lib/magic'
-import { labels, keys, headings, key, frequencyOptions } from './text';
-import { DText, DBox, OptionLabel, DInput, DateInput, DAutocomplete } from 'components'
-import { FormOptionType } from 'lib/types'
-import * as React from 'react' 
-import { useNewDealSelector, useNewDealDispatch } from '../..';
-import { CSSTransition } from 'react-transition-group';
 import dayjs from 'dayjs';
+import { FormOptionType } from 'lib/types';
+import * as React from 'react';
+import { useNewDealDispatch, useNewDealSelector } from '../..';
+import { frequencyOptions, headings, key, keys, labels } from './text';
 
 
 interface LoanDetailsPageProps {}
@@ -31,8 +30,6 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
     const { [key]: state, assetTypePage: { amount } } = useNewDealSelector(state => state)
 
     const dispatch = useNewDealDispatch()
-
-    const interestDetailsRef = React.useRef<HTMLDivElement>(null)
 
     const [fields, setFields] = React.useState(state)
 
@@ -78,13 +75,13 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
             <Grid item xs={12}>
                 <DText text={loanDateLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin * 2 }}>
+            <Grid item xs={12}>
                 <DateInput onAccept={value => handleChange(null, loanDateKey, value?.toISOString() ?? '')} value={dayjs(loanDate)} />
             </Grid>
             <Grid item xs={12}>
                 <DText text={interestLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin * 2 }}>
+            <Grid item xs={12}>
                 <DInput
                     placeholder={rateKey.charAt(0).toUpperCase() + rateKey.slice(1)}
                     value={rate}
@@ -93,11 +90,11 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
                     InputProps={{ startAdornment: <InputAdornment position="start"><DText text='%' /></InputAdornment>}}
                 />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin * 2 }}>
+            <Grid item xs={12}>
                 <ToggleButtonGroup
                     value={type}
                     exclusive
-                    onChange={(e, newVal) => handleChange(e, interestKey, { ...interest, type: newVal })}
+                    onChange={(e, newVal) => handleChange(e, interestKey, { ...interest, [typeKey]: newVal })}
                 >
                     <ToggleButton value={fixedKey}>
                         <DText text={fixedKey.charAt(0).toUpperCase() + fixedKey.slice(1)} variant='body2' />
@@ -107,34 +104,25 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
                     </ToggleButton>
                 </ToggleButtonGroup>
             </Grid>
-            <Grid item xs={12}>
-                <CSSTransition
-                    in={rate !== 0}
-                    nodeRef={interestDetailsRef}
-                    addEndListener={done => interestDetailsRef?.current?.addEventListener('transitionend', done)}
-                    classNames='hideshow'
-                >
-                    <div ref={interestDetailsRef}>
-                    {rate !== 0 &&
-                        <Grid item xs={12} sx={{ mb: margin * 2 }}>
-                            <DAutocomplete<FormOptionType> 
-                                options={frequencyOptions} 
-                                value={{ value: frequency, label: frequency.charAt(0) + frequency.slice(1) }} 
-                                onChange={(e, newVal) => handleChange(e, interestFrequencyKey, newVal?.value ?? undefined)} 
-                            />
-                        </Grid>
-                        }
-                    </div>
-                </CSSTransition>
+            <Grid item xs={12} sx={{ mb: margin }}>
+                {rate !== 0 &&
+                    <AppearAnimation>
+                        <DAutocomplete<FormOptionType>
+                            options={frequencyOptions}
+                            value={frequency}
+                            onChange={(e, newVal) => handleChange(e, interestFrequencyKey, newVal ?? undefined)}
+                        />
+                    </AppearAnimation>
+                }
             </Grid>
             <Grid item xs={12}>
                 <DText text={repaymentFrequencyLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin * 2 }}>
+            <Grid item xs={12}>
                 <DAutocomplete<FormOptionType> 
                     options={frequencyOptions} 
-                    value={{ value: repaymentFrequency, label: repaymentFrequency.charAt(0) + repaymentFrequency.slice(1) }} 
-                    onChange={(e, newVal) => handleChange(e, repaymentFrequencyKey, newVal?.value ?? undefined)} 
+                    value={repaymentFrequency}
+                    onChange={(e, newVal) => handleChange(e, repaymentFrequencyKey, newVal ?? undefined)}
                 />
             </Grid>
             {helperText !== '' &&

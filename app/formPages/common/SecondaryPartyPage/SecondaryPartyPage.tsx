@@ -8,6 +8,7 @@ import { DText, CountrySelect, DInput, DCheckbox } from 'components'
 import * as React from 'react' 
 import {  useNewDealDispatch, useNewDealSelector } from '../..';
 import { countries } from 'lib/countries';
+import { motion } from 'framer-motion';
 
 
 interface SecondaryPartyPageProps {}
@@ -36,8 +37,6 @@ export const SecondaryPartyPage: React.FC<SecondaryPartyPageProps> = (props) => 
           dispatch({ [key]: newFields })
      }
 
-    const nodeRef = React.useRef<HTMLDivElement>(null)
-
     return (
         <Grid container spacing={4}>
             {heading !== '' && 
@@ -53,7 +52,7 @@ export const SecondaryPartyPage: React.FC<SecondaryPartyPageProps> = (props) => 
             <Grid item xs={12}>
                 <DText text={nameLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin * 2 }}>
+            <Grid item xs={12}>
                 <DInput
                     placeholder={nameKey.charAt(0).toUpperCase() + nameKey.slice(1)} 
                     value={name} 
@@ -63,23 +62,25 @@ export const SecondaryPartyPage: React.FC<SecondaryPartyPageProps> = (props) => 
             <Grid item xs={12}>
                 <DText text={countryLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin }}>
+            <Grid item xs={12}>
                 <CountrySelect 
                     value={country} 
                     onChange={(e, newVal) => handleChange(e, countryKey, newVal?.code ?? undefined)} 
                     options={countries} 
                 />
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin * 2 }}>
-                <CSSTransition
-                    in={(fields.country.code !== '' &&  fields.name !== '')}
-                    nodeRef={nodeRef}
-                    classNames="hideshow"
-                    addEndListener={done => nodeRef?.current?.addEventListener('transitionend', done, false)}
-                >
-                    <div ref={nodeRef}>
-                        {(fields.country.code !== '' &&  fields.name !== '') &&
-                            <Grid container spacing={4}>
+            <Grid item xs={12}>
+                {(fields.country.code !== '' &&  fields.name !== '') ? (
+                    <motion.div
+                        initial={{ opacity: 0, y: '-200%' }}
+                        animate={{ opacity: 1, y: '0%' }}
+                        exit={{ opacity: 0.5, y: '200%'}}
+                        transition={{
+                            duration: 0.45,
+                            ease: [0, 0.71, 0.2, 1.01]
+                        }}
+                    >
+                         <Grid container spacing={4}>
                                 <Grid item xs={12}>
                                     <DText text={addressLabel} variant='body2' />
                                 </Grid>
@@ -98,11 +99,10 @@ export const SecondaryPartyPage: React.FC<SecondaryPartyPageProps> = (props) => 
                                     />
                                 </Grid>
                             </Grid>
-                        }
-                    </div>
-                </CSSTransition>
+                    </motion.div>
+                ) : null}
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin }}>
+            <Grid item xs={12}>
                 <FormControlLabel
                     control={<DCheckbox value={otherPerson} onChange={e => setOtherPerson(e.target.checked)} />}
                     label={<DText text={info} variant='caption' />}
