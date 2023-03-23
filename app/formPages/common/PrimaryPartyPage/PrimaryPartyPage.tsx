@@ -3,12 +3,10 @@
 
 import { Grid } from '@mui/material'
 import { key, labels, keys, headings } from './text';
-import { countries } from 'lib/countries';
-import { margin } from 'lib/magic';
-import { DText, CountrySelect, DInput } from 'components'
+import { margin } from 'lib/constants';
+import { DText, CountrySelect, DInput, AppearAnimation } from 'components'
 import * as React from 'react' 
 import { useNewDealSelector, useNewDealDispatch } from '../..';
-import { motion } from 'framer-motion';
 
 
 interface PrimaryPartyPageProps {}
@@ -63,21 +61,12 @@ export const PrimaryPartyPage: React.FC<PrimaryPartyPageProps> = (props) => {
             <Grid item xs={12}>
                 <CountrySelect 
                     value={country ?? { code: '', label: ''}}
-                    onChange={(e, newVal) => handleChange(e, countryKey, newVal?.code ?? undefined)} 
-                    options={countries} 
+                    onChange={(e, newVal) => handleChange(e, countryKey, newVal ?? undefined)}
                 />
             </Grid>
             <Grid item xs={12}>
-                {(fields.country && fields.country.code !== '' &&  fields.name !== '') ? (
-                    <motion.div
-                        initial={{ opacity: 0, y: '-200%' }}
-                        animate={{ opacity: 1, y: '0%' }}
-                        exit={{ opacity: 0.5, y: '200%'}}
-                        transition={{
-                            duration: 0.45,
-                            ease: [0, 0.71, 0.2, 1.01]
-                        }}
-                    >
+                {(fields.country && fields.name !== '') ? (
+                    <AppearAnimation>
                          <Grid container spacing={4}>
                                 <Grid item xs={12}>
                                     <DText text={addressLabel} variant='body2' />
@@ -97,7 +86,7 @@ export const PrimaryPartyPage: React.FC<PrimaryPartyPageProps> = (props) => {
                                     />
                                 </Grid>
                             </Grid>
-                    </motion.div>
+                    </AppearAnimation>
                 ) : null}
             </Grid>
             <Grid item xs={12}>

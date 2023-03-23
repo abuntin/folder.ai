@@ -3,7 +3,7 @@
 
 import { Grid, InputAdornment, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { AppearAnimation, DateInput, DAutocomplete, DInput, DText } from 'components';
-import { margin } from 'lib/magic'
+import { margin } from 'lib/constants'
 import dayjs from 'dayjs';
 import { FormOptionType } from 'lib/types';
 import * as React from 'react';

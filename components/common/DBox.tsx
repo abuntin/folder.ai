@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { Box, BoxProps } from '@mui/material' 
-import { styles } from 'lib/magic'
+import { styles } from 'lib/constants'
 
 
 interface DBoxProps extends BoxProps {

@@ -2,7 +2,7 @@
 
 
 import { Grid } from '@mui/material'
-import { margin, padding } from 'lib/magic'
+import { margin, padding } from 'lib/constants'
 import { DGrid, DBox, DText } from 'components'
 import { FormOptionType } from 'lib/types'
 import * as React from 'react' 
