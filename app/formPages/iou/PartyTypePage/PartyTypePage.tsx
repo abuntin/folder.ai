@@ -2,7 +2,7 @@
 
 
 import { Grid, Radio, RadioGroup } from '@mui/material'
-import { margin } from 'lib/magic'
+import { margin } from 'lib/constants'
 import { key, keys, headings } from './text';
 import { DText, DBox, OptionLabel } from 'components'
 import * as React from 'react' 

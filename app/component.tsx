@@ -4,7 +4,7 @@
 import { Box, FormControl, FormGroup } from '@mui/material'
 import { DButton, NavAnimation } from 'components'
 import { isCompleted } from 'lib/functions'
-import { margin } from 'lib/magic'
+import { margin } from 'lib/constants'
 import * as React from 'react'
 import { AnimatePresence } from "framer-motion";
 import { AssetTypePage, CosignPage, LoanDetailsPage, NewDealProvider, PartyTypePage, PrimaryPartyPage, SecondaryPartyPage, SelectDealPage, TermDetailsPage, useNewDealSelector } from './formPages'

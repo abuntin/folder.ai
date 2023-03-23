@@ -1,30 +1,27 @@
 import React from 'react';
-
+import { Frequency, AssetType, Party, DealType, LoanPartyType } from 'lib/types';
 export * from './common';
 export * from './iou'
 
 const initialState = {
-    selectDealPage: 'iou',
+    selectDealPage: 'iou' as DealType,
     primaryPartyPage: {
         name: '',
-        country: { code: 'gb', label: 'United Kingdom' },
+        country: 'GB',
         address: '',
         city: ''
-    },
+    } as Party,
     secondaryPartyPage: {
         name: '',
-        country: { code: 'gb', label: 'United Kingdom' },
+        country: 'GB',
         address: '',
         city: ''
-    },
-    partyTypePage: {
-        value: '',
-        label: '',
-    },
+    } as Party,
+    partyTypePage: 'lender' as LoanPartyType,
     assetTypePage: {
         amount: 0,
         details: '',
-        type: { value: '' as ('land-property' | 'business' | 'inventory' | 'debt' | 'other'), label: '' }
+        type: { value: 'cash' as AssetType, label: 'Cash, Securities, Bills' },
     },
     loanDetailsPage: {
         loanDate: '',
@@ -32,12 +29,12 @@ const initialState = {
             rate: 0,
             type: 'fixed' as ('compound' | 'fixed'),
             frequency: {
-                value: 'annually' as ('monthly' | 'quarterly' | 'annually' | 'weekly' | 'daily' | 'full' | string),
+                value: 'annually' as Frequency,
                 label: 'Annually'
             }
         },
         repaymentFrequency: {
-            value: 'annually' as ('monthly' | 'quarterly' | 'annually' | 'weekly' | 'daily' | 'full' | string),
+            value: 'annually' as Frequency,
             label: 'Annually'
         }
     },
@@ -45,7 +42,7 @@ const initialState = {
         isCosigned: false,
         name: '',
         address: '',
-        city: ''
+        city: '',
     },
     termDetailsPage: {
         signDate: '',

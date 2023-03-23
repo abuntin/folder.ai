@@ -3,7 +3,7 @@
 
 import { Grid, InputAdornment, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { AppearAnimation, DateInput, DAutocomplete, DInput, DText } from 'components';
-import { margin } from 'lib/magic'
+import { margin } from 'lib/constants'
 import dayjs from 'dayjs';
 import { FormOptionType } from 'lib/types';
 import * as React from 'react';
@@ -109,7 +109,7 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
                     <AppearAnimation>
                         <DAutocomplete<FormOptionType>
                             options={frequencyOptions}
-                            value={frequency}
+                            value={frequency ?? { value: '', label: ''}}
                             onChange={(e, newVal) => handleChange(e, interestFrequencyKey, newVal ?? undefined)}
                         />
                     </AppearAnimation>
@@ -121,7 +121,7 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
             <Grid item xs={12}>
                 <DAutocomplete<FormOptionType> 
                     options={frequencyOptions} 
-                    value={repaymentFrequency}
+                    value={repaymentFrequency ?? { value: '', label: ''}}
                     onChange={(e, newVal) => handleChange(e, repaymentFrequencyKey, newVal ?? undefined)}
                 />
             </Grid>
