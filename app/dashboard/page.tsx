@@ -6,4 +6,4 @@ export default async function Dashboard() {
         <> </>
       </section>
     );
-  }
+}
