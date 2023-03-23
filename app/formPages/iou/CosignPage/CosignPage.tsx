@@ -1,7 +1,7 @@
 'use client'
 
 
-import { FormControlLabel, Grid } from '@mui/material'
+import { FormControlLabel, Unstable_Grid2 as Grid } from '@mui/material'
 import { margin } from 'lib/constants'
 import { key, keys, headings, labels } from './text';
 import { AppearAnimation, DText, DCheckbox, DInput } from 'components'
@@ -34,42 +34,42 @@ export const CosignPage: React.FC<CosignPageProps> = () => {
     return (
         <Grid container spacing={4}>
             {heading !== '' && 
-             <Grid item xs={12}>
+             <Grid xs>
                 <DText text={heading} variant='h5' />
             </Grid>
           }
-            <Grid item xs={12}>
+            <Grid xs>
                 <FormControlLabel
                     control={<DCheckbox value={isCosigned} onChange={e => handleChange(e, 'isCosigned', e.target.checked)} />}
                     label={<DText text={subheading} variant='body1' />}
                     labelPlacement='end'
                 />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 {isCosigned &&
                     <AppearAnimation>
                         <Grid container spacing={4}>
-                            <Grid item xs={12}>
+                            <Grid xs>
                                 <DText text={nameLabel} variant='body2' />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid xs>
                                 <DInput
                                     placeholder={nameKey.charAt(0).toUpperCase() + nameKey.slice(1)}
                                     value={name}
                                     onChange={e => handleChange(e, nameKey)}
                                 />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid xs>
                                 <DText text={addressLabel} variant='body2' />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid xs>
                                 <DInput
                                     placeholder={`${addressKey.charAt(0).toUpperCase() + addressKey.slice(1)} & Postcode`}
                                     value={address}
                                     onChange={e => handleChange(e, addressKey)}
                                 />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid xs>
                                 <DInput
                                     placeholder={cityKey.charAt(0).toUpperCase() + cityKey.slice(1)}
                                     value={city}
@@ -80,7 +80,7 @@ export const CosignPage: React.FC<CosignPageProps> = () => {
                     </AppearAnimation>
                 }
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={info} variant='caption' />
             </Grid>
             

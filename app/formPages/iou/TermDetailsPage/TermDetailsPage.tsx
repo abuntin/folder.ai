@@ -1,7 +1,7 @@
 'use client'
 
 
-import { Grid } from '@mui/material'
+import { Unstable_Grid2 as Grid } from '@mui/material'
 import dayjs from 'dayjs'
 import { margin } from 'lib/constants'
 import { labels, keys, headings, key } from './text';
@@ -38,31 +38,31 @@ export const TermDetailsPage: React.FC<TermDetailsPageProps> = (props) => {
     return (
         <Grid container spacing={4}>
             {heading !== '' && 
-                 <Grid item xs={12}>
+                 <Grid xs>
                     <DText text={heading} variant='h5' />
                 </Grid>
             }
             {subheading !== '' && 
-             <Grid item xs={12} sx={{ mb: margin }}>
+               <Grid xs sx={{ mb: margin }}>
                 <DText text={subheading} variant='body1' />
                 </Grid>
             }
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={signDateLabel} variant='body1' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DateInput onAccept={value => handleChange(null, signDateKey, value?.toISOString() ?? '')} value={dayjs(signDate)} />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={endDateLabel} variant='body1' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DateInput onAccept={value => handleChange(null, termDateKey, value?.toISOString() ?? '')} value={dayjs(termDate)} minDate={dayjs(signDate === '' ? undefined : signDate)} />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={specialClauseLabel} variant='body1' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DInput
                     placeholder='Your best writing please!'
                     value={specialClause}
@@ -71,7 +71,7 @@ export const TermDetailsPage: React.FC<TermDetailsPageProps> = (props) => {
                     rows={2}
                 />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={info} variant='caption' />
             </Grid> 
         </Grid>
