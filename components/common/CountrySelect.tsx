@@ -36,6 +36,7 @@ export const CountrySelect: React.FC<CountrySelectProps<CountryType>> = (props) 
     if (props.onChange != null) props.onChange(e, value, reason)
   }
 
+
   return (
     <Autocomplete
       sx={{ width: 300 }}
@@ -44,18 +45,20 @@ export const CountrySelect: React.FC<CountrySelectProps<CountryType>> = (props) 
       autoSelect
       getOptionLabel={(option: CountryType) => option.label}
       onChange={handleChange}
-      renderOption={(props, option: CountryType) => (
-        <Box component="li" sx={{ '& > img': { mr: margin, flexShrink: 0, backgroundColor: 'primary' } }} {...props}>
-          <img
-            loading="lazy"
-            width="20"
-            src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-            srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-            alt=""
-          />
-          <DText text={`${option.label} (${option.code})`} />
-        </Box>
-      )}
+      renderOption={(props, option: CountryType) => {
+        return (
+          <Box {...props} component="li" sx={{ '& > img': { mr: margin, flexShrink: 0, backgroundColor: 'primary' }}}>
+            <img
+              loading="lazy"
+              width="20"
+              src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+              srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+              alt=""
+            />
+            <DText text={`${option.label} (${option.code})`} />
+          </Box>
+        )
+      }}
       renderInput={(params) => (
         <TextField
           {...params}

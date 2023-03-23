@@ -60,8 +60,8 @@ const App: React.FC<AppProps> = (props) => {
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
             <ThemeProvider theme={theme}>
                 <AnimationWrapper>
-                     <Sidebar />
-                    <main className="flex-auto min-w-0 mt-2 md:mt-0 flex flex-col px-2 md:px-0">
+                    <Sidebar />
+                    <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
                         {props.children}
                         <AnalyticsWrapper />
                     </main>
