@@ -4,7 +4,7 @@
 import { Autocomplete, Box, UseAutocompleteProps } from '@mui/material'
 import * as React from 'react' 
 import { DText, DInput } from 'components'
-import { margin, padding } from 'lib/magic'
+import { margin, padding } from 'lib/constants'
 
 
 interface DAutocompleteProps<T> extends UseAutocompleteProps<T, false, false, false> {}

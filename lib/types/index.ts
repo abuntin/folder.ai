@@ -7,9 +7,3 @@ type ContractTypeProperty<key extends keyof ContractType> = PropType<Partial<Con
 export * from './deals'
 
 export * from './forms'
-
-export interface CountryType {
-    code: string;
-    label: string;
-    suggested?: boolean;
-}

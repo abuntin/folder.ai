@@ -1,22 +1,24 @@
 import * as React from 'react'
 import { Autocomplete, TextField, Box, UseAutocompleteProps, InputAdornment } from '@mui/material'
 import PublicIcon from '@mui/icons-material/Public';
-import { margin } from 'lib/magic'
+import { margin } from 'lib/constants'
 import { DText } from './DText'
-import { CountryType } from 'lib/types'
+import { CountryType, countries } from 'lib/constants'
 
-interface CountrySelectProps<T> extends UseAutocompleteProps<T, false, false, false> {}
+interface CountrySelectProps<T> extends Omit<UseAutocompleteProps<T, false, false, false>, 'options'> {
+}
 
 export const CountrySelect: React.FC<CountrySelectProps<CountryType>> = (props) => {
 
   const { value } = props;
+
   const [leading, setLeading] = React.useState<React.ReactNode>(
-    (value && value.code) ?
+    value ?
       <img
         loading="eager"
         width="20"
-        src={`https://flagcdn.com/w20/${value.code.toLowerCase()}.png`}
-        srcSet={`https://flagcdn.com/w40/${value.code.toLowerCase()}.png 2x`}
+        src={`https://flagcdn.com/w20/${value.toLowerCase()}.png`}
+        srcSet={`https://flagcdn.com/w40/${value.toLowerCase()}.png 2x`}
         alt=""
       />
     : null
@@ -28,34 +30,37 @@ export const CountrySelect: React.FC<CountrySelectProps<CountryType>> = (props) 
         <img
           loading="eager"
           width="20"
-          src={`https://flagcdn.com/w20/${value.code.toLowerCase()}.png`}
-          srcSet={`https://flagcdn.com/w40/${value.code.toLowerCase()}.png 2x`}
+          src={`https://flagcdn.com/w20/${value.toLowerCase()}.png`}
+          srcSet={`https://flagcdn.com/w40/${value.toLowerCase()}.png 2x`}
           alt=""
         />
       )
     if (props.onChange != null) props.onChange(e, value, reason)
   }
 
+
   return (
     <Autocomplete
       sx={{ width: 300 }}
-      options={props.options}
+      options={Object.keys(countries)}
       autoHighlight
       autoSelect
-      getOptionLabel={(option: CountryType) => option.label}
+      getOptionLabel={(option: CountryType) => countries[option]}
       onChange={handleChange}
-      renderOption={(props, option: CountryType) => (
-        <Box component="li" sx={{ '& > img': { mr: margin, flexShrink: 0, backgroundColor: 'primary' } }} {...props}>
-          <img
-            loading="lazy"
-            width="20"
-            src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-            srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-            alt=""
-          />
-          <DText text={`${option.label} (${option.code})`} />
-        </Box>
-      )}
+      renderOption={(props, option: CountryType) => {
+        return (
+          <Box {...props} component="li" sx={{ '& > img': { mr: margin, flexShrink: 0, backgroundColor: 'primary' }}}>
+            <img
+              loading="lazy"
+              width="20"
+              src={`https://flagcdn.com/w20/${option.toLowerCase()}.png`}
+              srcSet={`https://flagcdn.com/w40/${option.toLowerCase()}.png 2x`}
+              alt=""
+            />
+            <DText text={`${countries[option]} (${option})`} />
+          </Box>
+        )
+      }}
       renderInput={(params) => (
         <TextField
           {...params}
