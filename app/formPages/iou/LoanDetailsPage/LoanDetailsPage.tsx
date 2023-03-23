@@ -109,7 +109,7 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
                     <AppearAnimation>
                         <DAutocomplete<FormOptionType>
                             options={frequencyOptions}
-                            value={frequency}
+                            value={frequency ?? { value: '', label: ''}}
                             onChange={(e, newVal) => handleChange(e, interestFrequencyKey, newVal ?? undefined)}
                         />
                     </AppearAnimation>
@@ -121,7 +121,7 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
             <Grid item xs={12}>
                 <DAutocomplete<FormOptionType> 
                     options={frequencyOptions} 
-                    value={repaymentFrequency}
+                    value={repaymentFrequency ?? { value: '', label: ''}}
                     onChange={(e, newVal) => handleChange(e, repaymentFrequencyKey, newVal ?? undefined)}
                 />
             </Grid>

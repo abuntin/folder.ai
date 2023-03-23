@@ -5,7 +5,7 @@ export const revalidate = 60;
 export default async function SelectDeal() {
 
   return (
-    <section className='px-6'>
+    <section>
       <NewDeal />
     </section>
   );

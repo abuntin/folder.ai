@@ -24,7 +24,7 @@ const initialState = {
     assetTypePage: {
         amount: 0,
         details: '',
-        type: { value: '' as ('land-property' | 'business' | 'inventory' | 'debt' | 'other'), label: '' }
+        type: { value: 'cash' as ('land-property' | 'business' | 'inventory' | 'cash' | 'other'), label: 'Cash, Securities, Bills' },
     },
     loanDetailsPage: {
         loanDate: '',
@@ -45,7 +45,9 @@ const initialState = {
         isCosigned: false,
         name: '',
         address: '',
-        city: ''
+        city: '',
+        // hasCollateral: false,
+        // details: '',
     },
     termDetailsPage: {
         signDate: '',

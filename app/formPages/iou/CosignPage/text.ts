@@ -2,6 +2,7 @@ export const keys = {
   name: 'name',
   address: 'address',
   city: 'city',
+  details: 'details',
 }
 
 export const headings = {

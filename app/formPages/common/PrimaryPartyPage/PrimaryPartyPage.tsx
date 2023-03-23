@@ -62,13 +62,13 @@ export const PrimaryPartyPage: React.FC<PrimaryPartyPageProps> = (props) => {
             </Grid>
             <Grid item xs={12}>
                 <CountrySelect 
-                    value={country} 
+                    value={country ?? { code: '', label: ''}}
                     onChange={(e, newVal) => handleChange(e, countryKey, newVal?.code ?? undefined)} 
                     options={countries} 
                 />
             </Grid>
             <Grid item xs={12}>
-                {(fields.country.code !== '' &&  fields.name !== '') ? (
+                {(fields.country && fields.country.code !== '' &&  fields.name !== '') ? (
                     <motion.div
                         initial={{ opacity: 0, y: '-200%' }}
                         animate={{ opacity: 1, y: '0%' }}
