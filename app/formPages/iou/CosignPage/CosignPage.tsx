@@ -2,7 +2,7 @@
 
 
 import { FormControlLabel, Grid } from '@mui/material'
-import { margin } from 'lib/magic'
+import { margin } from 'lib/constants'
 import { key, keys, headings, labels } from './text';
 import { AppearAnimation, DText, DCheckbox, DInput } from 'components'
 import * as React from 'react' 

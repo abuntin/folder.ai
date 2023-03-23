@@ -2,7 +2,7 @@
 
 
 import { Grid, InputAdornment, RadioGroup } from '@mui/material'
-import { margin } from 'lib/magic'
+import { margin } from 'lib/constants'
 import { key, keys, headings, labels } from './text';
 import { DText, DAutocomplete, OptionLabel, DInput } from 'components'
 import * as React from 'react' 

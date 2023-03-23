@@ -3,7 +3,7 @@
 
 import { Grid } from '@mui/material'
 import dayjs from 'dayjs'
-import { margin } from 'lib/magic'
+import { margin } from 'lib/constants'
 import { labels, keys, headings, key } from './text';
 import { DText, DateInput, DInput } from 'components'
 import * as React from 'react' 

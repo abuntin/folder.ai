@@ -1,14 +1,11 @@
 'use client'
 
-import { Checkbox, FormControlLabel, Grid } from '@mui/material'
-import { CSSTransition } from 'react-transition-group'
-import { margin } from 'lib/magic'
-import { key, labels, keys, headings } from './text';
-import { DText, CountrySelect, DInput, DCheckbox } from 'components'
-import * as React from 'react' 
-import {  useNewDealDispatch, useNewDealSelector } from '../..';
-import { countries } from 'lib/countries';
-import { motion } from 'framer-motion';
+import { FormControlLabel, Grid } from '@mui/material';
+import { CountrySelect, DCheckbox, DInput, DText, AppearAnimation } from 'components';
+import { margin } from 'lib/constants';
+import * as React from 'react';
+import { useNewDealDispatch, useNewDealSelector } from '../..';
+import { headings, key, keys, labels } from './text';
 
 
 interface SecondaryPartyPageProps {}
@@ -65,21 +62,12 @@ export const SecondaryPartyPage: React.FC<SecondaryPartyPageProps> = (props) => 
             <Grid item xs={12}>
                 <CountrySelect 
                     value={country ?? { code: '', label: ''}}
-                    onChange={(e, newVal) => handleChange(e, countryKey, newVal?.code ?? undefined)} 
-                    options={countries} 
+                    onChange={(e, newVal) => handleChange(e, countryKey, newVal ?? undefined)}
                 />
             </Grid>
             <Grid item xs={12}>
-                {(fields.country && fields.country.code !== '' &&  fields.name !== '') ? (
-                    <motion.div
-                        initial={{ opacity: 0, y: '-200%' }}
-                        animate={{ opacity: 1, y: '0%' }}
-                        exit={{ opacity: 0.5, y: '200%'}}
-                        transition={{
-                            duration: 0.45,
-                            ease: [0, 0.71, 0.2, 1.01]
-                        }}
-                    >
+                {(fields.country  &&  fields.name !== '') ? (
+                    <AppearAnimation>
                          <Grid container spacing={4}>
                                 <Grid item xs={12}>
                                     <DText text={addressLabel} variant='body2' />
@@ -99,7 +87,7 @@ export const SecondaryPartyPage: React.FC<SecondaryPartyPageProps> = (props) => 
                                     />
                                 </Grid>
                             </Grid>
-                    </motion.div>
+                    </AppearAnimation>
                 ) : null}
             </Grid>
             <Grid item xs={12}>
