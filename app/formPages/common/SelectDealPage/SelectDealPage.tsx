@@ -1,7 +1,7 @@
 'use client' 
 
 
-import { Grid } from '@mui/material'
+import { Unstable_Grid2 as Grid } from '@mui/material'
 import { margin, padding } from 'lib/constants'
 import { DGrid, DBox, DText } from 'components'
 import { DealType, FormOptionType } from 'lib/types'
@@ -29,15 +29,15 @@ export const SelectDealPage: React.FC<SelectDealPageProps> = (props) => {
 
     return (
         <Grid container spacing={4}>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={heading} variant='h5' sx={{ marginBottom: margin * 2 }}/>
             </Grid>
             {subheading !== '' && 
-             <Grid item xs={12} sx={{ mb: margin }}>
+               <Grid xs sx={{ mb: margin }}>
                 <DText text={subheading} variant='body1' />
             </Grid>
           }
-            <Grid item xs={12}>
+            <Grid xs>
             <DBox sx={{ padding }}>
                 <DGrid options={options} onChange={handleChange} />
             </DBox>

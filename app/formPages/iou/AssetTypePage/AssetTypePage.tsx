@@ -1,7 +1,7 @@
 'use client'
 
 
-import { Grid, InputAdornment, RadioGroup } from '@mui/material'
+import { Unstable_Grid2 as Grid, InputAdornment } from '@mui/material'
 import { margin } from 'lib/constants'
 import { key, keys, headings, labels } from './text';
 import { DText, DAutocomplete, OptionLabel, DInput } from 'components'
@@ -35,29 +35,29 @@ export const AssetTypePage: React.FC<AssetTypePageProps> = () => {
     return (
         <Grid container spacing={4}>
             {heading !== '' && 
-                 <Grid item xs={12}>
+                 <Grid xs>
                     <DText text={heading} variant='h5' />
                 </Grid>
             }
             {subheading !== '' && 
-             <Grid item xs={12} sx={{ mb: margin }}>
+               <Grid xs sx={{ mb: margin }}>
                 <DText text={subheading} variant='body1' />
             </Grid>
           }        
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={typeLabel} variant='body2' />
             </Grid>    
-            <Grid item xs={12}>
+            <Grid xs>
                 <DAutocomplete<FormOptionType> 
                     options={typeKey.options} 
                     value={type ?? { value: 'cash', label: 'Cash, Securities, Bills'} as FormOptionType}
                     onChange={(e, newVal) => handleChange(e, typeKey.value, newVal ?? undefined)} 
                 />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={amountLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DInput
                     placeholder={amountLabel}
                     value={amount}
@@ -66,10 +66,10 @@ export const AssetTypePage: React.FC<AssetTypePageProps> = () => {
                     InputProps={{ startAdornment: <InputAdornment position="start"><DText text='£' /> </InputAdornment>}}
                 />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={detailsLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DInput
                     placeholder='(E.g. Plot no. 13579, Alphabet Class A shares)'
                     value={details}

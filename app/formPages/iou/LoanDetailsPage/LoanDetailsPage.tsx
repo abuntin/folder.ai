@@ -1,7 +1,7 @@
 'use client'
 
 
-import { Grid, InputAdornment, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Unstable_Grid2 as Grid, InputAdornment, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { AppearAnimation, DateInput, DAutocomplete, DInput, DText } from 'components';
 import { margin } from 'lib/constants'
 import dayjs from 'dayjs';
@@ -63,25 +63,25 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
     return (
         <Grid container spacing={4}>
             {heading !== '' && 
-                 <Grid item xs={12}>
+                 <Grid xs>
                     <DText text={heading} variant='h5' />
                 </Grid>
             }
             {subheading !== '' && 
-             <Grid item xs={12} sx={{ mb: margin }}>
+               <Grid xs sx={{ mb: margin }}>
                 <DText text={subheading} variant='body1' />
                 </Grid>
             }
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={loanDateLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DateInput onAccept={value => handleChange(null, loanDateKey, value?.toISOString() ?? '')} value={dayjs(loanDate)} />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={interestLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DInput
                     placeholder={rateKey.charAt(0).toUpperCase() + rateKey.slice(1)}
                     value={rate}
@@ -90,7 +90,7 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
                     InputProps={{ startAdornment: <InputAdornment position="start"><DText text='%' /></InputAdornment>}}
                 />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <ToggleButtonGroup
                     value={type}
                     exclusive
@@ -104,7 +104,7 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
                     </ToggleButton>
                 </ToggleButtonGroup>
             </Grid>
-            <Grid item xs={12} sx={{ mb: margin }}>
+              <Grid xs sx={{ mb: margin }}>
                 {rate !== 0 &&
                     <AppearAnimation>
                         <DAutocomplete<FormOptionType>
@@ -115,10 +115,10 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
                     </AppearAnimation>
                 }
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={repaymentFrequencyLabel} variant='body2' />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs>
                 <DAutocomplete<FormOptionType> 
                     options={frequencyOptions} 
                     value={repaymentFrequency ?? { value: '', label: ''}}
@@ -126,11 +126,11 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
                 />
             </Grid>
             {helperText !== '' &&
-                (<Grid item xs={12}>
+                (<Grid xs>
                     <DText text={helperText} variant='h6' fontStyle='italic' />
                 </Grid>)
             }
-            <Grid item xs={12}>
+            <Grid xs>
                 <DText text={info} variant='caption' />
             </Grid> 
         </Grid>
