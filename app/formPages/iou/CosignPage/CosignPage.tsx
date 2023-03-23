@@ -21,9 +21,9 @@ export const CosignPage: React.FC<CosignPageProps> = () => {
 
     const dispatch = useNewDealDispatch()
 
-;
-
     const [fields, setFields] = React.useState(state)
+
+    const { isCosigned, name, address, city } = fields;
 
     const handleChange = (e: any, field: string, newVal?: boolean) => {
           const newFields = { ...fields, [field]: newVal ?? e.target.value } 
@@ -40,13 +40,13 @@ export const CosignPage: React.FC<CosignPageProps> = () => {
           }
             <Grid item xs={12}>
                 <FormControlLabel
-                    control={<DCheckbox value={fields.isCosigned} onChange={e => handleChange(e, 'isCosigned', e.target.checked)} />}
+                    control={<DCheckbox value={isCosigned} onChange={e => handleChange(e, 'isCosigned', e.target.checked)} />}
                     label={<DText text={subheading} variant='body1' />}
                     labelPlacement='end'
                 />
             </Grid>
             <Grid item xs={12}>
-                {fields.isCosigned &&
+                {isCosigned &&
                     <AppearAnimation>
                         <Grid container spacing={4}>
                             <Grid item xs={12}>
@@ -55,7 +55,7 @@ export const CosignPage: React.FC<CosignPageProps> = () => {
                             <Grid item xs={12}>
                                 <DInput
                                     placeholder={nameKey.charAt(0).toUpperCase() + nameKey.slice(1)}
-                                    value={fields[nameKey]}
+                                    value={name}
                                     onChange={e => handleChange(e, nameKey)}
                                 />
                             </Grid>
@@ -65,14 +65,14 @@ export const CosignPage: React.FC<CosignPageProps> = () => {
                             <Grid item xs={12}>
                                 <DInput
                                     placeholder={`${addressKey.charAt(0).toUpperCase() + addressKey.slice(1)} & Postcode`}
-                                    value={fields[addressKey]}
+                                    value={address}
                                     onChange={e => handleChange(e, addressKey)}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <DInput
                                     placeholder={cityKey.charAt(0).toUpperCase() + cityKey.slice(1)}
-                                    value={fields[cityKey]}
+                                    value={city}
                                     onChange={e => handleChange(e, cityKey)}
                                 />
                             </Grid>
