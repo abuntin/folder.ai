@@ -4,16 +4,15 @@
 import { Grid } from '@mui/material'
 import { margin, padding } from 'lib/constants'
 import { DGrid, DBox, DText } from 'components'
-import { FormOptionType } from 'lib/types'
+import { DealType, FormOptionType } from 'lib/types'
 import * as React from 'react' 
 import { headings, keys, key } from './text'
-import { useNewDealDispatch, useNewDealSelector } from '../..'
+import { useNewDealDispatch } from '../..'
 
 
 
 interface SelectDealPageProps {
 } 
-
 
 
 const { heading, subheading } = headings;
@@ -25,7 +24,7 @@ export const SelectDealPage: React.FC<SelectDealPageProps> = (props) => {
     const dispatch = useNewDealDispatch()
     
     const handleChange = (e: any, option: FormOptionType) => {
-        dispatch({ [key]: option.value })
+        dispatch({ [key]: option.value as DealType })
     }
 
     return (

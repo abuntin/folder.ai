@@ -1,6 +1,6 @@
 import './global.css';
 import clsx from 'clsx';
-import localFont from '@next/font/local';
+import localFont from 'next/font/local';
 import App from './app';
 
 
