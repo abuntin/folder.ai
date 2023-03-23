@@ -21,8 +21,8 @@ export const keys = {
       label: 'Inventory (Truck, Raw Materials, Vacuum Cleaner)',
     },
     {
-      value: 'debt',
-      label: 'Cash, Debt or Bills',
+      value: 'cash',
+      label: 'Cash, Securities, Bills',
     },
     {
       value: 'other',

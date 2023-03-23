@@ -50,7 +50,7 @@ export const AssetTypePage: React.FC<AssetTypePageProps> = () => {
             <Grid item xs={12}>
                 <DAutocomplete<FormOptionType> 
                     options={typeKey.options} 
-                    value={type} 
+                    value={type ?? { value: 'cash', label: 'Cash, Securities, Bills'} as FormOptionType}
                     onChange={(e, newVal) => handleChange(e, typeKey.value, newVal ?? undefined)} 
                 />
             </Grid>
