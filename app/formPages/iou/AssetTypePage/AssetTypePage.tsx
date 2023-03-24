@@ -33,7 +33,7 @@ export const AssetTypePage: React.FC<AssetTypePageProps> = () => {
    }
 
     return (
-        <Grid container spacing={4}>
+         <Grid container spacing={4} direction='column'>
             {heading !== '' && 
                  <Grid xs>
                     <DText text={heading} variant='h5' />

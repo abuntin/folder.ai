@@ -34,9 +34,9 @@ export const PrimaryPartyPage: React.FC<PrimaryPartyPageProps> = (props) => {
     }
 
     return (
-        <Grid container spacing={4}>
+         <Grid container spacing={5} direction='column'>
             {heading !== '' && 
-                 <Grid xs>
+                 <Grid xs={12}>
                     <DText text={heading} variant='h5' />
                 </Grid>
             }
@@ -48,7 +48,7 @@ export const PrimaryPartyPage: React.FC<PrimaryPartyPageProps> = (props) => {
             <Grid xs>
                 <DText text={nameLabel} variant='body2' />
             </Grid>
-            <Grid xs>
+            <Grid xs={12}>
                 <DInput
                     placeholder={nameKey.charAt(0).toUpperCase() + nameKey.slice(1)} 
                     value={name} 
@@ -67,7 +67,7 @@ export const PrimaryPartyPage: React.FC<PrimaryPartyPageProps> = (props) => {
             <Grid xs>
                 {(fields.country && fields.name !== '') ? (
                     <AppearAnimation>
-                         <Grid container spacing={4}>
+                          <Grid container spacing={4} direction='column'>
                                 <Grid xs>
                                     <DText text={addressLabel} variant='body2' />
                                 </Grid>

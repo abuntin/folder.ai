@@ -15,8 +15,8 @@ export type Frequency = 'monthly' | 'quarterly' | 'annually' | 'weekly' | 'daily
 export type AssetType = 'land-property' | 'business' | 'inventory' | 'cash' | 'other'
 
 export interface DealMetadata {
-    signDate: '',
-    termDate: '',
+    signDate: string,
+    termDate: string,
 }
 
 export interface Party {
@@ -34,14 +34,13 @@ export interface InterestTerms {
 
 export interface AssetTerms {
     amount: number,
-    details: '',
+    details: string,
     type: 'land-property' | 'business' | 'inventory' | 'cash' | 'other'
 }
 
 export interface PaymentTerms {
-    loanDate: ''
+    loanDate: string,
     interest: InterestTerms,
-    assetType: AssetTerms,
     repayment: Frequency,
 }
 

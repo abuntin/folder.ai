@@ -22,7 +22,7 @@ export const NavAnimation: React.FC<AnimationProps> = ({ children, ...rest }) =>
             ease: [0, 0.71, 0.2, 1.01],
             x: {
                 type: 'spring',
-                damping: 10,
+                damping: 20,
                 stiffness: 100,
                 restDelta: 0.001
             }

@@ -28,7 +28,7 @@ export const SelectDealPage: React.FC<SelectDealPageProps> = (props) => {
     }
 
     return (
-        <Grid container spacing={4}>
+         <Grid container spacing={4} direction='column'>
             <Grid xs>
                 <DText text={heading} variant='h5' sx={{ marginBottom: margin * 2 }}/>
             </Grid>

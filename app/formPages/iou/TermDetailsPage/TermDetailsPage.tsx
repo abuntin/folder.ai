@@ -36,7 +36,7 @@ export const TermDetailsPage: React.FC<TermDetailsPageProps> = (props) => {
      }
 
     return (
-        <Grid container spacing={4}>
+         <Grid container spacing={4} direction='column'>
             {heading !== '' && 
                  <Grid xs>
                     <DText text={heading} variant='h5' />
