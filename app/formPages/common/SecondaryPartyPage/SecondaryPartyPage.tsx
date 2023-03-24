@@ -35,7 +35,7 @@ export const SecondaryPartyPage: React.FC<SecondaryPartyPageProps> = (props) => 
      }
 
     return (
-        <Grid container spacing={4}>
+         <Grid container spacing={4} direction='column'>
             {heading !== '' && 
                  <Grid xs>
                     <DText text={heading} variant='h5' />
@@ -68,7 +68,7 @@ export const SecondaryPartyPage: React.FC<SecondaryPartyPageProps> = (props) => 
             <Grid xs>
                 {(fields.country  &&  fields.name !== '') ? (
                     <AppearAnimation>
-                         <Grid container spacing={4}>
+                          <Grid container spacing={4} direction='column'>
                                 <Grid xs>
                                     <DText text={addressLabel} variant='body2' />
                                 </Grid>

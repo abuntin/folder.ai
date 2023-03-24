@@ -1,7 +1,7 @@
 'use client'
 
 
-import { FormControlLabel, Unstable_Grid2 as Grid } from '@mui/material'
+import { FormControlLabel, Unstable_Grid2 as Grid, } from '@mui/material'
 import { margin } from 'lib/constants'
 import { key, keys, headings, labels } from './text';
 import { AppearAnimation, DText, DCheckbox, DInput } from 'components'
@@ -32,7 +32,7 @@ export const CosignPage: React.FC<CosignPageProps> = () => {
      }
 
     return (
-        <Grid container spacing={4}>
+         <Grid container spacing={4} direction='column'>
             {heading !== '' && 
              <Grid xs>
                 <DText text={heading} variant='h5' />
@@ -48,7 +48,7 @@ export const CosignPage: React.FC<CosignPageProps> = () => {
             <Grid xs>
                 {isCosigned &&
                     <AppearAnimation>
-                        <Grid container spacing={4}>
+                         <Grid container spacing={4} direction='column'>
                             <Grid xs>
                                 <DText text={nameLabel} variant='body2' />
                             </Grid>

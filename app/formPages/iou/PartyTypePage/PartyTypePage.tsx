@@ -30,7 +30,7 @@ export const PartyTypePage: React.FC<PartyTypePageProps> = () => {
     }
 
     return (
-        <Grid container spacing={4}>
+         <Grid container spacing={4} direction='column'>
             <Grid xs>
                 <DText text={name === '' ? heading : `${name} is the...`} variant='h5' />
             </Grid>
@@ -41,7 +41,7 @@ export const PartyTypePage: React.FC<PartyTypePageProps> = () => {
           }
             <Grid xs>
                 <RadioGroup>
-                    <Grid container spacing={4}>
+                     <Grid container spacing={4} direction='column'>
                         {options.map((option, i) => {
                             return (
                                 // TODO: Add tooltips to options via option.description

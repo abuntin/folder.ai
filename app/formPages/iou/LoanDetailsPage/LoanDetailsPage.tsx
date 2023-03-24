@@ -61,7 +61,7 @@ export const LoanDetailsPage: React.FC<LoanDetailsPageProps> = (props) => {
     }, [fields[interestKey]])
 
     return (
-        <Grid container spacing={4}>
+         <Grid container spacing={4} direction='column'>
             {heading !== '' && 
                  <Grid xs>
                     <DText text={heading} variant='h5' />
