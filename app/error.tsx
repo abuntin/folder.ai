@@ -1,5 +1,6 @@
 'use client';
 
+import { DealEngineLogo } from 'components';
 import { useEffect } from 'react';
 
 export default function Error({
@@ -17,6 +18,7 @@ export default function Error({
   return (
     <div>
       <p>Oh no, something went wrong... maybe refresh?</p>
+      <DealEngineLogo />
     </div>
   );
 }

@@ -11,6 +11,8 @@ import 'dayjs/locale/en-gb';
 import Sidebar from '../components/sidebar';
 import AnalyticsWrapper from '../components/analytics';
 import { AnimationWrapper } from 'components';
+import { Provider } from 'react-redux';
+import { store } from 'lib/redux';
 
 let theme: Theme = createTheme({
     palette: {
@@ -41,7 +43,7 @@ let theme: Theme = createTheme({
           '"Segoe UI Emoji"',
           '"Segoe UI Symbol"',
         ].join(','),
-        fontSize: 14,
+        fontSize: 10,
         fontWeightBold: 700,
         fontWeightLight: 300,
         fontWeightRegular: 400,
@@ -57,17 +59,19 @@ interface AppProps {
 
 const App: React.FC<AppProps> = (props) => {
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-            <ThemeProvider theme={theme}>
-                <AnimationWrapper>
-                    <Sidebar />
-                    <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
-                        {props.children}
-                        <AnalyticsWrapper />
-                    </main>
-                </AnimationWrapper>
-            </ThemeProvider>
-        </LocalizationProvider>
+        <Provider store={store}>
+             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+                <ThemeProvider theme={theme}>
+                    <AnimationWrapper>
+                        <Sidebar />
+                        <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
+                            {props.children}
+                            <AnalyticsWrapper />
+                        </main>
+                    </AnimationWrapper>
+                </ThemeProvider>
+            </LocalizationProvider>
+        </Provider>
     )
 } 
  

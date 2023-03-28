@@ -1,4 +1,4 @@
-import { CountryType } from "lib/constants"
+import { CountryType, currencies, CurrencyType } from "lib/constants"
 
 export type ContractType = {
     nda: 'Non-Disclosure Agreement (NDA)', 
@@ -15,15 +15,18 @@ export type Frequency = 'monthly' | 'quarterly' | 'annually' | 'weekly' | 'daily
 export type AssetType = 'land-property' | 'business' | 'inventory' | 'cash' | 'other'
 
 export interface DealMetadata {
-    signDate: string,
-    termDate: string,
+    sign: string,
+    term: string,
+    created: string,
+    title: string,
 }
 
 export interface Party {
     name: string,
     address: string,
     city: string,
-    country: CountryType
+    country: CountryType,
+    signed?: boolean,
 }
 
 export interface InterestTerms {
@@ -34,8 +37,9 @@ export interface InterestTerms {
 
 export interface AssetTerms {
     amount: number,
+    currency: CurrencyType
     details: string,
-    type: 'land-property' | 'business' | 'inventory' | 'cash' | 'other'
+    type: 'property' | 'business' | 'inventory' | 'cash' | 'other'
 }
 
 export interface PaymentTerms {
