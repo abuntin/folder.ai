@@ -16,3 +16,4 @@ export const DBox: React.FC<DBoxProps> = (props) => {
        </Box>
     )
 }
+
