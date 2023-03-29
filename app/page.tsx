@@ -1,4 +1,4 @@
-import { DashboardList } from 'components'
+import { DashboardList, DealView } from 'components'
 
 export const revalidate = 60;
 
@@ -15,7 +15,7 @@ export default async function Dashboard() {
 
   return (
     <section className="mx-6 my-6">
-      <DashboardList />
+      <DealView />
     </section>
   );
 }
