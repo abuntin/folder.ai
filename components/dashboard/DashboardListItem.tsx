@@ -1,18 +1,19 @@
 'use client' 
 
 
-import { DoneAllSharp, ExpandMore, Verified } from '@mui/icons-material';
-import { Collapse, IconButton, IconButtonProps, Divider, ListItemProps, styled, Unstable_Grid2 as Grid } from '@mui/material';
-import { DBox, DText, HoverAnimation } from 'components';
+import { DoneAllSharp, KeyboardArrowRightSharp, Verified } from '@mui/icons-material';
+import { Box, Collapse, IconButton, IconButtonProps, BoxProps, styled, Unstable_Grid2 as Grid, useTheme } from '@mui/material';
+import { DText, HoverAnimation } from 'components';
 import { padding } from 'lib/constants';
 import { formatDate } from 'lib/functions';
 import { Deal } from 'lib/models';
+import { useAppDispatch } from 'lib/redux';
+import { set_action_pane } from 'lib/redux/reducers';
 import * as React from 'react';
-import { getTypeLabel } from './DashboardType';
 import { ProgressBar } from './ProgressBar';
 
 
-interface DashboardListItemProps extends ListItemProps {
+interface DashboardListItemProps extends BoxProps {
     deal: Deal
     expanded?: boolean,
 } 
@@ -25,7 +26,7 @@ const ExpandMoreButton = styled((props: ExpandMoreProps) => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
   })(({ theme, expand }) => ({
-    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+    transform: !expand ? 'rotate(0deg)' : 'rotate(360deg)',
     marginLeft: 'auto',
     transition: theme.transitions.create('transform', {
       duration: theme.transitions.duration.shortest,
@@ -35,6 +36,8 @@ const ExpandMoreButton = styled((props: ExpandMoreProps) => {
 
 export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
 
+    const dispatch = useAppDispatch()
+
     const { deal, expanded: _expanded } = props;
 
     const [expanded, setExpanded] = React.useState(_expanded ?? false)
@@ -43,62 +46,51 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
 
     const { sign, term, created, title } = metadata
 
+    const handleDealActionPane = (e: any) => {
+        dispatch(set_action_pane(deal.id))
+    }
+
     return (
-        <DBox>
+        <Box>
             <Grid container spacing={2} direction='column' display='flex' justifyContent='space-between'>
                 <Grid xs={12} container direction='row'>
-                    <Grid xs={2}>
+                    <Grid xs={1}>
                         <DText text={type.toLocaleUpperCase()} variant='subtitle1' />
                     </Grid>
-                    <Grid xs={4}>
+                    <Grid xs={3}>
                         <DText text={title} variant='body1' fontWeight='medium' />
                         <DText text={`Created: ${formatDate(created)}`} variant='caption' />
                     </Grid>
-                    <Grid xs={3} display='flex'>
+                    <Grid xs={5}>
                         <ProgressBar progress='10%' />
-                    </Grid>
-                    <Grid xs={3} container direction='row' display='flex' justifyContent='end'>
-                        <Grid xs={6} display='flex' justifyContent='space-around' alignItems='center'>
-                            <DText text={formatDate(term)} variant='body1' fontWeight='regular' />
-                        </Grid>
-                        <Grid xs={6} display='flex' justifyContent='space-around' alignItems='center'>
-                            <ExpandMoreButton expand={expanded} onClick={e => setExpanded(expanded ? false : true)}>
-                                <ExpandMore />
-                            </ExpandMoreButton>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid>
-            {deal.type === 'iou' &&
-                <Collapse in={expanded} unmountOnExit timeout='auto'>
-                    <Grid container spacing={2} sx={{ padding }}>
-                        <Grid xs={4} container direction='row' sx={{ backgroundColor: 'info' }}>
-                            <Grid xs={6} display='flex' justifyContent='center'>
-                                <DText text={`${primaryParty.name} (Me)`} />
+                        <Grid container spacing={2} sx={{ padding }}>
+                            <Grid xs={4} container direction='row'>
+                                <Grid xs={6} display='flex' justifyContent='center'>
+                                    <DText text={`${primaryParty.name} (Me)`} />
+                                </Grid>
+                                <Grid xs={6} display='flex' justifyContent='center'>
+                                    {
+                                        primaryParty.signed ?
+                                        <Verified fontSize='small' color='success' />
+                                        :
+                                        <DoneAllSharp fontSize='small' color='primary' />
+                                    }
+                                </Grid>
                             </Grid>
-                            <Grid xs={6} display='flex' justifyContent='center'>
-                                {
-                                    primaryParty.signed ?
-                                    <Verified fontSize='small' color='success' />
-                                    :
-                                    <DoneAllSharp fontSize='small' color='primary' />
-                                }
+                            <Grid xs={4} container direction='row'>
+                                <Grid xs={6} display='flex' justifyContent='center'>
+                                    <DText text={`${secondaryParty.name}`} />
+                                </Grid>
+                                <Grid xs={6} display='flex' justifyContent='center'>
+                                    {
+                                        secondaryParty.signed ?
+                                        <Verified fontSize='small' color='success' />
+                                        :
+                                        <DoneAllSharp fontSize='small' color='primary' />
+                                    }
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid xs={4} container direction='row' sx={{ backgroundColor: 'secondary' }}>
-                            <Grid xs={6} display='flex' justifyContent='center'>
-                                <DText text={`${secondaryParty.name}`} />
-                            </Grid>
-                            <Grid xs={6} display='flex' justifyContent='center'>
-                                {
-                                    secondaryParty.signed ?
-                                    <Verified fontSize='small' color='success' />
-                                    :
-                                    <DoneAllSharp fontSize='small' color='primary' />
-                                }
-                            </Grid>
-                        </Grid>
-                        <Grid xs={4} container direction='row' sx={{ backgroundColor: 'secondary' }}>
+                            <Grid xs={4} container direction='row'>
                             {
                                 cosigners && cosigners.length != 0 &&
                                 <>
@@ -106,7 +98,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
                                         <DText text={
                                             cosigners.length === 1 ?
                                             cosigners[0].name :
-                                            `${cosigners[0].name}, ${cosigners[1].name} ${cosigners.length > 2 ? `and ${cosigners.length - 2} others` : ''}`
+                                            `${cosigners[0].name} + ${cosigners.length - 1} more`
                                         } />
                                     </Grid>
                                     <Grid xs={6} display='flex' justifyContent='center'>
@@ -121,9 +113,20 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
                             }
                         </Grid>
                     </Grid>
-                </Collapse>
-            }
-        </DBox>
+                    </Grid>
+                    <Grid xs={3} container direction='row' display='flex' justifyContent='end'>
+                        <Grid xs={6} display='flex' justifyContent='space-around' alignItems='center'>
+                            <DText text={formatDate(term)} variant='body1' fontWeight='regular' />
+                        </Grid>
+                        <Grid xs={6} display='flex' justifyContent='space-around' alignItems='center'>
+                            <ExpandMoreButton expand={expanded} onClick={handleDealActionPane}>
+                                <KeyboardArrowRightSharp />
+                            </ExpandMoreButton>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Box>
     )
 }
 
