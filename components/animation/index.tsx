@@ -62,7 +62,6 @@ export const HoverAnimation: React.FC<AnimationProps> = ({ children, ...rest }) 
         }}
         whileTap={{ scale: 0.98 }}
         {...rest}
-        style={{ width: 'max-content', height: 'max-content' }}
     >
         {children}
     </m.div>
@@ -76,7 +75,7 @@ export const RotateAnimation: React.FC<AnimationProps> = ({ children, ...rest })
             duration: 0.5,
             repeat: Infinity
         }}
-        style={{ width: 'max-content', height: 'max-content' }}
+        {...rest}
     >
         {children}
     </m.div>

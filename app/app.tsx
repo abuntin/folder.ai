@@ -16,6 +16,7 @@ import { store } from 'lib/redux';
 
 let theme: Theme = createTheme({
     palette: {
+        common: { black: '#1b1a22', white: '#fafafa'},
         primary: { main: '#fafafa' },
         secondary: { main: '#fca311' },
         error: { main: '#ff0033' },
@@ -24,7 +25,7 @@ let theme: Theme = createTheme({
         success: { main: '#4BB543' },
         mode: 'dark',
         grey: 600 as Partial<Color>,
-        text:  { primary: '#fafafa', secondary: '#000000', disabled: '#E5E5E5'},
+        text:  { primary: '#fafafa', secondary: '#000000', disabled: '#E5E5E5', default: '#fafafa' },
         // divider: string,
         // action: Partial<TypeAction>,
         background: { default: '#1b1a22'},
@@ -47,7 +48,7 @@ let theme: Theme = createTheme({
         fontWeightBold: 700,
         fontWeightLight: 300,
         fontWeightRegular: 400,
-        fontWeightMedium: 500
+        fontWeightMedium: 500,
     },
 })
 

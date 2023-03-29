@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { Deal } from "lib/models";
 
 export const randomSubstring = (str: string, len: number) => {
@@ -22,6 +23,18 @@ export const isCompleted = (obj: ValueType | Record<string, ValueType>) => {
     }
 }
 
+export const formatDate = (dateStr: string) => {
+    let date = dayjs(dateStr)
+
+    let diff = date.diff(dayjs(), 'days')
+
+    if (diff === 1) return date.format('[Yesterday at] HH:mm:ss')
+
+    if (diff < 7) return date.format('dddd [at] HH:mm:ss')
+
+    else return date.format('DD/MM/YY [at] HH:mm')
+
+}
 
 export const dealProgress = (deal: Deal) => {
 

@@ -2,40 +2,107 @@
 
 
 import * as React from 'react' 
-import { List, ListProps } from '@mui/material'
+import { Box, FormControl, Divider, InputLabel, Select, Unstable_Grid2 as Grid, Stack, MenuItem, ListProps } from '@mui/material'
 import { DashboardListItem } from './DashboardListItem'
-import { sampleIOU } from 'lib/models'
 import { useAppDispatch, useAppSelector } from 'lib/redux'
-import { open_one } from 'lib/redux/reducers'
+import { DLabel, DText } from 'components/common'
+import { Deal } from 'lib/models'
+import { DealType } from 'lib/types'
+import { typeOptions } from './DashboardType'
 
 interface DashboardListProps extends ListProps {
 } 
 
+interface Filters {
+    type?: DealType;
+
+}
+
+const applyFilters = (
+    deals: Deal[],
+    filters: Filters
+  ): Deal[] => {
+    return deals.filter((deal) => {
+      let matches = true;
+
+      if (filters.type && deal.type !== filters.type) {
+        matches = false;
+      }
+      return matches;
+    });
+};
+
+
 export const DashboardList: React.FC<DashboardListProps> = (props) => {
 
-    const { open } = useAppSelector(state => state.dashboard)
+    const { deals } = useAppSelector(state => state.dashboard)
 
-    const dispatch = useAppDispatch();
+    const [filters, setFilters] = React.useState<Filters>({
+        type: null
+    });
 
-    const handleClick = (e: any, index: string) => {
 
-        let newOpen = Object.keys(open).reduce((prev, curr) => {
-            if (curr === index) return { ...prev, [curr]: open[curr] ? false : true }
-            
-            else return { ...prev, [curr]: !open[index] ? false : open[curr] }
+    const handleTypeChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        let value = null;
 
-        }, {})
+        if (e.target.value !== 'all') {
+            value = e.target.value;
+        }
 
-        dispatch(open_one(newOpen))
-    }
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            type: value
+        }));
+    };
+
+    const filteredDeals = applyFilters(deals, filters);
 
     return (
-       <List sx={{ width: '100%', height: '100%' }}>
+        <Grid container spacing={4} direction='column' sx={{ width: '100%' }}>
+            <Grid xs container direction='row'>
+                <Grid xs display='flex' justifyContent='start' alignItems='center'>
+                    <DText text='Dashboard' variant='h5' />
+                </Grid>
+                <Grid xs display='flex' justifyContent='end' alignItems='center'>
+                    {
+                        (deals && deals.length !== 0) ?
+                            <Box width={150}>
+                                <FormControl fullWidth variant="outlined">
+                                    <InputLabel color='primary'> DealType </InputLabel>
+                                    <Select
+                                        value={filters.type || 'all'}
+                                        onChange={handleTypeChange}
+                                        label={<DText text="DealType" />}
+                                        autoWidth
+                                        >
+                                        {typeOptions.map(option => (
+                                            <MenuItem key={option.id} value={option.id}>
+                                                {option.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        : null
+                    }
+                </Grid>
+            </Grid>
+            <Grid xs>
+                <Divider />
+            </Grid>
+
             {
-                [0, 1, 2].map(_ => (
-                    <DashboardListItem key={_} deal={sampleIOU} open={open[_.toString()]} handleExpand={e => handleClick(e, _.toString())} />
-                ))
-            } 
-       </List>
+                (deals && deals.length !== 0) &&
+                    <Grid xs={12}>
+                        <Stack spacing={0.5} alignItems='stretch'>
+                            {
+                                filteredDeals.map((deal, i) => (
+                                    <DashboardListItem key={i} deal={deal} />
+                                ))
+                            }
+                        </Stack>
+                    </Grid>
+            }
+        </Grid>
     )
 }

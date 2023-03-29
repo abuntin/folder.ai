@@ -10,7 +10,7 @@ export class Deal {
 
     secondaryParty: Party  = null;
 
-    cosigner?: Party[] = undefined;
+    cosigners?: Party[] = undefined;
 
     metadata: DealMetadata  = null;
 

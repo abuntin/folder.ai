@@ -11,7 +11,7 @@ interface DBoxProps extends BoxProps {
 
 export const DBox: React.FC<DBoxProps> = (props) => {
     return (
-       <Box sx={{ ...styles, margin: 0, ...props.sx }}>
+       <Box sx={{ ...styles, margin: 0, width: '100%', ...props.sx }}>
         {props.children}
        </Box>
     )
