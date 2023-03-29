@@ -7,13 +7,13 @@ import { DText } from 'components';
 
 const navItems = {
   '/': {
-    name: 'home',
+    name: 'Dashboard',
     x: 0,
     y: 0,
     w: '64px',
   },
   '/newdeal': {
-    name: 'newdeal',
+    name: 'Create New',
     x: 0,
     y: 0,
     w: '64px',
@@ -23,7 +23,7 @@ const navItems = {
 function Logo() {
   return (
     <Link aria-label='DealAI' href='/'>
-      <DText text='DealAI' variant='h4' fontWeight='medium' />
+      <DText text='DealAI' variant='h6' fontWeight='medium' />
     </Link>
   )
 }
@@ -81,14 +81,14 @@ export default function Navbar() {
   return (
     <aside className="md:w-[150px] md:flex-shrink-0 -mx-4 md:mx-0 md:px-0 font-serif">
       <div className="lg:sticky lg:top-20">
-        <div className="ml-2 md:ml-[12px] mb-2 px-4 md:px-0 md:mb-8 space-y-10 flex flex-col md:flex-row items-start ">
+        <div className="ml-2 md:ml-[12px] mb-2 px-4 md:px-0 md:mb-8 space-y-10 flex flex-row md:flex-row items-start ">
           <Logo />
         </div>
         <nav
-          className="flex flex-row md:flex-col items-start relative overflow-scroll px-4 md:px-0 pb-0 fade md:overflow-auto scroll-pr-6 md:relative"
+          className="flex flex-row"
           id="nav"
         >
-          <div className="flex flex-row md:flex-col space-x-0 pr-10 mb-2 mt-2 md:mt-0">
+          <div className="flex flex-row">
             {Object.entries(navItems).map(([path, { name }]) => {
               const isActive = path === pathname;
 

@@ -1,8 +1,8 @@
 'use client' 
 
 
-import { DoneAllSharp, KeyboardArrowRightSharp, Verified } from '@mui/icons-material';
-import { Box, Collapse, IconButton, IconButtonProps, BoxProps, styled, Unstable_Grid2 as Grid, useTheme } from '@mui/material';
+import { KeyboardArrowRightSharp, EditSharp } from '@mui/icons-material';
+import { Box, Button, IconButton, IconButtonProps, BoxProps, styled, Unstable_Grid2 as Grid, useTheme } from '@mui/material';
 import { DText, HoverAnimation } from 'components';
 import { padding } from 'lib/constants';
 import { formatDate } from 'lib/functions';
@@ -22,16 +22,28 @@ interface ExpandMoreProps extends IconButtonProps {
     expand: boolean
 }
 
+interface EditButtonProps extends IconButtonProps {
+
+}
+
 const ExpandMoreButton = styled((props: ExpandMoreProps) => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
   })(({ theme, expand }) => ({
-    transform: !expand ? 'rotate(0deg)' : 'rotate(360deg)',
+    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
     marginLeft: 'auto',
     transition: theme.transitions.create('transform', {
       duration: theme.transitions.duration.shortest,
     }),
 }));
+
+const EditButton = styled((props: EditButtonProps) => {
+    const { disabled, ...other } = props;
+    return <IconButton {...other} />
+
+})(({ theme, disabled}) => ({
+     
+}))
 
 
 export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
@@ -41,28 +53,28 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
 
     const { activeDealId } = useAppSelector(state => state.dashboard.table)
 
-    const [bg, setBg] = React.useState(theme.palette.background.default)
+    const [bg, setBg] = React.useState(theme.palette.common.black)
 
     React.useEffect(() => {
 
-        if (deal.id === activeDealId) setBg(theme.palette.grey[100])
+        if (deal.id === activeDealId) setBg(theme.palette.background.default)
+
+        else setBg(theme.palette.common.black)
 
     }, [activeDealId])
 
-    const { deal, expanded: _expanded } = props;
+    const { deal } = props;
 
-    const [expanded, setExpanded] = React.useState(_expanded ?? false)
-
-    const { id, type, cosigners, metadata, specialClause, primaryParty, secondaryParty } = deal;
+    const { id, type, metadata } = deal;
 
     const { sign, term, created, title } = metadata
 
     const handleDealActionPane = (e: any) => {
-        dispatch(set_action_pane(deal.id))
+        dispatch(set_action_pane(activeDealId === id ? '' : id))
     }
 
     return (
-        <Box sx={{ backgroundColor: bg }}>
+        <Box sx={{ backgroundColor: bg, '&:hover': { backgroundColor: theme.palette.background.default } }}>
             <Grid container spacing={2} direction='column' display='flex' justifyContent='space-between'>
                 <Grid xs={12} container direction='row'>
                     <Grid xs={1}>
@@ -72,74 +84,30 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
                         <DText text={title} variant='body1' fontWeight='medium' />
                         <DText text={`Created: ${formatDate(created)}`} variant='caption' />
                     </Grid>
-                    <Grid xs={5}>
-                        <ProgressBar progress='10%' />
-                        <Grid container spacing={2} sx={{ padding }}>
-                            <Grid xs={4} container direction='row'>
-                                <Grid xs={6} display='flex' justifyContent='center'>
-                                    <DText text={`${primaryParty.name} (Me)`} />
-                                </Grid>
-                                <Grid xs={6} display='flex' justifyContent='center'>
-                                    {
-                                        primaryParty.signed ?
-                                        <Verified fontSize='small' color='success' />
-                                        :
-                                        <DoneAllSharp fontSize='small' color='primary' />
-                                    }
-                                </Grid>
-                            </Grid>
-                            <Grid xs={4} container direction='row'>
-                                <Grid xs={6} display='flex' justifyContent='center'>
-                                    <DText text={`${secondaryParty.name}`} />
-                                </Grid>
-                                <Grid xs={6} display='flex' justifyContent='center'>
-                                    {
-                                        secondaryParty.signed ?
-                                        <Verified fontSize='small' color='success' />
-                                        :
-                                        <DoneAllSharp fontSize='small' color='primary' />
-                                    }
-                                </Grid>
-                            </Grid>
-                            <Grid xs={4} container direction='row'>
-                            {
-                                cosigners && cosigners.length != 0 &&
-                                <>
-                                    <Grid xs={6}>
-                                        <DText text={
-                                            cosigners.length === 1 ?
-                                            cosigners[0].name :
-                                            `${cosigners[0].name} + ${cosigners.length - 1} more`
-                                        } />
-                                    </Grid>
-                                    <Grid xs={6} display='flex' justifyContent='center'>
-                                        {
-                                            ((cosigners.length === 1 && cosigners[0].signed) || cosigners.reduce((prev, curr) => prev && curr.signed, true)) ?
-                                                <Verified fontSize='small' color='success' />
-                                                :
-                                                <DoneAllSharp fontSize='small' color='primary' />
-                                        }
-                                    </Grid>
-                                </>
-                            }
+                    <Grid xs={5} container direction='row'>
+                        <Grid xs={10}>
+                            <ProgressBar progress='10%' />
                         </Grid>
-                    </Grid>
+                        <Grid xs={2}>
+                            <EditButton>
+                                <EditSharp />
+                            </EditButton>
+                        </Grid>
                     </Grid>
                     <Grid xs={3} container direction='row' display='flex' justifyContent='end'>
                         <Grid xs={6} display='flex' justifyContent='space-around' alignItems='center'>
                             <DText text={formatDate(term)} variant='body1' fontWeight='regular' />
                         </Grid>
                         <Grid xs={6} display='flex' justifyContent='space-around' alignItems='center'>
-                            <HoverAnimation>
-                                <ExpandMoreButton expand={expanded} onClick={handleDealActionPane}>
-                                    <KeyboardArrowRightSharp />
-                                </ExpandMoreButton>
-                            </HoverAnimation>
+                            <ExpandMoreButton expand={activeDealId === id} onClick={handleDealActionPane}>
+                                <KeyboardArrowRightSharp />
+                            </ExpandMoreButton>
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
         </Box>
+
     )
 }
 

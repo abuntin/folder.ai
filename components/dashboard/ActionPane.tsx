@@ -8,7 +8,7 @@ import { capitalise, formatDate, repaymentRange } from 'lib/functions'
 import { IOU } from 'lib/models'
 import * as React from 'react' 
 import { useAppDispatch, useAppSelector } from 'lib/redux'
-import { CloseSharp, DoneAllSharp, Verified } from '@mui/icons-material'
+import { CloseSharp, EditSharp } from '@mui/icons-material'
 import { set_action_pane } from 'lib/redux/reducers'
 import { Party } from 'lib/types'
 import { getCosignersStatus, getPartyStatus } from './DashboardType'
@@ -54,11 +54,11 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
 
 
     const renderActions = () => (
-        <Grid xs={12} container spacing={2}>
+        <Grid xs={12} container spacing={2} display='flex' justifyContent='space-between'>
             {
-                [{ text: 'Raise Issue', color: 'secondary' }, { text: 'Share', color: 'success' }, { text: 'Editor', color: 'primary' },].map(({ text, color }) => (
+                [{ text: 'Raise Issue', color: 'secondary' }, { text: 'Share', color: 'success' }, { text: 'Edit', color: 'primary' },].map(({ text, color }) => (
                     <Grid xs={4}>
-                        <DButton direction={ text === 'Editor' ? 'forward' : undefined} color={color as "inherit" | "primary" | "secondary" | "error" | "info" | "success" | "warning"}>
+                        <DButton endIcon={ text === 'Edit' ? <EditSharp fontSize='small' /> : undefined} color={color as "inherit" | "primary" | "secondary" | "error" | "info" | "success" | "warning"}>
                             <DText text={text} />
                         </DButton>
                     </Grid>
@@ -101,7 +101,7 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
                         ))
                     }
                 </Grid>
-                <Grid xs={4} container>
+                <Grid xs={6} container>
                     <Grid xs={12}>
                         <DText text='Details' />   
                     </Grid>
@@ -124,7 +124,7 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
                         </Paper>
                     </Grid>
                 </Grid>
-                <Grid xs={4} container>
+                <Grid xs={6} container>
                     <Grid xs={12}>
                         <DText text='Terms' />   
                     </Grid>
