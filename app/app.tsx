@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react' 
-import { Color } from '@mui/material';
+import { Color, Box } from '@mui/material';
 import { createTheme, Theme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -16,7 +16,7 @@ import { store } from 'lib/redux';
 
 let theme: Theme = createTheme({
     palette: {
-        common: { black: '#1b1a22', white: '#fafafa'},
+        common: { black: '#111010', white: '#fafafa'},
         primary: { main: '#fafafa' },
         secondary: { main: '#fca311' },
         error: { main: '#ff0033' },
@@ -64,11 +64,14 @@ const App: React.FC<AppProps> = (props) => {
              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
                 <ThemeProvider theme={theme}>
                     <AnimationWrapper>
-                        <Sidebar />
-                        <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
-                            {props.children}
-                            <AnalyticsWrapper />
-                        </main>
+                        <div className='flex-auto'>
+                            <Sidebar />
+                            <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
+                                {props.children}
+                                <AnalyticsWrapper />
+                            </main>
+                        </div>
+                        
                     </AnimationWrapper>
                 </ThemeProvider>
             </LocalizationProvider>

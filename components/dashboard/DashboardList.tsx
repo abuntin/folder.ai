@@ -2,16 +2,16 @@
 
 
 import * as React from 'react' 
-import { Box, FormControl, Divider, InputLabel, Select, Unstable_Grid2 as Grid, Stack, MenuItem, ListProps, TablePagination } from '@mui/material'
+import { Box, FormControl, Divider, InputLabel, Select, Unstable_Grid2 as Grid, Stack, MenuItem, ListProps, TablePagination, useTheme } from '@mui/material'
 import { DashboardListItem } from './DashboardListItem'
 import { useAppDispatch, useAppSelector } from 'lib/redux'
-import { DText, DInput } from 'components'
+import { DText, DInput, NavAnimation } from 'components'
 import { Deal } from 'lib/models'
 import { DealType } from 'lib/types'
 import { typeOptions } from './DashboardType'
+import { ActionPane } from './ActionPane'
 
 interface DashboardListProps extends ListProps {
-    deals: Deal[]
 } 
 
 interface Filters {
@@ -42,7 +42,22 @@ const applyPagination = (
 };
 
 
-export const DashboardList: React.FC<DashboardListProps> = ({ deals, ...rest }) => {
+export const DashboardList: React.FC<DashboardListProps> = (props) => {
+
+    const theme = useTheme()
+
+    const { deals, table: { activeDealId }} = useAppSelector(state => state.dashboard)
+
+    const [active, setActive] = React.useState(null)
+
+    React.useEffect(() => {
+
+        const _deal = activeDealId === '' ? null : deals.filter(deal => deal.id === activeDealId)[0]
+
+        setActive(_deal)
+
+    }, [activeDealId])
+    
 
     const [page, setPage] = React.useState<number>(0);
     const [limit, setLimit] = React.useState<number>(5);
@@ -80,11 +95,12 @@ export const DashboardList: React.FC<DashboardListProps> = ({ deals, ...rest }) 
         limit
     );
 
+
     return (
         <Grid container spacing={4} direction='column' sx={{ width: '100%' }}>
-            <Grid xs container direction='row'>
+            {/* <Grid xs container direction='row'>
                 <Grid xs display='flex' justifyContent='start' alignItems='center'>
-                    <DText text='Dashboard' variant='h5' />
+                    <DText text='Dashboard' variant='subtitle1' />
                 </Grid>
                 <Grid xs display='flex' justifyContent='end' alignItems='center'>
                     {
@@ -97,7 +113,8 @@ export const DashboardList: React.FC<DashboardListProps> = ({ deals, ...rest }) 
                                         onChange={handleTypeChange}
                                         label={<DText text="DealType" />}
                                         autoWidth
-                                        >
+                                        variant='standard'
+                                    >
                                         {typeOptions.map(option => (
                                             <MenuItem key={option.id} value={option.id}>
                                                 {option.name}
@@ -109,39 +126,47 @@ export const DashboardList: React.FC<DashboardListProps> = ({ deals, ...rest }) 
                         : null
                     }
                 </Grid>
-            </Grid>
+            </Grid> */}
             <Grid xs>
                 <DInput placeholder='Search'/>
             </Grid>
-            <Grid xs>
-                <Divider />
-            </Grid>
-
-            {
-                (deals && deals.length !== 0) &&
+            <Grid xs={12} container direction='row'>
+                <Grid xs={activeDealId !== '' ? 7 : 12}>
+                    {
+                        (deals && deals.length !== 0) &&
+                            <Grid xs={12}>
+                                <Stack alignItems='stretch'>
+                                    {
+                                        paginatedDeals.map((deal, i) => (
+                                            <React.Fragment key={i}>
+                                                <DashboardListItem deal={deal} />
+                                                <Divider sx={{ width: '100%' }} />
+                                            </React.Fragment>
+                                        ))
+                                    }
+                                </Stack>
+                            </Grid>
+                    }
                     <Grid xs={12}>
-                        <Stack spacing={0.5} alignItems='stretch'>
-                            {
-                                paginatedDeals.map((deal, i) => (
-                                    <React.Fragment key={i}>
-                                        <DashboardListItem deal={deal} />
-                                        <Divider sx={{ width: '100%' }} />
-                                    </React.Fragment>
-                                ))
-                            }
-                        </Stack>
+                        <TablePagination
+                            component="div"
+                            count={filteredDeals.length}
+                            onPageChange={handlePageChange}
+                            onRowsPerPageChange={handleLimitChange}
+                            page={page}
+                            rowsPerPage={limit}
+                            rowsPerPageOptions={[5, 10, 25, 30]}
+                        />
                     </Grid>
-            }
-            <Grid xs={12}>
-                <TablePagination
-                    component="div"
-                    count={filteredDeals.length}
-                    onPageChange={handlePageChange}
-                    onRowsPerPageChange={handleLimitChange}
-                    page={page}
-                    rowsPerPage={limit}
-                    rowsPerPageOptions={[5, 10, 25, 30]}
-                />
+                </Grid>
+                {
+                    activeDealId !== '' && active &&
+                    <Grid xs={5} sx={{ height: '80%' }}>
+                        <NavAnimation>
+                            <ActionPane deal={active} open={activeDealId !== '' && active} />
+                        </NavAnimation>
+                    </Grid>
+                }
             </Grid>
         </Grid>
     )
