@@ -41,11 +41,11 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
 
     const { activeDealId } = useAppSelector(state => state.dashboard.table)
 
-    const [bg, setBg] = React.useState(theme.palette.primary.main)
+    const [bg, setBg] = React.useState(theme.palette.background.default)
 
     React.useEffect(() => {
 
-        if (deal.id === activeDealId) setBg(theme.palette.grey[500])
+        if (deal.id === activeDealId) setBg(theme.palette.grey[100])
 
     }, [activeDealId])
 
