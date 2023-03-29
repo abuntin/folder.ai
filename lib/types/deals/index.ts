@@ -25,6 +25,7 @@ export interface Party {
     city: string,
     country: string,
     signed?: boolean,
+    email: string,
 }
 
 export interface InterestTerms {

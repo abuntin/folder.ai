@@ -25,7 +25,7 @@ let theme: Theme = createTheme({
         success: { main: '#4BB543' },
         mode: 'dark',
         grey: 600 as Partial<Color>,
-        text:  { primary: '#fafafa', secondary: '#000000', disabled: '#E5E5E5', default: '#fafafa' },
+        text:  { primary: '#fafafa', secondary: '#000000', disabled: '#E5E5E5' },
         // divider: string,
         // action: Partial<TypeAction>,
         background: { default: '#1b1a22'},

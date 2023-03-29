@@ -7,7 +7,7 @@ import { DText, HoverAnimation } from 'components';
 import { padding } from 'lib/constants';
 import { formatDate } from 'lib/functions';
 import { Deal } from 'lib/models';
-import { useAppDispatch } from 'lib/redux';
+import { useAppDispatch, useAppSelector } from 'lib/redux';
 import { set_action_pane } from 'lib/redux/reducers';
 import * as React from 'react';
 import { ProgressBar } from './ProgressBar';
@@ -35,8 +35,19 @@ const ExpandMoreButton = styled((props: ExpandMoreProps) => {
 
 
 export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
+    const theme = useTheme()
 
     const dispatch = useAppDispatch()
+
+    const { activeDealId } = useAppSelector(state => state.dashboard.table)
+
+    const [bg, setBg] = React.useState(theme.palette.primary.main)
+
+    React.useEffect(() => {
+
+        if (deal.id === activeDealId) setBg(theme.palette.grey[500])
+
+    }, [activeDealId])
 
     const { deal, expanded: _expanded } = props;
 
@@ -51,7 +62,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
     }
 
     return (
-        <Box>
+        <Box sx={{ backgroundColor: bg }}>
             <Grid container spacing={2} direction='column' display='flex' justifyContent='space-between'>
                 <Grid xs={12} container direction='row'>
                     <Grid xs={1}>
@@ -119,9 +130,11 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
                             <DText text={formatDate(term)} variant='body1' fontWeight='regular' />
                         </Grid>
                         <Grid xs={6} display='flex' justifyContent='space-around' alignItems='center'>
-                            <ExpandMoreButton expand={expanded} onClick={handleDealActionPane}>
-                                <KeyboardArrowRightSharp />
-                            </ExpandMoreButton>
+                            <HoverAnimation>
+                                <ExpandMoreButton expand={expanded} onClick={handleDealActionPane}>
+                                    <KeyboardArrowRightSharp />
+                                </ExpandMoreButton>
+                            </HoverAnimation>
                         </Grid>
                     </Grid>
                 </Grid>

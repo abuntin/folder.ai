@@ -1,7 +1,7 @@
 'use client' 
 
 
-import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material'
+import { KeyboardArrowLeftSharp, KeyboardArrowRightSharp } from '@mui/icons-material'
 import { Button, ButtonProps } from '@mui/material'
 import * as React from 'react' 
 
@@ -18,8 +18,8 @@ export const DButton: React.FC<DButtonProps> = (props) => {
 
     return (
         <Button 
-            startIcon={(direction && direction === 'back') ? <ArrowBackIos fontSize='small' /> : undefined} 
-            endIcon={(direction && direction === 'forward') ? <ArrowForwardIos fontSize='small'/> : undefined}
+            startIcon={(direction && direction === 'back') ? <KeyboardArrowLeftSharp fontSize='small' /> : undefined} 
+            endIcon={(direction && direction === 'forward') ? <KeyboardArrowRightSharp fontSize='small'/> : undefined}
             variant={variant} 
             {...rest}
         > 

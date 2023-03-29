@@ -5,7 +5,7 @@ import * as React from 'react'
 import { Box, FormControl, Divider, InputLabel, Select, Unstable_Grid2 as Grid, Stack, MenuItem, ListProps, TablePagination } from '@mui/material'
 import { DashboardListItem } from './DashboardListItem'
 import { useAppDispatch, useAppSelector } from 'lib/redux'
-import { DText } from 'components'
+import { DText, DInput } from 'components'
 import { Deal } from 'lib/models'
 import { DealType } from 'lib/types'
 import { typeOptions } from './DashboardType'
@@ -111,6 +111,9 @@ export const DashboardList: React.FC<DashboardListProps> = ({ deals, ...rest }) 
                 </Grid>
             </Grid>
             <Grid xs>
+                <DInput placeholder='Search'/>
+            </Grid>
+            <Grid xs>
                 <Divider />
             </Grid>
 
@@ -120,10 +123,10 @@ export const DashboardList: React.FC<DashboardListProps> = ({ deals, ...rest }) 
                         <Stack spacing={0.5} alignItems='stretch'>
                             {
                                 paginatedDeals.map((deal, i) => (
-                                    <>
-                                        <DashboardListItem key={i} deal={deal} />
+                                    <React.Fragment key={i}>
+                                        <DashboardListItem deal={deal} />
                                         <Divider sx={{ width: '100%' }} />
-                                    </>
+                                    </React.Fragment>
                                 ))
                             }
                         </Stack>
