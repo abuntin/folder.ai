@@ -36,7 +36,7 @@ export const DealView: React.FC<DealViewProps> = (props) => {
             {
                 activeDealId !== '' && active &&
                 <Grid xs={5}>
-                    <ActionPane deal={active} />
+                    <ActionPane deal={active} open={activeDealId !== '' && active} />
                 </Grid>
             }
        </Grid>

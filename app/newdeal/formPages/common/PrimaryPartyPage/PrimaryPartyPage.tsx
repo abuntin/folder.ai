@@ -61,7 +61,7 @@ export const PrimaryPartyPage: React.FC<PrimaryPartyPageProps> = (props) => {
             </Grid>
             <Grid xs>
                 <CountrySelect 
-                    value={country ?? { code: '', label: ''}}
+                    value={country ?? ''}
                     onChange={(e, newVal) => handleChange(e, countryKey, newVal ?? undefined)}
                 />
             </Grid>

@@ -62,7 +62,7 @@ export const SecondaryPartyPage: React.FC<SecondaryPartyPageProps> = (props) => 
             </Grid>
             <Grid xs>
                 <CountrySelect 
-                    value={country ?? { code: '', label: ''}}
+                    value={country ?? ''}
                     onChange={(e, newVal) => handleChange(e, countryKey, newVal ?? undefined)}
                 />
             </Grid>

@@ -9,14 +9,16 @@ export const sampleIOU = new IOU({
         country: 'GB',
         address: 'House @ Marylebone dot Postcode',
         city: 'London',
-        signed: false
+        signed: false,
+        email: 'primary@email.com'
     },
     secondaryParty: {
         name: 'derrick',
         country: 'GB',
         address: 'House @ Marylebone dot Postcode',
         city: 'London',
-        signed: false
+        signed: false,
+        email: 'secondary@email.com'
     },
     cosigners: [
         {
@@ -24,14 +26,16 @@ export const sampleIOU = new IOU({
             country: 'GB',
             address: 'House @ Marylebone dot Postcode',
             city: 'London',
-            signed: false
+            signed: false,
+            email: 'cosigner1@email.com'
         },
         {
             name: 'james',
             country: 'GB',
             address: 'House @ Marylebone dot Postcode',
             city: 'London',
-            signed: false
+            signed: false,
+            email: 'cosigner2@email.com'
         },
     ],
     metadata: {
