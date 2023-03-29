@@ -1,13 +1,11 @@
-import { CountryType, currencies, CurrencyType } from "lib/constants"
-
 export type ContractType = {
     nda: 'Non-Disclosure Agreement (NDA)', 
     termsandconditions: 'Terms and Conditions Policy', 
     shareholders: "Shareholder's Agreement",
     iou: 'Promissory Note (IOU)',
     sales: "Sale's Agreement",
-    offerletter: 'Offer Letter' 
-
+    offerletter: 'Offer Letter',
+    custom: 'Custom'
 }
 
 export type Frequency = 'monthly' | 'quarterly' | 'annually' | 'weekly' | 'daily' | 'term' | 'other'
@@ -25,7 +23,7 @@ export interface Party {
     name: string,
     address: string,
     city: string,
-    country: CountryType,
+    country: string,
     signed?: boolean,
 }
 
@@ -37,7 +35,7 @@ export interface InterestTerms {
 
 export interface AssetTerms {
     amount: number,
-    currency: CurrencyType
+    currency: string
     details: string,
     type: 'property' | 'business' | 'inventory' | 'cash' | 'other'
 }

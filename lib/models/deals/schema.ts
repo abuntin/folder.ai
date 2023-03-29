@@ -18,6 +18,22 @@ export const sampleIOU = new IOU({
         city: 'London',
         signed: false
     },
+    cosigners: [
+        {
+            name: 'tom',
+            country: 'GB',
+            address: 'House @ Marylebone dot Postcode',
+            city: 'London',
+            signed: false
+        },
+        {
+            name: 'james',
+            country: 'GB',
+            address: 'House @ Marylebone dot Postcode',
+            city: 'London',
+            signed: false
+        },
+    ],
     metadata: {
         sign: dayjs().add(1, 'day').toISOString(),
         term: dayjs().add(3, 'day').toISOString(),
