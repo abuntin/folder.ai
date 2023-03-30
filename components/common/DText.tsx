@@ -5,7 +5,7 @@ import { Typography, TypographyProps } from '@mui/material'
 
 
 interface DTextProps extends TypographyProps {
-    text: string,
+    text: string | React.ReactNode,
 } 
 
 export const DText: React.FC<DTextProps> = (props) => {
@@ -16,3 +16,4 @@ export const DText: React.FC<DTextProps> = (props) => {
        <Typography fontFamily='sans-serif' fontWeight='light' {...props}> {text} </Typography>
     )
 }
+

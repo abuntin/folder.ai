@@ -52,3 +52,32 @@ export const AppearAnimation: React.FC<AnimationProps> = ({ children, ...rest })
         {children}
     </m.div>
 )
+
+export const HoverAnimation: React.FC<AnimationProps> = ({ children, ...rest }) => (
+    <m.div
+        initial={false}
+        whileHover={{
+            scale: 1.02,
+            transition: { duration: 0.2 },
+        }}
+        whileTap={{ scale: 0.98 }}
+        {...rest}
+    >
+        {children}
+    </m.div>
+)
+
+export const RotateAnimation: React.FC<AnimationProps> = ({ children, ...rest }) => (
+    <m.div
+        initial={{ rotate: 0 }}
+        animate={{ rotate: 360 }}
+        transition={{
+            duration: 0.5,
+            repeat: Infinity
+        }}
+        {...rest}
+    >
+        {children}
+    </m.div>
+        
+)

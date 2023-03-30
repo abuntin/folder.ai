@@ -8,12 +8,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/en-gb';
 
 
-import Sidebar from '../components/sidebar';
-import AnalyticsWrapper from '../components/analytics';
-import { AnimationWrapper } from 'components';
+import { Header, AnalyticsWrapper, AnimationWrapper } from 'components';
+import { Provider } from 'react-redux';
+import { store } from 'lib/redux';
 
 let theme: Theme = createTheme({
     palette: {
+        common: { black: '#111010', white: '#fafafa'},
         primary: { main: '#fafafa' },
         secondary: { main: '#fca311' },
         error: { main: '#ff0033' },
@@ -22,10 +23,10 @@ let theme: Theme = createTheme({
         success: { main: '#4BB543' },
         mode: 'dark',
         grey: 600 as Partial<Color>,
-        text:  { primary: '#fafafa', secondary: '#000000', disabled: '#E5E5E5'},
+        text:  { primary: '#fafafa', secondary: '#110010', disabled: '#E5E5E5' },
         // divider: string,
         // action: Partial<TypeAction>,
-        background: { default: '#1b1a22'},
+        background: { paper: '#1b1a22', default: '#111010'},
         // getContrastText: (background: string) => string,
     },
     typography: {
@@ -41,11 +42,11 @@ let theme: Theme = createTheme({
           '"Segoe UI Emoji"',
           '"Segoe UI Symbol"',
         ].join(','),
-        fontSize: 14,
+        fontSize: 10,
         fontWeightBold: 700,
         fontWeightLight: 300,
         fontWeightRegular: 400,
-        fontWeightMedium: 500
+        fontWeightMedium: 500,
     },
 })
 
@@ -57,17 +58,22 @@ interface AppProps {
 
 const App: React.FC<AppProps> = (props) => {
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-            <ThemeProvider theme={theme}>
-                <AnimationWrapper>
-                    <Sidebar />
-                    <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
-                        {props.children}
-                        <AnalyticsWrapper />
-                    </main>
-                </AnimationWrapper>
-            </ThemeProvider>
-        </LocalizationProvider>
+        <Provider store={store}>
+             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+                <ThemeProvider theme={theme}>
+                    <AnimationWrapper>
+                        <div className='flex-auto'>
+                            <Header />
+                            <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
+                                {props.children}
+                                <AnalyticsWrapper />
+                            </main>
+                        </div>
+                        
+                    </AnimationWrapper>
+                </ThemeProvider>
+            </LocalizationProvider>
+        </Provider>
     )
 } 
  

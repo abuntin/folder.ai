@@ -2,7 +2,7 @@
 
 
 import * as React from 'react' 
-import { Box, Button, ButtonProps } from '@mui/material'
+import { Box, Button, ButtonProps, Unstable_Grid2 as Grid, } from '@mui/material'
 import { margin, padding } from 'lib/constants'
 import { FormOptionType } from 'lib/types'
 import { DText } from './DText'
@@ -62,7 +62,7 @@ export const DGrid: React.FC<DGridProps> = (props) => {
                     
                     {
                         options.map((option, i) => (
-                            <Grid item xs={2} sm={4} md={4} key={i}>
+                            <Grid xs={2} sm={4} md={4} key={i}>
                                 <OptionButton key={i} option={option} variant={i === 0 || (defaultIndex && i === defaultIndex) ? 'outlined' : 'text'}/>
                             </Grid>
                             
