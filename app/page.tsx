@@ -1,14 +1,21 @@
-import NewDeal from './component'
-import { DashboardListItem } from 'components'
-import { sampleIOU } from 'lib/models';
+import { DashboardList, DealView } from 'components'
 
 export const revalidate = 60;
 
-export default async function SelectDeal() {
+
+async function delayRender() {
+  setTimeout(() => {}, 3000)
+
+  return []
+}
+
+export default async function Dashboard() {
+
+  // const data = await delayRender()
 
   return (
     <section className="mx-6 my-6">
-      <NewDeal />
+      <DealView />
     </section>
   );
 }

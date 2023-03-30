@@ -3,12 +3,13 @@ import { Autocomplete, TextField, Box, UseAutocompleteProps, InputAdornment } fr
 import PublicIcon from '@mui/icons-material/Public';
 import { margin } from 'lib/constants'
 import { DText } from './DText'
-import { CountryType, countries } from 'lib/constants'
+
+const countries = require('lib/constants/countries.json')
 
 interface CountrySelectProps<T> extends Omit<UseAutocompleteProps<T, false, false, false>, 'options'> {
 }
 
-export const CountrySelect: React.FC<CountrySelectProps<CountryType>> = (props) => {
+export const CountrySelect: React.FC<CountrySelectProps<string>> = (props) => {
 
   const { value } = props;
 
@@ -24,7 +25,7 @@ export const CountrySelect: React.FC<CountrySelectProps<CountryType>> = (props) 
     : null
   );
 
-  const handleChange = (e: any, value: CountryType, reason: "createOption" | "selectOption" | "removeOption" | "blur" | "clear") => {
+  const handleChange = (e: any, value: string, reason: "createOption" | "selectOption" | "removeOption" | "blur" | "clear") => {
       setLeading(
         (reason == 'removeOption' || reason == 'clear') ? null :
         <img
@@ -41,13 +42,13 @@ export const CountrySelect: React.FC<CountrySelectProps<CountryType>> = (props) 
 
   return (
     <Autocomplete
-      sx={{ width: 300 }}
+      sx={{ width: 'max-width' }}
       options={Object.keys(countries)}
       autoHighlight
       autoSelect
-      getOptionLabel={(option: CountryType) => countries[option]}
+      getOptionLabel={(option: string) => countries[option]}
       onChange={handleChange}
-      renderOption={(props, option: CountryType) => {
+      renderOption={(props, option: string) => {
         return (
           <Box {...props} component="li" sx={{ '& > img': { mr: margin, flexShrink: 0, backgroundColor: 'primary' }}}>
             <img
