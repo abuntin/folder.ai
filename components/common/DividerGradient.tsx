@@ -8,11 +8,11 @@ interface DividerGradientProps extends DividerProps { active: boolean, hover: bo
 
 export const DividerGradient = styled((props: DividerGradientProps) => {
     const { active, hover, ...rest } = props;
-    return <Divider {...rest} />;
+    return <Divider sx={{ backgroundColor: '#111010' }} {...rest} />;
   })(({ theme, active, hover }) => ({
     backgroundColor: (active || hover) ? theme.palette.common.white : theme.palette.common.black,
     //`linear-gradient(to right, ${theme.palette.background.paper} 0, ${theme.palette.background.paper} 15%, ${theme.palette.primary.main} 15%, ${theme.palette.primary.main} 85%, ${theme.palette.background.paper} 85%, ${theme.palette.background.paper} 100%)`,
     transition: theme.transitions.create('backgroundColor', {
-      duration: theme.transitions.duration.shortest,
+      duration: theme.transitions.duration.standard,
     }),
 }));

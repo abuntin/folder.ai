@@ -72,7 +72,7 @@ const NewDeal: React.FC<NewDealProps> = () => {
 
     return (
         <NewDealProvider>
-            <Box component='form' onSubmit={onSubmit} display='flex' flexDirection='column' justifyContent='center' alignItems='stretch'>
+            <Box component='form' onSubmit={onSubmit} display='flex' flexDirection='column' justifyContent='stretch' alignItems='center'>
                 <FormControl>
                     <FormGroup row>
                         {

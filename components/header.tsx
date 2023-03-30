@@ -68,23 +68,25 @@ export const Header: React.FC<HeaderProps> = (props) => {
     let entries = Object.entries(navItems);
 
     return (
-        <Grid container spacing={2} sx={{ padding, backgroundColor: theme.palette.common.black }}>
-            <Grid xs={2} display='flex' alignItems='start'>
-                <Logo />
-            </Grid>
-            <Grid xs={10} container display='flex' alignItems='end'>
-                {entries.map(([path, { name }], i) => {
-                    const isActive = path === pathname;
+        <Box sx={{ padding, backgroundColor: theme.palette.common.black, position: 'sticky', top: 0, zIndex: 1 }}>
+          <Grid container spacing={2}>
+              <Grid xs={2} display='flex' alignItems='start'>
+                  <Logo />
+              </Grid>
+              <Grid xs={10} container display='flex' alignItems='end'>
+                  {entries.map(([path, { name }], i) => {
+                      const isActive = path === pathname;
 
-                    return (
-                        <Grid xs={12 / entries.length} key={i} display='flex' justifyContent='center' alignItems='center'>
-                            <HeaderItem path={path} name={name} active={isActive} />
-                        </Grid> 
-                    
-                    );
-                })}
-            </Grid>
-            
-        </Grid>
+                      return (
+                          <Grid xs={12 / entries.length} key={i} display='flex' justifyContent='center' alignItems='center'>
+                              <HeaderItem path={path} name={name} active={isActive} />
+                          </Grid> 
+                      
+                      );
+                  })}
+              </Grid>
+              
+          </Grid>
+        </Box>
     )
 }
