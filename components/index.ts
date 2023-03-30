@@ -2,3 +2,5 @@
 export * from './common'
 export * from './animation'
 export * from './dashboard'
+export * from './header'
+export * from './analytics'
