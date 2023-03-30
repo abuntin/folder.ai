@@ -1,6 +1,7 @@
 'use client'
 
 export * from './DateInput'
+export * from './DividerGradient'
 export * from './DAutocomplete'
 export * from './DBox'
 export * from './DCheckbox'

@@ -1,16 +1,14 @@
 'use client'
 
 import * as React from 'react' 
-import { Color, Box } from '@mui/material';
+import { Color } from '@mui/material';
 import { createTheme, Theme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/en-gb';
 
 
-import Sidebar from '../components/sidebar';
-import AnalyticsWrapper from '../components/analytics';
-import { AnimationWrapper } from 'components';
+import { Header, AnalyticsWrapper, AnimationWrapper } from 'components';
 import { Provider } from 'react-redux';
 import { store } from 'lib/redux';
 
@@ -28,7 +26,7 @@ let theme: Theme = createTheme({
         text:  { primary: '#fafafa', secondary: '#000000', disabled: '#E5E5E5' },
         // divider: string,
         // action: Partial<TypeAction>,
-        background: { default: '#1b1a22'},
+        background: { paper: '#1b1a22', default: '#111010'},
         // getContrastText: (background: string) => string,
     },
     typography: {
@@ -65,7 +63,7 @@ const App: React.FC<AppProps> = (props) => {
                 <ThemeProvider theme={theme}>
                     <AnimationWrapper>
                         <div className='flex-auto'>
-                            <Sidebar />
+                            <Header />
                             <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
                                 {props.children}
                                 <AnalyticsWrapper />

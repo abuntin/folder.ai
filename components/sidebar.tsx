@@ -79,8 +79,8 @@ export default function Navbar() {
   }
 
   return (
-    <aside className="md:w-[150px] md:flex-shrink-0 -mx-4 md:mx-0 md:px-0 font-serif">
-      <div className="lg:sticky lg:top-20">
+    <aside className="sticky top-0 bg-black md:w-[150px] md:flex-shrink-0 -mx-4 md:mx-0 md:px-0 font-serif">
+      <div className="md:sticky md:top-10 lg:sticky lg:top-20">
         <div className="ml-2 md:ml-[12px] mb-2 px-4 md:px-0 md:mb-8 space-y-10 flex flex-row md:flex-row items-start ">
           <Logo />
         </div>
@@ -100,7 +100,7 @@ export default function Navbar() {
                     'transition-all hover:text-neutral-800 hover:underline hover:underline-offset-2 dark:hover:text-neutral-200 py-[5px] px-[10px]',
                   )}
                 >
-                  <DText text={name} variant='body1' fontWeight={isActive ? 'regular' : 'light' }/>
+                  <DText text={name} variant='body1' fontWeight={isActive ? 'regular' : 'light' } color={isActive ?  'white' : 'primary' } />
                 </Link>
               );
             })}

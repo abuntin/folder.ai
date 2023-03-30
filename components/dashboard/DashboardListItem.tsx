@@ -57,7 +57,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
 
     React.useEffect(() => {
 
-        if (deal.id === activeDealId) setBg(theme.palette.background.default)
+        if (deal.id === activeDealId) setBg(theme.palette.background.paper)
 
         else setBg(theme.palette.common.black)
 
@@ -74,7 +74,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
     }
 
     return (
-        <Box sx={{ backgroundColor: bg, '&:hover': { backgroundColor: theme.palette.background.default } }}>
+        <Box sx={{ backgroundColor: bg, '&:hover': { backgroundColor: theme.palette.background.paper } }}>
             <Grid container spacing={2} direction='column' display='flex' justifyContent='space-between'>
                 <Grid xs={12} container direction='row'>
                     <Grid xs={1}>
