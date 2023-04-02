@@ -14,6 +14,8 @@ import { margin } from "lib/constants";
 import React from "react";
 import { ColorModeContext } from "components/app";
 import { Brightness7, Brightness4 } from "@mui/icons-material";
+import Image from 'next/image'
+import logo from 'public/logo_transparent.png'
 
 const navItems = {
   "/": {
@@ -55,8 +57,13 @@ function ToggleThemeMode() {
 
 function Logo() {
   return (
-    <Link aria-label="DealAI" href="/">
-      <DText text="DealAI" variant="h6" fontWeight="medium" />
+    <Link aria-label="Folder.AI" href="/">
+      <Image
+        src={logo}
+        alt="Folder.AI"
+        width={125}
+        height={125}
+      />
     </Link>
   );
 }
@@ -109,16 +116,16 @@ export const Header: React.FC<HeaderProps> = (props) => {
     <Box
       sx={{
         padding,
-        position: "sticky",
-        top: 0,
-        zIndex: 1,
+        // position: "sticky",
+        // top: 0,
+        // zIndex: 1,
       }}
     >
       <Grid container spacing={2}>
-        <Grid xs={2} display="flex" alignItems="start">
+        <Grid xs={2}>
           <Logo />
         </Grid>
-        <Grid xs={8} container display="flex" alignItems="end">
+        <Grid xs={8} container>
           {entries.map(([path, { name }], i) => {
             const isActive = path === pathname;
 
@@ -126,9 +133,8 @@ export const Header: React.FC<HeaderProps> = (props) => {
               <Grid
                 xs={12 / entries.length}
                 key={i}
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
+                display='flex'
+                alignItems='center'
               >
                 <HeaderItem path={path} name={name} active={isActive} />
               </Grid>

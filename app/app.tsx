@@ -18,6 +18,8 @@ interface AppProps {
 
 const App: React.FC<AppProps> = (props) => {
   const [mode, setMode] = React.useState<"light" | "dark">("light");
+
+  
   const colorMode = React.useMemo(
     () => ({
       toggleColorMode: () => {
@@ -37,23 +39,24 @@ const App: React.FC<AppProps> = (props) => {
             <AnimationWrapper>
             <html
                 lang="en"
-                style={{
-                    background: theme.palette.mode == 'light' ? bgLight : bgDark,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundSize: 'cover',
-                    width: '100%',
-                    height: '100%'
-                }}
+                // style={{
+                //     height: '100%'
+                // }}
                 // className={clsx(
                 //   'text-black bg-white dark:text-white dark:bg-[#111010]',
                 //   kaisei.variable
                 // )}
             >
-                <body
-                    style={{
-                        flex: "auto",
-                    }}
-                >
+                <body style={{
+                    flex: "auto",
+                    minHeight: '100%',
+                    //height: '100%',
+                    margin: 0,
+                    background: mode == 'light' ? `${bgLight} fixed` : `${bgDark} fixed`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundAttachment: 'fixed',
+                    backgroundSize: 'cover\200%'
+                }}>
                     <Header />
                     <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
                     {props.children}

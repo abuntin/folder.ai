@@ -57,10 +57,10 @@ export const HoverAnimation: React.FC<AnimationProps> = ({ children, ...rest }) 
     <m.div
         initial={false}
         whileHover={{
-            scale: 1.02,
+            scale: 1.01,
             transition: { duration: 0.2 },
         }}
-        whileTap={{ scale: 0.98 }}
+        whileTap={{ scale: 0.99 }}
         {...rest}
     >
         {children}

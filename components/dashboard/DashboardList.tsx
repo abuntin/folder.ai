@@ -1,8 +1,8 @@
 'use client' 
 
 
-import { Divider, ListProps, Stack, TablePagination, Unstable_Grid2 as Grid, useTheme } from '@mui/material'
-import { DInput, NavAnimation } from 'components'
+import { Box, Divider, FormControl, InputLabel, ListProps, MenuItem, Select, Stack, TablePagination, Unstable_Grid2 as Grid, useTheme } from '@mui/material'
+import { AddButton, DInput, DText, HoverAnimation, NavAnimation } from 'components'
 import { padding } from 'lib/constants'
 import { Deal } from 'lib/models'
 import { useAppSelector } from 'lib/redux'
@@ -10,6 +10,7 @@ import { DealType } from 'lib/types'
 import * as React from 'react'
 import { ActionPane } from './ActionPane'
 import { DashboardListItem } from './DashboardListItem'
+import { typeOptions } from './DashboardType'
 
 interface DashboardListProps extends ListProps {
 } 
@@ -98,16 +99,21 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
 
     return (
         <Grid container spacing={4} direction='column' sx={{ width: '100%' }}>
-            {/* <Grid xs container direction='row'>
-                <Grid xs display='flex' justifyContent='start' alignItems='center'>
-                    <DText text='Dashboard' variant='subtitle1' />
+            <Grid xs={12} container direction='row'>
+                <Grid xs={4} sx={{ ml: '10%', mr: '20%'}}>
+                    <DInput placeholder='Search' />
                 </Grid>
-                <Grid xs display='flex' justifyContent='end' alignItems='center'>
+                <Grid xs={4} container display='flex' alignItems='flex-end'>
+                    <Grid xs={4}>
+                        <HoverAnimation>
+                            <AddButton />
+                        </HoverAnimation>
+                    </Grid>
+                    <Grid xs={8}>
                     {
                         (deals && deals.length !== 0) ?
                             <Box width={150}>
                                 <FormControl fullWidth variant="outlined">
-                                    <InputLabel color='primary'> DealType </InputLabel>
                                     <Select
                                         value={filters.type || 'all'}
                                         onChange={handleTypeChange}
@@ -125,10 +131,9 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
                             </Box>
                         : null
                     }
+                    </Grid>
                 </Grid>
-            </Grid> */}
-            <Grid xs={6} display='flex' justifyContent='end' alignItems='center'>
-                <DInput placeholder='Search' />
+                
             </Grid>
             <Grid xs={12} container direction='row'>
                 <Grid xs={activeDealId !== '' ? 7 : 12}>
@@ -139,7 +144,9 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
                                     {
                                         paginatedDeals.map((deal, i) => (
                                             <React.Fragment key={i}>
-                                                <DashboardListItem deal={deal} />
+                                                <HoverAnimation>
+                                                    <DashboardListItem deal={deal} />
+                                                </HoverAnimation>
                                                 <Divider sx={{ width: '100%' }} />
                                             </React.Fragment>
                                         ))
