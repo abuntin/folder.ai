@@ -2,7 +2,7 @@ import './global.css';
 import clsx from 'clsx';
 import localFont from 'next/font/local';
 import App from './app';
-
+import { Metadata } from 'next';
 
 const kaisei = localFont({
   src: '../public/fonts/kaisei-tokumin-latin-700-normal.woff2',
@@ -14,69 +14,85 @@ const kaisei = localFont({
 
 
 
-// export const metadata: Metadata = {
-//   title: {
-//     default: 'Lee Robinson',
-//     template: '%s | Lee Robinson',
-//   },
-//   description: 'Developer, writer, and creator.',
-//   openGraph: {
-//     title: 'Lee Robinson',
-//     description: 'Developer, writer, and creator.',
-//     url: 'https://leerob.io',
-//     siteName: 'Lee Robinson',
-//     images: [
-//       {
-//         url: 'https://leerob.io/og.jpg',
-//         width: 1920,
-//         height: 1080,
-//       },
-//     ],
-//     locale: 'en-US',
-//     type: 'website',
-//   },
-//   robots: {
-//     index: true,
-//     follow: true,
-//     googleBot: {
-//       index: true,
-//       follow: true,
-//       'max-video-preview': -1,
-//       'max-image-preview': 'large',
-//       'max-snippet': -1,
-//     },
-//   },
-//   twitter: {
-//     title: 'Lee Robinson',
-//     card: 'summary_large_image',
-//   },
-//   icons: {
-//     shortcut: '/favicon.ico',
-//   },
-//   verification: {
-//     google: 'eZSdmzAXlLkKhNJzfgwDqWORghxnJ8qR9_CHdAh5-xw',
-//     yandex: '14d2e73487fa6c71',
-//   },
-// };
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Deal AI',
+    template: '%s | Deal AI',
+  },
+  description: 'AI-powered document management.',
+  openGraph: {
+    title: 'Deal AI',
+    description: 'AI-powered document management.',
+    url: 'https://deal.ai',
+    siteName: 'Deal AI',
+    images: [
+      {
+        url: 'https://leerob.io/og.jpg',
+        width: 1920,
+        height: 1080,
+      },
+    ],
+    locale: 'en-GB',
+    type: 'website',
+  },
+  // robots: {
+  //   index: true,
+  //   follow: true,
+  //   googleBot: {
+  //     index: true,
+  //     follow: true,
+  //     'max-video-preview': -1,
+  //     'max-image-preview': 'large',
+  //     'max-snippet': -1,
+  //   },
+  // },
+  // twitter: {
+  //   title: 'Lee Robinson',
+  //   card: 'summary_large_image',
+  // },
+  // icons: {
+  //   shortcut: '/favicon.ico',
+  // },
+  // verification: {
+  //   google: 'eZSdmzAXlLkKhNJzfgwDqWORghxnJ8qR9_CHdAh5-xw',
+  //   yandex: '14d2e73487fa6c71',
+  // },
+};
+
+
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // return (
+  //   <html
+  //     lang="en"
+  //     // style={{
+  //     //   backgroundImage: bgDark,
+  //     //   backgroundPosition: 'center',
+  //     //   backgroundSize: 'cover',
+  //     //   width: '100%',
+  //     //   height: '100%'
+  //     // }}
+  //     // className={clsx(
+  //     //   'text-black bg-white dark:text-white dark:bg-[#111010]',
+  //     //   kaisei.variable
+  //     // )}
+  //   > 
+  //     {/* <body className="antialiased max-w-10xl mb-40 flex flex-col md:flex-row mx-auto mt-0 md:mt-0 lg:mt-12 lg:mx-10"> */}
+  //       <App>
+  //         {children}
+  //       </App>
+  //     {/* </body> */}
+  //   </html>
+  // );
+
   return (
-    <html
-      lang="en"
-      className={clsx(
-        'text-black bg-white dark:text-white dark:bg-[#111010]',
-        kaisei.variable
-      )}
-    >
-      <body className="antialiased max-w-10xl mb-40 flex flex-col md:flex-row mx-auto mt-0 md:mt-0 lg:mt-12 lg:mx-10">
-        <App>
-          {children}
-        </App>
-      </body>
-    </html>
-  );
+    <App>
+      {children}
+    </App>
+  )
 }

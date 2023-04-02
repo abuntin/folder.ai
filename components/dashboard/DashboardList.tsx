@@ -1,15 +1,15 @@
 'use client' 
 
 
-import * as React from 'react' 
-import { Box, FormControl, Divider, InputLabel, Select, Unstable_Grid2 as Grid, Stack, MenuItem, ListProps, TablePagination, useTheme } from '@mui/material'
-import { DashboardListItem } from './DashboardListItem'
-import { useAppDispatch, useAppSelector } from 'lib/redux'
-import { DText, DInput, NavAnimation } from 'components'
+import { Divider, ListProps, Stack, TablePagination, Unstable_Grid2 as Grid, useTheme } from '@mui/material'
+import { DInput, NavAnimation } from 'components'
+import { padding } from 'lib/constants'
 import { Deal } from 'lib/models'
+import { useAppSelector } from 'lib/redux'
 import { DealType } from 'lib/types'
-import { typeOptions } from './DashboardType'
+import * as React from 'react'
 import { ActionPane } from './ActionPane'
+import { DashboardListItem } from './DashboardListItem'
 
 interface DashboardListProps extends ListProps {
 } 
@@ -127,8 +127,8 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
                     }
                 </Grid>
             </Grid> */}
-            <Grid xs>
-                <DInput placeholder='Search'/>
+            <Grid xs={6} display='flex' justifyContent='end' alignItems='center'>
+                <DInput placeholder='Search' />
             </Grid>
             <Grid xs={12} container direction='row'>
                 <Grid xs={activeDealId !== '' ? 7 : 12}>

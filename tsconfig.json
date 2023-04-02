@@ -32,6 +32,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".contentlayer/generated"
-  ],
+, "lib/copy-webviewer-files.mjs"  ],
   "exclude": ["node_modules"]
 }
