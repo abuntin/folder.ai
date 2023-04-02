@@ -66,3 +66,13 @@ export const repaymentRange = (amount, rate, lookahead?) => {
 
     return [amount * (1 + (rate * 0.01)), amount * Math.pow(1 + (rate * 0.01), lookahead ?? 10)]
 }
+
+export const hexToRgb = (hex) => {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
+  

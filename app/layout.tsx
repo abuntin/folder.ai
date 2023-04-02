@@ -1,40 +1,36 @@
-import './global.css';
-import clsx from 'clsx';
-import localFont from 'next/font/local';
-import App from './app';
-import { Metadata } from 'next';
+import "./global.css";
+import clsx from "clsx";
+import localFont from "next/font/local";
+import App from "./app";
+import { Metadata } from "next";
 
 const kaisei = localFont({
-  src: '../public/fonts/kaisei-tokumin-latin-700-normal.woff2',
-  weight: '700',
-  variable: '--font-kaisei',
-  display: 'swap',
+  src: "../public/fonts/kaisei-tokumin-latin-700-normal.woff2",
+  weight: "700",
+  variable: "--font-kaisei",
+  display: "swap",
 });
-
-
-
-
 
 export const metadata: Metadata = {
   title: {
-    default: 'Deal AI',
-    template: '%s | Deal AI',
+    default: "Folder.AI",
+    template: "%s | Folder.AI",
   },
-  description: 'AI-powered document management.',
+  description: "AI-powered document management.",
   openGraph: {
-    title: 'Deal AI',
-    description: 'AI-powered document management.',
-    url: 'https://deal.ai',
-    siteName: 'Deal AI',
+    title: "Folder.AI",
+    description: "AI-powered document management.",
+    url: "https://folder.ai",
+    siteName: "Folder.AI",
     images: [
       {
-        url: 'https://leerob.io/og.jpg',
+        url: "/logo_transparent.png",
         width: 1920,
         height: 1080,
       },
     ],
-    locale: 'en-GB',
-    type: 'website',
+    locale: "en-GB",
+    type: "website",
   },
   // robots: {
   //   index: true,
@@ -60,8 +56,6 @@ export const metadata: Metadata = {
   // },
 };
 
-
-
 export default function RootLayout({
   children,
 }: {
@@ -81,7 +75,7 @@ export default function RootLayout({
   //     //   'text-black bg-white dark:text-white dark:bg-[#111010]',
   //     //   kaisei.variable
   //     // )}
-  //   > 
+  //   >
   //     {/* <body className="antialiased max-w-10xl mb-40 flex flex-col md:flex-row mx-auto mt-0 md:mt-0 lg:mt-12 lg:mx-10"> */}
   //       <App>
   //         {children}
@@ -90,9 +84,5 @@ export default function RootLayout({
   //   </html>
   // );
 
-  return (
-    <App>
-      {children}
-    </App>
-  )
+  return <App>{children}</App>;
 }
