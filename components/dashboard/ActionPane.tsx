@@ -12,6 +12,7 @@ import { CloseSharp, EditSharp } from '@mui/icons-material'
 import { set_action_pane } from 'lib/redux/reducers'
 import { Party } from 'lib/types'
 import { getCosignersStatus, getPartyStatus } from './DashboardType'
+import { useRouter } from 'next/navigation'
 
 
 interface ActionPaneProps {
@@ -37,6 +38,9 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
 
     const { loanDate, interest, repayment } = paymentTerms
 
+    const router = useRouter()
+
+    const toEditor = (e: any) => router.push('/editor')
 
     const renderParty = React.useCallback((party: Party) => {
 
@@ -56,9 +60,14 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
     const renderActions = () => (
         <Grid xs={12} container spacing={2} display='flex' justifyContent='space-between'>
             {
-                [{ text: 'Raise Issue', color: 'secondary' }, { text: 'Share', color: 'success' }, { text: 'Edit', color: 'primary' },].map(({ text, color }) => (
+                [{ text: 'Raise Issue', color: 'warning' }, { text: 'Share', color: 'success' }, { text: 'Edit', color: 'primary' },].map(({ text, color }) => (
                     <Grid xs={4}>
-                        <DButton endIcon={ text === 'Edit' ? <EditSharp fontSize='small' /> : undefined} color={color as "inherit" | "primary" | "secondary" | "error" | "info" | "success" | "warning"}>
+                        <DButton 
+                            endIcon={ text === 'Edit' ? <EditSharp fontSize='small' /> : undefined} 
+                            color={color as "inherit" | "primary" | "secondary" | "error" | "info" | "success" | "warning"}
+                            disabled={text !== 'Edit'}
+                            onClick={text === 'Edit' ? toEditor : undefined}
+                        >
                             <DText text={text} />
                         </DButton>
                     </Grid>
@@ -70,7 +79,7 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
     
     return (
         <Collapse in={open ?? true} unmountOnExit timeout='auto'>
-            <Grid container spacing={2} sx={{ padding }}>
+            <Grid container spacing={2} sx={{ padding, backgroundColor: 'background.paper' }}>
                 <Grid xs display='flex' justifyContent='end'>
                     <IconButton onClick={closeActionPane}>
                         <CloseSharp />

@@ -1,82 +1,72 @@
-'use client'
+"use client";
 
-import * as React from 'react' 
-import { Color } from '@mui/material';
-import { createTheme, Theme, ThemeProvider, responsiveFontSizes } from '@mui/material/styles'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import 'dayjs/locale/en-gb';
+import * as React from "react";
+import {
+  ThemeProvider,
+} from "@mui/material/styles";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "dayjs/locale/en-gb";
 
-
-import { Header, AnalyticsWrapper, AnimationWrapper } from 'components';
-import { Provider } from 'react-redux';
-import { store } from 'lib/redux';
-
-let theme: Theme = createTheme({
-    palette: {
-        common: { black: '#111010', white: '#fafafa'},
-        primary: { main: '#fafafa' },
-        secondary: { main: '#fca311' },
-        error: { main: '#ff0033' },
-        warning: { main: '#fafafa' },
-        info: { main: '#14213d' },
-        success: { main: '#4BB543' },
-        mode: 'dark',
-        grey: 600 as Partial<Color>,
-        text:  { primary: '#fafafa', secondary: '#110010', disabled: '#E5E5E5' },
-        // divider: string,
-        // action: Partial<TypeAction>,
-        background: { paper: '#1b1a22', default: '#111010'},
-        // getContrastText: (background: string) => string,
-    },
-    typography: {
-        fontFamily: [
-          '-apple-system',
-          'BlinkMacSystemFont',
-          '"Segoe UI"',
-          'Roboto',
-          '"Helvetica Neue"',
-          'Arial',
-          'sans-serif',
-          '"Apple Color Emoji"',
-          '"Segoe UI Emoji"',
-          '"Segoe UI Symbol"',
-        ].join(','),
-        fontSize: 10,
-        fontWeightBold: 700,
-        fontWeightLight: 300,
-        fontWeightRegular: 400,
-        fontWeightMedium: 500,
-    },
-})
-
-theme = responsiveFontSizes(theme);
+import { Header, AnalyticsWrapper, AnimationWrapper, ColorModeContext, createCustomTheme, bgLight, bgDark } from "components";
+import { Provider } from "react-redux";
+import { store } from "lib/redux";
 
 interface AppProps {
-    children: React.ReactNode;
-} 
+  children: React.ReactNode;
+}
 
 const App: React.FC<AppProps> = (props) => {
-    return (
-        <Provider store={store}>
-             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-                <ThemeProvider theme={theme}>
-                    <AnimationWrapper>
-                        <div className='flex-auto'>
-                            <Header />
-                            <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
-                                {props.children}
-                                <AnalyticsWrapper />
-                            </main>
-                        </div>
-                        
-                    </AnimationWrapper>
-                </ThemeProvider>
-            </LocalizationProvider>
-        </Provider>
-    )
-} 
- 
- 
+  const [mode, setMode] = React.useState<"light" | "dark">("light");
+  const colorMode = React.useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+      },
+    }),
+    []
+  );
 
-export default App
+  const theme = React.useMemo(() => createCustomTheme(mode), [mode]);
+
+  return (
+    <Provider store={store}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+        <ColorModeContext.Provider value={colorMode}>
+          <ThemeProvider theme={theme}>
+            <AnimationWrapper>
+            <html
+                lang="en"
+                style={{
+                    background: theme.palette.mode == 'light' ? bgLight : bgDark,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover',
+                    width: '100%',
+                    height: '100%'
+                }}
+                // className={clsx(
+                //   'text-black bg-white dark:text-white dark:bg-[#111010]',
+                //   kaisei.variable
+                // )}
+            >
+                <body
+                    style={{
+                        flex: "auto",
+                    }}
+                >
+                    <Header />
+                    <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
+                    {props.children}
+                    <AnalyticsWrapper />
+                    </main>
+                </body>
+            </html>
+            </AnimationWrapper>
+          </ThemeProvider>
+        </ColorModeContext.Provider>
+      </LocalizationProvider>
+    </Provider>
+  );
+};
+
+export default App;

@@ -13,7 +13,7 @@ export const DText: React.FC<DTextProps> = (props) => {
     const { text } = props;
 
     return (
-       <Typography fontFamily='sans-serif' fontWeight='light' {...props}> {text} </Typography>
+       <Typography fontFamily='sans-serif' fontWeight='light' color='text.primary' {...props}> {text} </Typography>
     )
 }
 

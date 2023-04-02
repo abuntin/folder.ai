@@ -53,13 +53,13 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
 
     const { activeDealId } = useAppSelector(state => state.dashboard.table)
 
-    const [bg, setBg] = React.useState(theme.palette.common.black)
+    const [bg, setBg] = React.useState(undefined)
 
     React.useEffect(() => {
 
-        if (deal.id === activeDealId) setBg(theme.palette.background.paper)
+        if (deal.id === activeDealId) setBg('background.paper')
 
-        else setBg(theme.palette.common.black)
+        else setBg(undefined)
 
     }, [activeDealId])
 
@@ -74,7 +74,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
     }
 
     return (
-        <Box sx={{ backgroundColor: bg, '&:hover': { backgroundColor: theme.palette.background.paper } }}>
+        <Box sx={{ backgroundColor: bg, '&:hover': { backgroundColor: 'background.paper'} }}>
             <Grid container spacing={2} direction='column' display='flex' justifyContent='space-between'>
                 <Grid xs={12} container direction='row'>
                     <Grid xs={1}>
