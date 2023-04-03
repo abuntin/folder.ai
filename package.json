@@ -9,6 +9,8 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@faker-js/faker": "^7.6.0",
+    "@mongez/events": "^2.0.0",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.12",
     "@mui/x-date-pickers": "^6.0.2",
