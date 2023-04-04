@@ -1,19 +1,30 @@
 "use client";
 
-import { FolderSharp, InsertDriveFileSharp } from "@mui/icons-material";
-import { Box, BoxProps, Unstable_Grid2 as Grid, useTheme } from "@mui/material";
+import { GridViewSharp, ViewListSharp } from "@mui/icons-material";
 import {
-  AppearAnimationChild, AppearAnimationParent, DText, Loading
+  Divider,
+  ToggleButton,
+  ToggleButtonGroup,
+  Unstable_Grid2 as Grid,
+} from "@mui/material";
+import {
+  AppearAnimationParent,
+  LoadingComponent,
+  DInput,
+  AddButton,
+  HoverAnimation,
 } from "components";
 import { margin, padding } from "lib/constants";
 import { Folder } from "lib/models";
 import * as React from "react";
 import { useDashboard } from ".";
+import { DashboardItemIcon } from "./DashboardItemIcon";
+import { DashboardItemTile } from "./DashboardItemTile";
 
 interface DashboardListProps {}
 
 export const DashboardList: React.FC<DashboardListProps> = (props) => {
-  const { current, root, kernel, selected, loading } = useDashboard();
+  const { current, view, kernel, selected, loading } = useDashboard();
 
   const folders = React.useMemo(() => {
     const folder = current;
@@ -28,81 +39,86 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
   };
 
   return loading ? (
-    <Loading />
+    <LoadingComponent />
   ) : (
     <AppearAnimationParent>
       <Grid
         container
-        spacing={6}
+        spacing={4}
         display="flex"
         justifyContent="space-between"
-        sx={{ padding: padding * 2 }}
+        sx={{ pl: padding * 2, pr: padding * 2 }}
       >
-        {folders.map((folder: Folder, i) => {
-          return (
-            <Grid
-              xs={4}
-              onDoubleClick={(e) => kernel.load(folder.path)}
-              onClick={(e) => handleSelect(e, folder)}
-            >
-              <DashboardItem
-                folder={folder}
-                selected={selected && selected.id === folder.id}
-              />
+        <Grid
+          xs={12}
+          container
+          display="flex"
+          alignItems="stretch"
+          justifyContent="space-between"
+        >
+          <Grid xs={8} display="flex" alignItems="flex-start">
+            <DInput placeholder="Search" />
+          </Grid>
+          <Grid xs={2}></Grid>
+          <Grid
+            container
+            xs={2}
+            display="flex"
+            alignItems="flex-end"
+            justifyContent="space-around"
+          >
+            <Grid xs={6} display="flex" justifyContent="center">
+              <AddButton />
             </Grid>
-          );
-        })}
+            <Grid xs={6} display="flex" justifyContent="center">
+              <ToggleButtonGroup
+                value={view}
+                exclusive
+                onChange={(e, newVal) => kernel.trigger("view", newVal)}
+              >
+                <ToggleButton value="grid">
+                  <GridViewSharp
+                    color={view === "grid" ? "info" : "disabled"}
+                  />
+                </ToggleButton>
+                <ToggleButton value="tile">
+                  <ViewListSharp
+                    color={view === "grid" ? "disabled" : "info"}
+                  />
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid xs={12} container spacing={view === "grid" ? 6 : 2}>
+          {folders.map((folder: Folder, i) => {
+            return (
+              <Grid
+                xs={view === "grid" ? 4 : 12}
+                onDoubleClick={(e) => kernel.load(folder.path)}
+                onClick={(e) => handleSelect(e, folder)}
+              >
+                {view === "grid" ? (
+                  <DashboardItemIcon
+                    folder={folder}
+                    selected={selected && selected.id === folder.id}
+                  />
+                ) : (
+                  <>
+                    <HoverAnimation>
+                      <DashboardItemTile
+                        folder={folder}
+                        selected={selected && selected.id === folder.id}
+                      />
+                    </HoverAnimation>
+                    <Divider color="background.default" />
+                  </>
+                )}
+              </Grid>
+            );
+          })}
+        </Grid>
       </Grid>
     </AppearAnimationParent>
-  );
-};
-
-interface DashboardItemProps extends BoxProps {
-  folder: Folder;
-  selected: boolean;
-}
-
-const DashboardItem: React.FC<DashboardItemProps> = ({
-  folder,
-  selected,
-  ...rest
-}) => {
-  const theme = useTheme();
-
-  return (
-    <AppearAnimationChild>
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        sx={{
-          padding: padding,
-          backgroundColor: selected ? "background.paper" : undefined,
-          "&:hover": { backgroundColor: "background.paper" },
-        }}
-        {...rest}
-      >
-        {folder.isDirectory ? (
-          <FolderSharp
-            fontSize="large"
-            color="disabled"
-            sx={{ mb: margin * 2, mt: margin * 2 }}
-          />
-        ) : (
-          <InsertDriveFileSharp
-            fontSize="large"
-            color="disabled"
-            sx={{ mb: margin * 2, mt: margin * 2 }}
-          />
-        )}
-        <DText
-          text={folder.name}
-          variant="subtitle2"
-          color={theme.palette.common.white}
-          fontWeight="regular"
-        />
-      </Box>
-    </AppearAnimationChild>
   );
 };

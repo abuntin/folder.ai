@@ -10,6 +10,7 @@ export const DashboardContext = React.createContext<{
   root: Folder;
   loading: boolean;
   selected: Folder;
+  view: "grid" | "tile";
 }>(null);
 
 export const useDashboard = () => {
@@ -23,7 +24,7 @@ export const useDashboard = () => {
 export const DashboardProvider = ({ children, rootPath, ...rest }) => {
   const { current: kernel } = React.useRef(new Kernel());
 
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoadingComponent] = React.useState(true);
 
   const [root, setRoot] = React.useState<Folder>(null);
 
@@ -31,9 +32,11 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
 
   const [selected, setSelected] = React.useState<Folder>(null);
 
+  const [view, setView] = React.useState<"grid" | "tile">("grid");
+
   const load = React.useCallback(
     (path: string, isRoot = false) => {
-      setLoading(true);
+      setLoadingComponent(true);
 
       if (isRoot) kernel.setRootPath(path);
 
@@ -46,7 +49,7 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
             setRoot(folder);
           }
         })
-        .finally(() => setLoading(false));
+        .finally(() => setLoadingComponent(false));
     },
     [kernel]
   );
@@ -58,6 +61,16 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
 
     load(rootPath, true);
   }, [rootPath, kernel, load]);
+
+  // Listen for change view event
+
+  React.useEffect(() => {
+    const changeViewEvent = kernel.on("view", setView);
+
+    return () => {
+      changeViewEvent.unsubscribe();
+    };
+  }, [kernel]);
 
   // Listen for select event
 
@@ -72,9 +85,9 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
   // Listen for loading event
 
   React.useEffect(() => {
-    const loadingEvent = kernel.on("loading", () => setLoading(true));
+    const loadingEvent = kernel.on("loading", () => setLoadingComponent(true));
 
-    const loadEvent = kernel.on("load", () => setLoading(false));
+    const loadEvent = kernel.on("load", () => setLoadingComponent(false));
 
     return () => {
       loadingEvent.unsubscribe();
@@ -92,7 +105,7 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
 
   return (
     <DashboardContext.Provider
-      value={{ kernel, current, root, loading, selected }} // Provide filesystem properties as context
+      value={{ kernel, current, root, loading, selected, view }} // Provide filesystem properties as context
       {...rest}
     >
       {children}

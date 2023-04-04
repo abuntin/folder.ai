@@ -75,7 +75,7 @@ export default function RootLayout({
   //     //   'text-black bg-white dark:text-white dark:bg-[#111010]',
   //     //   kaisei.variable
   //     // )}
-  //   >
+  //  >
   //     {/* <body className="antialiased max-w-10xl mb-40 flex flex-col md:flex-row mx-auto mt-0 md:mt-0 lg:mt-12 lg:mx-10"> */}
   //       <App>
   //         {children}

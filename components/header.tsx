@@ -13,8 +13,8 @@ import {
 import { margin } from "lib/constants";
 import React from "react";
 import { Brightness7, Brightness4 } from "@mui/icons-material";
-import Image from 'next/image'
-import logo from 'public/logo_transparent.png'
+import Image from "next/image";
+import logo from "public/logo_transparent.png";
 
 const navItems = {
   "/": {
@@ -57,12 +57,7 @@ function ToggleThemeMode() {
 function Logo() {
   return (
     <Link aria-label="Folder.AI" href="/">
-      <Image
-        src={logo}
-        alt="Folder.AI"
-        width={125}
-        height={125}
-      />
+      <Image src={logo} alt="Folder.AI" width={125} height={125} />
     </Link>
   );
 }
@@ -103,7 +98,6 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
 interface HeaderProps {}
 
 export const Header: React.FC<HeaderProps> = (props) => {
-
   let pathname = usePathname() || "/";
   if (pathname.includes("/blog/")) {
     pathname = "/blog";
@@ -132,8 +126,8 @@ export const Header: React.FC<HeaderProps> = (props) => {
               <Grid
                 xs={12 / entries.length}
                 key={i}
-                display='flex'
-                alignItems='center'
+                display="flex"
+                alignItems="center"
               >
                 <HeaderItem path={path} name={name} active={isActive} />
               </Grid>

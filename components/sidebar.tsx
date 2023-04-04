@@ -1,31 +1,31 @@
-'use client';
+"use client";
 
-import clsx from 'clsx';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { DText } from 'components';
+import clsx from "clsx";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { DText } from "components";
 
 const navItems = {
-  '/': {
-    name: 'Dashboard',
+  "/": {
+    name: "Dashboard",
     x: 0,
     y: 0,
-    w: '64px',
+    w: "64px",
   },
-  '/newdeal': {
-    name: 'Create New',
+  "/newdeal": {
+    name: "Create New",
     x: 0,
     y: 0,
-    w: '64px',
+    w: "64px",
   },
 };
 
 function Logo() {
   return (
-    <Link aria-label='DealAI' href='/'>
-      <DText text='DealAI' variant='h6' fontWeight='medium' />
+    <Link aria-label="DealAI" href="/">
+      <DText text="DealAI" variant="h6" fontWeight="medium" />
     </Link>
-  )
+  );
 }
 // function Logo() {
 //   return (
@@ -37,7 +37,7 @@ function Logo() {
 //         viewBox="0 0 232 316"
 //         fill="none"
 //         xmlns="http://www.w3.org/2000/svg"
-//       >
+//      >
 //         <motion.path
 //           initial={{
 //             opacity: 0,
@@ -73,9 +73,9 @@ function Logo() {
 // }
 
 export default function Navbar() {
-  let pathname = usePathname() || '/';
-  if (pathname.includes('/blog/')) {
-    pathname = '/blog';
+  let pathname = usePathname() || "/";
+  if (pathname.includes("/blog/")) {
+    pathname = "/blog";
   }
 
   return (
@@ -84,10 +84,7 @@ export default function Navbar() {
         <div className="ml-2 md:ml-[12px] mb-2 px-4 md:px-0 md:mb-8 space-y-10 flex flex-row md:flex-row items-start ">
           <Logo />
         </div>
-        <nav
-          className="flex flex-row"
-          id="nav"
-        >
+        <nav className="flex flex-row" id="nav">
           <div className="flex flex-row">
             {Object.entries(navItems).map(([path, { name }]) => {
               const isActive = path === pathname;
@@ -97,14 +94,18 @@ export default function Navbar() {
                   key={path}
                   href={path}
                   className={clsx(
-                    'transition-all hover:text-neutral-800 hover:underline hover:underline-offset-2 dark:hover:text-neutral-200 py-[5px] px-[10px]',
+                    "transition-all hover:text-neutral-800 hover:underline hover:underline-offset-2 dark:hover:text-neutral-200 py-[5px] px-[10px]"
                   )}
                 >
-                  <DText text={name} variant='body1' fontWeight={isActive ? 'regular' : 'light' } color={isActive ?  'white' : 'primary' } />
+                  <DText
+                    text={name}
+                    variant="body1"
+                    fontWeight={isActive ? "regular" : "light"}
+                    color={isActive ? "white" : "primary"}
+                  />
                 </Link>
               );
             })}
-
           </div>
         </nav>
       </div>

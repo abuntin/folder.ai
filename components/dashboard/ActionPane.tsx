@@ -59,7 +59,7 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
   const renderParty = React.useCallback(
     (party: Party) => {
       return (
-        <Grid xs={12} container spacing={2} direction="row">
+        <Grid xs={12} container spacing={2}>
           <Grid xs={6}>
             <DText text={`${party.name}`} /> {getPartyStatus(party)}
           </Grid>

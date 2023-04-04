@@ -14,7 +14,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
 
     let palette = mode === 'light' ? ({
         common: { black: '#111010'},
-        primary: { main: '#578346', dark: '#578346', light: 'rgba(87,131,70,0.3)' },
+        primary: { main: '#578346', dark: '#578346', light: 'rgba(87,131,70,0.3)' }, //green
         secondary: { main: '#578346', light: 'rgba(254,177,121,0.3)', dark: '#7CC7B9' }, // yellow 
         error: { main: '#ff0033' }, // red 
         warning: { main: '#eabb13' }, // yellow
