@@ -13,11 +13,12 @@ interface AddButtonProps extends IconButtonProps {
 
 export const AddButton: React.FC<AddButtonProps> = (props) => {
     return (
-        <IconButton {...props}>
-            <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center'>
+        <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center'>
+            <IconButton {...props}>
                 <AddSharp fontSize='medium' />
-                <DText text='Add' variant='caption' color='common.white' />
-            </Box>
-        </IconButton>
+            </IconButton>
+            <DText text='Add' variant='caption' color='common.white' />
+        </Box>
+        
     )
 }
