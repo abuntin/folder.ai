@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { DividerGradient, DText, ColorModeContext } from "components";
 import { padding } from "lib/constants";
+import { motion } from 'framer-motion'
 import {
   Box,
   IconButton,
@@ -57,7 +58,7 @@ function ToggleThemeMode() {
 function Logo() {
   return (
     <Link aria-label="Folder.AI" href="/">
-      <Image src={logo} alt="Folder.AI" width={125} height={125} />
+      <Image src={logo} alt="Folder.AI" width={110} height={110} />
     </Link>
   );
 }
@@ -109,13 +110,11 @@ export const Header: React.FC<HeaderProps> = (props) => {
     <Box
       sx={{
         padding,
-        // position: "sticky",
-        // top: 0,
-        // zIndex: 1,
       }}
     >
-      <Grid container spacing={2}>
-        <Grid xs={2}>
+      <Grid container>
+        <Grid xs={2} display="flex"
+                alignItems="center">
           <Logo />
         </Grid>
         <Grid xs={8} container>
@@ -129,7 +128,9 @@ export const Header: React.FC<HeaderProps> = (props) => {
                 display="flex"
                 alignItems="center"
               >
-                <HeaderItem path={path} name={name} active={isActive} />
+                <motion.div layout>
+                  <HeaderItem path={path} name={name} active={isActive} />
+                </motion.div>
               </Grid>
             );
           })}

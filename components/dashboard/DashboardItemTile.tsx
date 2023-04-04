@@ -3,6 +3,7 @@
 import {
   KeyboardArrowRightSharp,
   FolderSharp,
+  FolderOpenSharp,
   InsertDriveFileSharp,
 } from "@mui/icons-material";
 import {
@@ -74,7 +75,16 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = (props) => {
           <Grid xs={12} container>
             <Grid xs={1}>
               {folder.isDirectory ? (
-                <FolderSharp fontSize="large" color="disabled" />
+                folder.children ?
+                <FolderSharp
+                  fontSize="large"
+                  color="primary"
+                />
+                : 
+                <FolderOpenSharp
+                  fontSize='large'
+                  color='disabled'
+                />
               ) : (
                 <InsertDriveFileSharp fontSize="large" color="disabled" />
               )}
