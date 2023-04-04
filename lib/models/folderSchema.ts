@@ -1,6 +1,5 @@
 import { Folder } from "./Folder"
 import { faker } from '@faker-js/faker'
-import { NestCamWiredStand } from "@mui/icons-material"
 
 const newFolder = (): Folder => {
 
@@ -56,7 +55,9 @@ const flattenList = (folder: Folder) => {
 
     res.push(folder)
 
-    for (let child of folder.children) res.concat(flattenList(child))
+    for (let child of folder.children) res = res.concat(flattenList(child))
+
+    return res
 }
 
 export const rootFolder = newFolder()

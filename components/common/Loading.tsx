@@ -25,13 +25,13 @@ export const LoadingComponent: React.FC<LoadingComponentProps> = (props) => {
     >
       <BlinkAnimation>
         <Image
-          alt="Folder.AI LoadingComponent"
+          alt="Folder.AI Loading"
           src={logo}
           width={250}
           height={250}
         />
         <DText
-          text="LoadingComponent..."
+          text="Loading..."
           fontWeight="medium"
           fontSize={24}
           textAlign="center"

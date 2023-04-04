@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, BoxProps, useTheme } from "@mui/material";
-import { FolderSharp, InsertDriveFileSharp } from "@mui/icons-material";
+import { FolderSharp, FolderOpenSharp, InsertDriveFileSharp } from "@mui/icons-material";
 import { AppearAnimationChild } from "components/animation";
 import { DText } from "components/common";
 import { padding, borderRadius, margin } from "lib/constants";
@@ -34,10 +34,17 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = (props) => {
         {...rest}
       >
         {folder.isDirectory ? (
+          folder.children ?
           <FolderSharp
             fontSize="large"
-            color="disabled"
+            color="primary"
             sx={{ mb: margin * 2, mt: margin * 2 }}
+          />
+          : 
+          <FolderOpenSharp
+            fontSize='large'
+            color='disabled'
+            sx={{ mb: margin * 2, mt: margin * 2}}
           />
         ) : (
           <InsertDriveFileSharp

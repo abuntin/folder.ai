@@ -3,15 +3,28 @@ import { Folder, rootFolder } from 'lib/models'
 
 
 const fetchFolder = (path: string, folder = undefined as Folder): Folder | null => {
+
     if (!folder) folder = rootFolder;
 
-    if (folder.path === path) return folder
+    let q = [] as Folder[]
 
-    for (let child of folder.children) {
+    q.push(folder)
 
-        let found = fetchFolder(path, child)
+    while(q.length != 0) {
 
-        return found ?? null
+        let n = q.length
+        
+        while (n > 0) {
+
+            let curr = q[0]
+
+            if (curr.path === path) return curr
+
+            q.shift()
+
+            for (let child of curr.children) q.push(child)
+
+        }
     }
 
     return null
