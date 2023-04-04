@@ -2,7 +2,7 @@ import { Folder, Kernel, rootFolder } from "lib/models";
 
 import React from "react";
 import { DashboardProvider, useDashboard } from ".";
-import { DashboardFileList } from "./DashboardFileList";
+import { DashboardList } from "./DashboardList";
 
 interface FileManagerProps {
   /**
@@ -73,7 +73,7 @@ export const Dashboard: React.FC<FileManagerProps> = (props) => {
 
   return (
     <DashboardProvider rootPath={rootFolder.path}>
-      <DashboardFileList />
+      <DashboardList />
     </DashboardProvider>
   );
 };

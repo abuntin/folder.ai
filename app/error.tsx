@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { DealEngineLogo } from 'components';
-import { useEffect } from 'react';
+import { useEffect } from "react";
+import { ConstructionSharp } from "@mui/icons-material";
+import { margin } from "lib/constants";
 
 export default function Error({
   error,
@@ -16,9 +17,18 @@ export default function Error({
   }, [error]);
 
   return (
-    <div>
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <p>Oh no, something went wrong... maybe refresh?</p>
-      <DealEngineLogo />
+      <ConstructionSharp fontSize="large" sx={{ mt: margin * 10 }} />
     </div>
   );
 }

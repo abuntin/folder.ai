@@ -2,7 +2,7 @@ import { fileManagerService } from "lib/services";
 import { Folder } from ".";
 import events, { EventSubscription } from "@mongez/events";
 
-export type KernelEvent = "loading" | "idle" | "directoryChange" | "load";
+export type KernelEvent = "loading" | "idle" | "directoryChange" | "load" | "select";
 
 export class Kernel {
   protected rootPath = "/";
@@ -50,13 +50,13 @@ export class Kernel {
    * Add event listener to the given event
    */
   public on(event: KernelEvent, callback: any): EventSubscription {
-    return events.subscribe(`file-manager.${event}`, callback);
+    return events.subscribe(`kernel.${event}`, callback);
   }
 
   /**
    * Trigger the given event
    */
   public trigger(event: KernelEvent, ...args: any[]): void {
-    events.trigger(`file-manager.${event}`, ...args);
+    events.trigger(`kernel.${event}`, ...args);
   }
 }

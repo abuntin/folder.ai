@@ -11,8 +11,9 @@ export const DividerGradient = styled((props: DividerGradientProps) => {
     return <Divider sx={{ backgroundColor: '#111010' }} {...rest} />;
   })(({ theme, active, hover }) => ({
     backgroundColor: (active || hover) ? theme.palette.text.disabled : theme.palette.text.primary,
+    opacity: (active || hover) ? 1 : 0,
     //`linear-gradient(to right, ${theme.palette.background.paper} 0, ${theme.palette.background.paper} 15%, ${theme.palette.primary.main} 15%, ${theme.palette.primary.main} 85%, ${theme.palette.background.paper} 85%, ${theme.palette.background.paper} 100%)`,
-    transition: theme.transitions.create('backgroundColor', {
-      duration: theme.transitions.duration.standard,
+    transition: theme.transitions.create(['backgroundColor', 'opacity'], {
+      duration: theme.transitions.duration.shortest,
     }),
 }));
