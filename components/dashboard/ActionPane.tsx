@@ -9,15 +9,15 @@ import {
   Divider,
 } from "@mui/material";
 import { padding } from "lib/constants";
-import { DButton, DText } from "components/common";
+import { DButton, DText } from "components";
 import { capitalise, formatDate, repaymentRange } from "lib/functions";
 import { IOU } from "lib/models";
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "lib/redux";
 import { CloseSharp, EditSharp } from "@mui/icons-material";
-import { set_action_pane } from "lib/redux/reducers";
+import { set_action_pane } from "lib/redux";
 import { Party } from "lib/types";
-import { getCosignersStatus, getPartyStatus } from "./DashboardType";
+import { getCosignersStatus, getPartyStatus } from "./DealType";
 import { useRouter } from "next/navigation";
 
 interface ActionPaneProps {

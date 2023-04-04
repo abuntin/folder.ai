@@ -20,10 +20,11 @@ export const createCustomTheme = (mode: PaletteMode) => {
         warning: { main: '#eabb13' }, // yellow
         info: { main: '#14213d' }, // blue
         success: { main: '#4BB543' }, // green
+        disabled: { main: `rgba(229,229,229,0.5)`},
         mode,
         grey: 600 as Partial<Color>,
         text:  { secondary: '#fafafa', primary: '#110010', disabled: '#E5E5E5' },
-        background: { paper: 'rgba(229,229,229,0.5)', default: '#fafafa'},
+        background: { paper: 'rgba(229,229,229,0.3)', default: '#fafafa'},
     }) : ({
         common: { black: '#111010', white: '#fafafa'},
         primary: { main: '#fafafa', light: '#1b1a22' },
@@ -35,12 +36,29 @@ export const createCustomTheme = (mode: PaletteMode) => {
         mode,
         grey: 600 as Partial<Color>,
         text:  { primary: '#fafafa', secondary: '#110010', disabled: '#E5E5E5' },
-        background: { paper: '#1b1a22', default: '#111010'},
+        background: { paper: 'rgba(229,229,229,0.3)', default: '#111010'},
     }) as PaletteOptions
 
 
+    let transitions = {
+        duration: {
+            shortest: 150,
+            shorter: 200,
+            short: 250,
+            // most basic recommended timing
+            standard: 300,
+            // this is to be used in complex animations
+            complex: 375,
+            // recommended when something is entering screen
+            enteringScreen: 225,
+            // recommended when something is leaving screen
+            leavingScreen: 195,
+        },
+    }
+    
     let theme: Theme = createTheme({
         palette,
+        transitions,
         typography: {
             fontFamily: [
             '-apple-system',

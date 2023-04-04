@@ -1,14 +1,15 @@
 import { Kernel, Folder, rootFolder } from "lib/models";
 import React from "react";
 
-export * from "./DashboardList";
-export * from './Dashboard'
+export * from "./DealList";
+export * from "./Dashboard";
 
 export const DashboardContext = React.createContext<{
   kernel: Kernel;
   current: Folder;
   root: Folder;
   loading: boolean;
+  selected: Folder;
 }>(null);
 
 export const useDashboard = () => {
@@ -20,7 +21,6 @@ export const useDashboard = () => {
 };
 
 export const DashboardProvider = ({ children, rootPath, ...rest }) => {
-
   const { current: kernel } = React.useRef(new Kernel());
 
   const [loading, setLoading] = React.useState(true);
@@ -28,6 +28,8 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
   const [root, setRoot] = React.useState<Folder>(null);
 
   const [current, setCurrent] = React.useState<Folder>(null);
+
+  const [selected, setSelected] = React.useState<Folder>(null);
 
   const load = React.useCallback(
     (path: string, isRoot = false) => {
@@ -57,11 +59,19 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
     load(rootPath, true);
   }, [rootPath, kernel, load]);
 
+  // Listen for select event
+
+  React.useEffect(() => {
+    const selectEvent = kernel.on("select", setSelected);
+
+    return () => {
+      selectEvent.unsubscribe();
+    };
+  }, [kernel]);
 
   // Listen for loading event
 
   React.useEffect(() => {
-
     const loadingEvent = kernel.on("loading", () => setLoading(true));
 
     const loadEvent = kernel.on("load", () => setLoading(false));
@@ -82,7 +92,7 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
 
   return (
     <DashboardContext.Provider
-      value={{ kernel, current, root, loading }} // Provide filesystem properties as context
+      value={{ kernel, current, root, loading, selected }} // Provide filesystem properties as context
       {...rest}
     >
       {children}

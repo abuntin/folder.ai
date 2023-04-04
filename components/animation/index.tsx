@@ -33,7 +33,7 @@ export const NavAnimation: React.FC<AnimationProps> = ({ children, ...rest }) =>
     </m.div>
 )
 
-export const AppearAnimation: React.FC<AnimationProps> = ({ children, ...rest }) => (
+export const PanDownAnimation: React.FC<AnimationProps> = ({ children, ...rest }) => (
     <m.div
         initial={{ opacity: 0, y: '-100%' }}
         animate={{ opacity: 1, y: '0%' }}
@@ -80,4 +80,25 @@ export const RotateAnimation: React.FC<AnimationProps> = ({ children, ...rest })
         {children}
     </m.div>
         
+)
+
+export const AppearAnimationParent: React.FC<AnimationProps> = ({ children, ...rest }) => (
+    <m.div
+        initial='hidden'
+        animate='visible'
+        variants={{ visible: { opacity: 1 }, hidden: { opacity: 0 }}}
+        {...rest}
+    >
+        {children}
+    </m.div>
+)
+
+export const AppearAnimationChild: React.FC<AnimationProps> = ({ children, ...rest }) => (
+    <m.div variants={{ visible: { opacity: 1, x: 0 }, hidden: { opacity: 1, x: -100 } }} {...rest}>{children}</m.div>
+)
+
+export const BlinkAnimation: React.FC<AnimationProps> = ({ children, ...rest }) => (
+    <m.div initial={{ opacity: 0.2 }} animate={{ opacity: 0.8 }} transition={{ opacity: { duration: 0.7, repeat: Infinity }}}>
+        {children}
+    </m.div>
 )

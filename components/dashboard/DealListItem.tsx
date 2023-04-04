@@ -12,11 +12,10 @@ import {
   useTheme,
 } from "@mui/material";
 import { DText, HoverAnimation } from "components";
-import { padding } from "lib/constants";
 import { formatDate } from "lib/functions";
 import { Deal } from "lib/models";
 import { useAppDispatch, useAppSelector } from "lib/redux";
-import { set_action_pane } from "lib/redux/reducers";
+import { set_action_pane } from "lib/redux";
 import * as React from "react";
 import { ProgressBar } from "./ProgressBar";
 

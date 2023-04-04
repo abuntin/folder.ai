@@ -2,7 +2,7 @@
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { DividerGradient, DText } from "components";
+import { DividerGradient, DText, ColorModeContext } from "components";
 import { padding } from "lib/constants";
 import {
   Box,
@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import { margin } from "lib/constants";
 import React from "react";
-import { ColorModeContext } from "components/app";
 import { Brightness7, Brightness4 } from "@mui/icons-material";
 import Image from 'next/image'
 import logo from 'public/logo_transparent.png'

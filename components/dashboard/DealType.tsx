@@ -1,7 +1,7 @@
 'use client'
 
 import { Verified, DoneAllSharp } from "@mui/icons-material";
-import { DLabel, DText } from "components/common";
+import { DLabel, DText } from "components";
 import { DealType, Party } from "lib/types";
 
 export const getTypeLabel = (type: DealType): JSX.Element => {

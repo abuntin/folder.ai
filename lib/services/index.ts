@@ -5,7 +5,7 @@ import { Folder, rootFolder } from 'lib/models'
 const fetchFolder = (path: string, folder = undefined as Folder): Folder | null => {
     if (!folder) folder = rootFolder;
 
-    if (folder.path === path) return rootFolder
+    if (folder.path === path) return folder
 
     for (let child of folder.children) {
 
