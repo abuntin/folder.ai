@@ -2,17 +2,17 @@
 
 import { GridViewSharp, ViewListSharp } from "@mui/icons-material";
 import {
-  Divider,
+  Box,
   ToggleButton,
   ToggleButtonGroup,
   Unstable_Grid2 as Grid,
   useTheme
 } from "@mui/material";
 import {
-  AddButton, AppearAnimationParent, DInput, HoverAnimation, LoadingComponent
+  AddButton, AppearAnimationParent, bgLight, DInput, HoverAnimation, LoadingComponent
 } from "components";
-import { motion } from "framer-motion";
-import { padding } from "lib/constants";
+import { motion, useScroll } from 'framer-motion'
+import { borderRadius, margin, padding } from "lib/constants";
 import { Folder } from "lib/models";
 import * as React from "react";
 import { useDashboard } from ".";
@@ -22,7 +22,8 @@ import { DashboardItemTile } from "./DashboardItemTile";
 interface DashboardListProps {}
 
 export const DashboardList: React.FC<DashboardListProps> = (props) => {
-  const theme = useTheme();
+
+  const { scrollYProgress } = useScroll();
 
   const { current, view, kernel, selected, loading } = useDashboard();
 
@@ -45,13 +46,17 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
   return loading ? (
     <LoadingComponent />
   ) : (
-    <AppearAnimationParent>
+    <Box sx={{ maxHeight: '100%', overflowY: 'scroll', borderRadius }}>
+      <motion.div
+        style={{ scaleX: scrollYProgress, background: bgLight, height: margin * 5, borderRadius }}
+      />
+      <AppearAnimationParent>
       <Grid
         container
         spacing={4}
         display="flex"
         justifyContent="space-between"
-        sx={{ pl: padding * 2, pr: padding * 2 }}
+        sx={{ pl: padding * 2, pr: padding * 2, pt: padding * 2 }}
       >
         <Grid
           xs={12}
@@ -61,7 +66,7 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
           justifyContent="space-between"
         >
           <Grid xs={6} display="flex" alignItems="flex-start">
-            <DInput placeholder="Search" noTheme={true} variant="standard" />
+            <DInput placeholder="Search" variant="standard" />
           </Grid>
           <Grid
             container
@@ -70,10 +75,10 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
             alignItems="flex-end"
             justifyContent="space-around"
           >
-            <Grid xs={6} display="flex" alignItems="center">
+            <Grid xs={6} display="flex" justifyContent="center">
               <AddButton />
             </Grid>
-            <Grid xs={6} display="flex" alignItems="center">
+            <Grid xs={6} display="flex" justifyContent="start">
               <ToggleButtonGroup
                 value={view}
                 exclusive
@@ -103,22 +108,17 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
                 onClick={(e) => handleSelect(e, folder)}
               >
                 {view === "grid" ? (
-                  <motion.div layout>
                     <DashboardItemIcon
                       folder={folder}
                       selected={selected && selected.id === folder.id}
                     />
-                  </motion.div>
                 ) : (
-                  <>
                     <HoverAnimation>
                       <DashboardItemTile
                         folder={folder}
                         selected={selected && selected.id === folder.id}
                       />
                     </HoverAnimation>
-                    <Divider color={theme.palette.common.white} />
-                  </>
                 )}
               </Grid>
             );
@@ -126,5 +126,6 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
         </Grid>
       </Grid>
     </AppearAnimationParent>
+    </Box>
   );
 };
