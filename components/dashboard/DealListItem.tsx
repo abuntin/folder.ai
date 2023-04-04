@@ -84,7 +84,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
         display="flex"
         justifyContent="space-between"
       >
-        <Grid xs={12} container direction="row">
+        <Grid xs={12} container>
           <Grid xs={1}>
             <DText text={type.toLocaleUpperCase()} variant="subtitle1" />
           </Grid>
@@ -92,7 +92,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
             <DText text={title} variant="body1" fontWeight="medium" />
             <DText text={`Created: ${formatDate(created)}`} variant="caption" />
           </Grid>
-          <Grid xs={5} container direction="row">
+          <Grid xs={5} container>
             <Grid xs={10}>
               <ProgressBar progress="10%" />
             </Grid>
@@ -102,13 +102,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
               </EditButton>
             </Grid>
           </Grid>
-          <Grid
-            xs={3}
-            container
-            direction="row"
-            display="flex"
-            justifyContent="end"
-          >
+          <Grid xs={3} container display="flex" justifyContent="end">
             <Grid
               xs={6}
               display="flex"

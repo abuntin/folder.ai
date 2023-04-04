@@ -2,7 +2,7 @@ import { fileManagerService } from "lib/services";
 import { Folder } from ".";
 import events, { EventSubscription } from "@mongez/events";
 
-export type KernelEvent = "loading" | "idle" | "directoryChange" | "load" | "select";
+export type KernelEvent = "loading" | "idle" | "directoryChange" | "load" | "select" | "view";
 
 export class Kernel {
   protected rootPath = "/";

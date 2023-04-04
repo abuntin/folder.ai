@@ -1,14 +1,20 @@
 "use client";
 
 import * as React from "react";
-import {
-  ThemeProvider,
-} from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/en-gb";
 
-import { Header, AnalyticsWrapper, AnimationWrapper, ColorModeContext, createCustomTheme, bgLight, bgDark } from "components";
+import {
+  Header,
+  AnalyticsWrapper,
+  AnimationWrapper,
+  ColorModeContext,
+  createCustomTheme,
+  bgLight,
+  bgDark,
+} from "components";
 import { Provider } from "react-redux";
 import { store } from "lib/redux";
 
@@ -19,7 +25,6 @@ interface AppProps {
 const App: React.FC<AppProps> = (props) => {
   const [mode, setMode] = React.useState<"light" | "dark">("light");
 
-  
   const colorMode = React.useMemo(
     () => ({
       toggleColorMode: () => {
@@ -37,7 +42,7 @@ const App: React.FC<AppProps> = (props) => {
         <ColorModeContext.Provider value={colorMode}>
           <ThemeProvider theme={theme}>
             <AnimationWrapper>
-            <html
+              <html
                 lang="en"
                 // style={{
                 //     height: '100%'
@@ -46,24 +51,27 @@ const App: React.FC<AppProps> = (props) => {
                 //   'text-black bg-white dark:text-white dark:bg-[#111010]',
                 //   kaisei.variable
                 // )}
-            >
-                <body style={{
+              >
+                <body
+                  style={{
                     flex: "auto",
-                    minHeight: '100%',
+                    minHeight: "100%",
                     //height: '100%',
                     margin: 0,
-                    background: mode == 'light' ? `${bgLight} fixed` : `${bgDark} fixed`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundAttachment: 'fixed',
-                    backgroundSize: 'cover\200%'
-                }}>
-                    <Header />
-                    <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
+                    background:
+                      mode == "light" ? `${bgLight} fixed` : `${bgDark} fixed`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundAttachment: "fixed",
+                    backgroundSize: "cover\200%",
+                  }}
+                >
+                  <Header />
+                  <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
                     {props.children}
                     <AnalyticsWrapper />
-                    </main>
+                  </main>
                 </body>
-            </html>
+              </html>
             </AnimationWrapper>
           </ThemeProvider>
         </ColorModeContext.Provider>

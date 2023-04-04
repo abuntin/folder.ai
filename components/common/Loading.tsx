@@ -5,13 +5,12 @@ import { BlinkAnimation } from "components";
 import Image from "next/image";
 import logo from "public/logo_transparent.png";
 import { DText } from "./DText";
-import { useTheme } from '@mui/material'
+import { useTheme } from "@mui/material";
 
-interface LoadingProps {}
+interface LoadingComponentProps {}
 
-export const Loading: React.FC<LoadingProps> = (props) => {
-
-  const theme = useTheme()
+export const LoadingComponent: React.FC<LoadingComponentProps> = (props) => {
+  const theme = useTheme();
 
   return (
     <div
@@ -25,8 +24,19 @@ export const Loading: React.FC<LoadingProps> = (props) => {
       }}
     >
       <BlinkAnimation>
-        <Image alt="Folder.AI Loading" src={logo} width={250} height={250} />
-        <DText text="Loading..." fontWeight='medium' fontSize={24} textAlign='center' color={theme.palette.common.white} />
+        <Image
+          alt="Folder.AI LoadingComponent"
+          src={logo}
+          width={250}
+          height={250}
+        />
+        <DText
+          text="LoadingComponent..."
+          fontWeight="medium"
+          fontSize={24}
+          textAlign="center"
+          color={theme.palette.common.white}
+        />
       </BlinkAnimation>
     </div>
   );

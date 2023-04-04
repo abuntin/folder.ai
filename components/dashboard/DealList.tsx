@@ -108,7 +108,7 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
 
   return (
     <Grid container spacing={4} direction="column" sx={{ width: "100%" }}>
-      <Grid xs={12} container direction="row">
+      <Grid xs={12} container>
         <Grid xs={4} sx={{ ml: "10%", mr: "20%" }}>
           <DInput placeholder="Search" />
         </Grid>
@@ -141,7 +141,7 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid xs={12} container direction="row">
+      <Grid xs={12} container>
         <Grid xs={activeDealId !== "" ? 7 : 12}>
           {deals && deals.length !== 0 && (
             <Grid xs={12}>
