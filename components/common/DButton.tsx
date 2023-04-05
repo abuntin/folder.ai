@@ -7,11 +7,7 @@ import {
 import { Button, ButtonProps } from "@mui/material";
 import * as React from "react";
 
-interface DButtonProps extends ButtonProps {
-  direction?: "forward" | "back";
-}
-
-export const DButton: React.FC<DButtonProps> = (props) => {
+export const DButton: React.FC<{ direction?: 'forward' | 'back'} & ButtonProps> = (props) => {
   const { children, ...rest } = props;
 
   const { direction, variant = "outlined" } = rest;

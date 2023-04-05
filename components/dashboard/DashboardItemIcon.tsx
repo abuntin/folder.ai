@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, BoxProps, useTheme } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
 import { FolderSharp, FolderOpenSharp, InsertDriveFileSharp } from "@mui/icons-material";
 import { AppearAnimationChild } from "components/animation";
 import { DText } from "components/common";
@@ -16,8 +16,6 @@ interface DashboardItemProps extends BoxProps {
 export const DashboardItemIcon: React.FC<DashboardItemProps> = (props) => {
   const { folder, selected, ...rest } = props;
 
-  const theme = useTheme();
-
   return (
     <AppearAnimationChild>
       <Box
@@ -26,7 +24,8 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = (props) => {
         alignItems="center"
         justifyContent="center"
         sx={{
-          padding: padding,
+          paddingBottom: padding,
+          paddingTop: padding,
           backgroundColor: selected ? "background.paper" : undefined,
           borderRadius,
           "&:hover": { backgroundColor: "background.paper" },
@@ -54,7 +53,7 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = (props) => {
         <DText
           text={folder.name}
           variant="subtitle2"
-          color={theme.palette.common.white}
+          color={theme => theme.palette.common.white}
           fontWeight="regular"
         />
       </Box>

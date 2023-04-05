@@ -25,9 +25,9 @@ interface AppProps {
 const App: React.FC<AppProps> = (props) => {
   const [mode, setMode] = React.useState<"light" | "dark">("light");
 
-  const colorMode = React.useMemo(
+  const toggleColorMode = React.useMemo(
     () => ({
-      toggleColorMode: () => {
+      toggle: () => {
         setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
       },
     }),
@@ -39,19 +39,10 @@ const App: React.FC<AppProps> = (props) => {
   return (
     <Provider store={store}>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-        <ColorModeContext.Provider value={colorMode}>
+        <ColorModeContext.Provider value={{ mode, toggleColorMode }}>
           <ThemeProvider theme={theme}>
             <AnimationWrapper>
-              <html
-                lang="en"
-                // style={{
-                //     height: '100%'
-                // }}
-                // className={clsx(
-                //   'text-black bg-white dark:text-white dark:bg-[#111010]',
-                //   kaisei.variable
-                // )}
-              >
+              <html lang="en">
                 <body
                   style={{
                     flex: "auto",

@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { Folder } from "lib/models";
 import * as React from "react";
-import { DText, HoverAnimation } from "components";
+import { DText } from "components";
 
 interface DashboardItemTileProps extends BoxProps {
   folder: Folder;
@@ -58,61 +58,59 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = (props) => {
   }, [selected]);
 
   return (
-    <HoverAnimation>
-      <Box
-        sx={{
-          backgroundColor: bg,
-          "&:hover": { backgroundColor: "background.paper" },
-        }}
+    <Box
+      sx={{
+        backgroundColor: bg,
+        "&:hover": { backgroundColor: "background.paper" },
+      }}
+    >
+      <Grid
+        container
+        spacing={2}
+        direction="column"
+        display="flex"
+        justifyContent="space-between"
       >
-        <Grid
-          container
-          spacing={2}
-          direction="column"
-          display="flex"
-          justifyContent="space-between"
-        >
-          <Grid xs={12} container>
-            <Grid xs={1}>
-              {folder.isDirectory ? (
-                folder.children ?
-                <FolderSharp
-                  fontSize="large"
-                  color="primary"
-                />
-                : 
-                <FolderOpenSharp
-                  fontSize='large'
-                  color='disabled'
-                />
-              ) : (
-                <InsertDriveFileSharp fontSize="large" color="disabled" />
-              )}
-            </Grid>
-            <Grid xs={8}>
-              <DText
-                text={name}
-                fontWeight={folder.isDirectory ? "bold" : "regular"}
-                color="common.white"
+        <Grid xs={12} container>
+          <Grid xs={1}>
+            {folder.isDirectory ? (
+              folder.children ?
+              <FolderSharp
+                fontSize="large"
+                color="primary"
               />
-            </Grid>
-            <Grid xs={3} container display="flex" justifyContent="end">
-              {folder.isDirectory && (
-                <Grid
-                  xs={6}
-                  display="flex"
-                  justifyContent="space-around"
-                  alignItems="center"
-                >
-                  <ExpandMoreButton expand={selected}>
-                    <KeyboardArrowRightSharp />
-                  </ExpandMoreButton>
-                </Grid>
-              )}
-            </Grid>
+              : 
+              <FolderOpenSharp
+                fontSize='large'
+                color='disabled'
+              />
+            ) : (
+              <InsertDriveFileSharp fontSize="large" color="disabled" />
+            )}
+          </Grid>
+          <Grid xs={8}>
+            <DText
+              text={name}
+              fontWeight={folder.isDirectory ? "bold" : "regular"}
+              color="common.white"
+            />
+          </Grid>
+          <Grid xs={3} container display="flex" justifyContent="end">
+            {folder.isDirectory && (
+              <Grid
+                xs={6}
+                display="flex"
+                justifyContent="space-around"
+                alignItems="center"
+              >
+                <ExpandMoreButton expand={selected}>
+                  <KeyboardArrowRightSharp />
+                </ExpandMoreButton>
+              </Grid>
+            )}
           </Grid>
         </Grid>
-      </Box>
-    </HoverAnimation>
+      </Grid>
+    </Box>
   );
 };

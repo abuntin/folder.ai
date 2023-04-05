@@ -1,7 +1,10 @@
 import { Color, createTheme, PaletteMode, PaletteOptions, responsiveFontSizes, Theme } from "@mui/material";
 import React from "react";
 
-export const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
+export const ColorModeContext = React.createContext<{ mode: PaletteMode, toggleColorMode: { toggle: () => void } }>({
+    mode: 'light' as PaletteMode,
+    toggleColorMode: { toggle: () => {}}
+});
 
 
 export const bgLight = `linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(43,54,200,1) 100%),
@@ -26,7 +29,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
         mode,
         grey: 600 as Partial<Color>,
         text:  { secondary: '#110010', primary: '#fafafa', disabled: '#E5E5E5' },
-        background: { paper: 'rgba(229,229,229,0.3)', default: '#fafafa'},
+        background: { paper: 'rgba(229,229,229,0.3)', default: 'rgba(235, 235, 235, 0.3)'},
     }) : ({
         common: { black: '#111010', white: '#fafafa'},
         primary: { main: '#fafafa', light: '#1b1a22' },
@@ -38,7 +41,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
         mode,
         grey: 600 as Partial<Color>,
         text:  { primary: '#fafafa', secondary: '#110010', disabled: '#E5E5E5' },
-        background: { paper: 'rgba(229,229,229,0.3)', default: '#111010'},
+        background: { paper: 'rgba(229,229,229,0.3)', default: 'rgba(235, 235, 235, 0.5)'},
     }) as PaletteOptions
 
 

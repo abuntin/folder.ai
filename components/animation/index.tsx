@@ -1,9 +1,9 @@
-import { m, LazyMotion, domMax, MotionProps } from "framer-motion";
+import { m, LazyMotion, domAnimation, MotionProps } from "framer-motion";
 
 interface AnimationProps extends MotionProps {}
 
 export const AnimationWrapper = ({ children }) => (
-  <LazyMotion features={domMax}>{children}</LazyMotion>
+  <LazyMotion features={domAnimation}>{children}</LazyMotion>
 );
 
 export const NavAnimation: React.FC<AnimationProps> = ({
