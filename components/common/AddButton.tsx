@@ -3,21 +3,15 @@
 
 import { Box, IconButton, IconButtonProps } from '@mui/material'
 import { AddSharp } from '@mui/icons-material'
-import { DText } from 'components'
 import * as React from 'react' 
 
 
-interface AddButtonProps extends IconButtonProps {
-    
-} 
-
-export const AddButton: React.FC<AddButtonProps> = (props) => {
+export const AddButton: React.FC<IconButtonProps> = (props) => {
     return (
-        <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center'>
+        <Box display='flex' flexDirection='column' alignItems='center' justifyContent='space-between'>
             <IconButton {...props}>
-                <AddSharp fontSize='medium' />
+                <AddSharp sx={{ fontSize: 20 }} color='disabled' />
             </IconButton>
-            <DText text='Add' variant='caption' color='common.white' />
         </Box>
         
     )

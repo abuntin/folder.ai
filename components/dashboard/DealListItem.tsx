@@ -3,13 +3,11 @@
 import { KeyboardArrowRightSharp, EditSharp } from "@mui/icons-material";
 import {
   Box,
-  Button,
   IconButton,
   IconButtonProps,
   BoxProps,
   styled,
   Unstable_Grid2 as Grid,
-  useTheme,
 } from "@mui/material";
 import { DText, HoverAnimation } from "components";
 import { formatDate } from "lib/functions";
@@ -47,7 +45,6 @@ const EditButton = styled((props: EditButtonProps) => {
 })(({ theme, disabled }) => ({}));
 
 export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
-  const theme = useTheme();
 
   const dispatch = useAppDispatch();
 

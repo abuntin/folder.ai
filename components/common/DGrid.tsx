@@ -7,7 +7,7 @@ import {
   ButtonProps,
   Unstable_Grid2 as Grid,
 } from "@mui/material";
-import { margin, padding } from "lib/constants";
+import { padding } from "lib/constants";
 import { FormOptionType } from "lib/types";
 import { DText } from "./DText";
 

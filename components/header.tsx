@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { DividerGradient, DText, ColorModeContext } from "components";
 import { padding } from "lib/constants";
-import { motion } from 'framer-motion'
 import {
   Box,
   IconButton,
@@ -21,17 +20,14 @@ const navItems = {
   "/": {
     name: "Dashboard",
   },
-  "/newdeal": {
-    name: "Create New",
-  },
   "/editor": {
     name: "Editor",
   },
 };
 
 function ToggleThemeMode() {
-  const theme = useTheme();
-  const colorMode = React.useContext(ColorModeContext);
+  const { mode, toggleColorMode } = React.useContext(ColorModeContext);
+
   return (
     <Box
       sx={{
@@ -46,10 +42,10 @@ function ToggleThemeMode() {
     >
       <IconButton
         sx={{ ml: 1 }}
-        onClick={colorMode.toggleColorMode}
+        onClick={toggleColorMode.toggle}
         color="inherit"
       >
-        {theme.palette.mode === "dark" ? <Brightness7 /> : <Brightness4 />}
+        {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
       </IconButton>
     </Box>
   );
@@ -74,7 +70,7 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
     >
       <Link
         key={path}
-        href={path}
+        href={"/"}
         className={clsx(
           "transition-all hover:text-neutral-800 dark:hover:text-neutral-200 py-[5px] px-[10px]",
           "flex flex-col items-center justify-evenly"
@@ -113,8 +109,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
       }}
     >
       <Grid container>
-        <Grid xs={2} display="flex"
-                alignItems="center">
+        <Grid xs={2} display="flex" alignItems="center">
           <Logo />
         </Grid>
         <Grid xs={8} container>
@@ -128,9 +123,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
                 display="flex"
                 alignItems="center"
               >
-                <motion.div layout>
-                  <HeaderItem path={path} name={name} active={isActive} />
-                </motion.div>
+                <HeaderItem path={path} name={name} active={isActive} />
               </Grid>
             );
           })}

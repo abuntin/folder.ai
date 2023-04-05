@@ -5,12 +5,10 @@ import { BlinkAnimation } from "components";
 import Image from "next/image";
 import logo from "public/logo_transparent.png";
 import { DText } from "./DText";
-import { useTheme } from "@mui/material";
 
 interface LoadingComponentProps {}
 
 export const LoadingComponent: React.FC<LoadingComponentProps> = (props) => {
-  const theme = useTheme();
 
   return (
     <div
@@ -35,7 +33,7 @@ export const LoadingComponent: React.FC<LoadingComponentProps> = (props) => {
           fontWeight="medium"
           fontSize={24}
           textAlign="center"
-          color={theme.palette.common.white}
+          color={theme => theme.palette.common.white}
         />
       </BlinkAnimation>
     </div>

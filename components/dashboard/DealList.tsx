@@ -4,14 +4,12 @@ import {
   Box,
   Divider,
   FormControl,
-  InputLabel,
   ListProps,
   MenuItem,
   Select,
   Stack,
   TablePagination,
   Unstable_Grid2 as Grid,
-  useTheme,
 } from "@mui/material";
 import {
   AddButton,
@@ -55,7 +53,6 @@ const applyPagination = (
 };
 
 export const DashboardList: React.FC<DashboardListProps> = (props) => {
-  const theme = useTheme();
 
   const {
     deals,

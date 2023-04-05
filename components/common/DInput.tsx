@@ -11,15 +11,16 @@ interface DInputProps extends StandardTextFieldProps {
 
 export const DInput: React.FC<DInputProps> = (props) => {
 
-    const {sx, inputProps, InputProps, number, fullWidth, ...rest} = props
+    const {sx, inputProps, number, variant, fullWidth, color, ...rest} = props
 
     return (
         <TextField
-            variant='standard'
-            sx={{ fontFamily: 'sans-serif', fontWeight: 'light', ...sx }}
-            fullWidth={fullWidth ?? true}
-            inputProps={{ ...inputProps,  ...(number ? {inputMode: 'numeric', pattern: '[0-9]*'} : {})}}
+            variant={variant ?? 'standard'}
+            color={color ?? 'primary'}
+            fullWidth
             {...rest}
+            sx={{ fontFamily: 'sans-serif', fontWeight: 'light', ...sx }}
+            inputProps={{ ...inputProps,  ...(number ? {inputMode: 'numeric', pattern: '[0-9]*'} : {})}}
         />
     )
 }
