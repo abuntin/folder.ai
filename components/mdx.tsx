@@ -1,13 +1,13 @@
-import * as React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useMDXComponent } from 'next-contentlayer/hooks';
-import Tweet from './tweet';
+import * as React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useMDXComponent } from "next-contentlayer/hooks";
+import Tweet from "./tweet";
 
 const CustomLink = (props) => {
   const href = props.href;
 
-  if (href.startsWith('/')) {
+  if (href.startsWith("/")) {
     return (
       <Link href={href} {...props}>
         {props.children}
@@ -15,7 +15,7 @@ const CustomLink = (props) => {
     );
   }
 
-  if (href.startsWith('#')) {
+  if (href.startsWith("#")) {
     return <a {...props} />;
   }
 

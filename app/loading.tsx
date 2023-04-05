@@ -1,6 +1,6 @@
-import { DealEngineLogo } from "components";
+import { LoadingComponent } from "components";
 
 export default function Loading() {
-    // You can add any UI inside Loading, including a Skeleton.
-    return <DealEngineLogo />
+  // You can add any UI inside Loading, including a Skeleton.
+  return <LoadingComponent />;
 }
