@@ -2,7 +2,6 @@
 export * from './common'
 export * from './animation'
 export * from './dashboard'
-//export * from './editor'
 export * from './header'
 export * from './analytics'
 export * from './app'

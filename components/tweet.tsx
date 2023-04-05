@@ -1,5 +1,5 @@
-import Image from 'next/image';
-import { format } from 'date-fns';
+import Image from "next/image";
+import { format } from "date-fns";
 
 /**
  * Supports plain text, images, quote tweets.
@@ -24,10 +24,10 @@ export default function Tweet({
   const createdAt = new Date(created_at);
 
   const formattedText = text
-    .replace(/https:\/\/[\n\S]+/g, '')
-    .replace('&amp;', '&');
+    .replace(/https:\/\/[\n\S]+/g, "")
+    .replace("&amp;", "&");
   const quoteTweet =
-    referenced_tweets && referenced_tweets.find((t) => t.type === 'quoted');
+    referenced_tweets && referenced_tweets.find((t) => t.type === "quoted");
 
   return (
     <div className="tweet rounded-lg border border-neutral-200 dark:border-neutral-800 px-6 py-4 my-4 bg-white dark:bg-neutral-900 max-w-xl mx-auto">
@@ -91,7 +91,7 @@ export default function Tweet({
           >
             <path
               d="M 630, 425    A 195, 195 0 0 1 331, 600    A 142, 142 0 0 0 428, 570    A  70,  70 0 0 1 370, 523    A  70,  70 0 0 0 401, 521    A  70,  70 0 0 1 344, 455    A  70,  70 0 0 0 372, 460    A  70,  70 0 0 1 354, 370    A 195, 195 0 0 0 495, 442    A  67,  67 0 0 1 611, 380    A 117, 117 0 0 0 654, 363    A  65,  65 0 0 1 623, 401    A 117, 117 0 0 0 662, 390    A  65,  65 0 0 1 630, 425    Z"
-              style={{ fill: '#3BA9EE' }}
+              style={{ fill: "#3BA9EE" }}
             />
           </svg>
         </a>
@@ -103,8 +103,8 @@ export default function Tweet({
         <div
           className={
             media.length === 1
-              ? 'inline-grid grid-cols-1 gap-x-2 gap-y-2 my-2'
-              : 'inline-grid grid-cols-2 gap-x-2 gap-y-2 my-2'
+              ? "inline-grid grid-cols-1 gap-x-2 gap-y-2 my-2"
+              : "inline-grid grid-cols-2 gap-x-2 gap-y-2 my-2"
           }
         >
           {media.map((m) => (
@@ -130,7 +130,7 @@ export default function Tweet({
           title={`Time Posted: ${createdAt.toUTCString()}`}
           dateTime={createdAt.toISOString()}
         >
-          {format(createdAt, 'h:mm a - MMM d, y')}
+          {format(createdAt, "h:mm a - MMM d, y")}
         </time>
       </a>
       <div className="flex text-sm mt-2">
@@ -147,8 +147,8 @@ export default function Tweet({
             />
           </svg>
           <span>
-            {new Number(public_metrics.reply_count).toLocaleString('en', {
-              notation: 'compact',
+            {new Number(public_metrics.reply_count).toLocaleString("en", {
+              notation: "compact",
             })}
           </span>
         </a>
@@ -165,8 +165,8 @@ export default function Tweet({
             />
           </svg>
           <span>
-            {new Number(public_metrics.retweet_count).toLocaleString('en', {
-              notation: 'compact',
+            {new Number(public_metrics.retweet_count).toLocaleString("en", {
+              notation: "compact",
             })}
           </span>
         </a>
@@ -183,8 +183,8 @@ export default function Tweet({
             />
           </svg>
           <span>
-            {new Number(public_metrics.like_count).toLocaleString('en', {
-              notation: 'compact',
+            {new Number(public_metrics.like_count).toLocaleString("en", {
+              notation: "compact",
             })}
           </span>
         </a>

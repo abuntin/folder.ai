@@ -1,20 +1,21 @@
-import * as React from 'react'
-import { Autocomplete, TextField, Box, UseAutocompleteProps, InputAdornment } from '@mui/material'
-import PublicIcon from '@mui/icons-material/Public';
-import { margin } from 'lib/constants'
-import { DText } from './DText'
+import PublicIcon from "@mui/icons-material/Public";
+import {
+  Autocomplete, Box, InputAdornment, TextField, UseAutocompleteProps
+} from "@mui/material";
+import { margin } from "lib/constants";
+import * as React from "react";
+import { DText } from "./DText";
 
-const countries = require('lib/constants/countries.json')
+const countries = require("lib/constants/countries.json");
 
-interface CountrySelectProps<T> extends Omit<UseAutocompleteProps<T, false, false, false>, 'options'> {
-}
+interface CountrySelectProps<T>
+  extends Omit<UseAutocompleteProps<T, false, false, false>, "options"> {}
 
 export const CountrySelect: React.FC<CountrySelectProps<string>> = (props) => {
-
   const { value } = props;
 
   const [leading, setLeading] = React.useState<React.ReactNode>(
-    value ?
+    value ? (
       <img
         loading="eager"
         width="20"
@@ -22,12 +23,16 @@ export const CountrySelect: React.FC<CountrySelectProps<string>> = (props) => {
         srcSet={`https://flagcdn.com/w40/${value.toLowerCase()}.png 2x`}
         alt=""
       />
-    : null
+    ) : null
   );
 
-  const handleChange = (e: any, value: string, reason: "createOption" | "selectOption" | "removeOption" | "blur" | "clear") => {
-      setLeading(
-        (reason == 'removeOption' || reason == 'clear') ? null :
+  const handleChange = (
+    e: any,
+    value: string,
+    reason: "createOption" | "selectOption" | "removeOption" | "blur" | "clear"
+  ) => {
+    setLeading(
+      reason == "removeOption" || reason == "clear" ? null : (
         <img
           loading="eager"
           width="20"
@@ -36,13 +41,13 @@ export const CountrySelect: React.FC<CountrySelectProps<string>> = (props) => {
           alt=""
         />
       )
-    if (props.onChange != null) props.onChange(e, value, reason)
-  }
-
+    );
+    if (props.onChange != null) props.onChange(e, value, reason);
+  };
 
   return (
     <Autocomplete
-      sx={{ width: 'max-width' }}
+      sx={{ width: "max-width" }}
       options={Object.keys(countries)}
       autoHighlight
       autoSelect
@@ -50,7 +55,17 @@ export const CountrySelect: React.FC<CountrySelectProps<string>> = (props) => {
       onChange={handleChange}
       renderOption={(props, option: string) => {
         return (
-          <Box {...props} component="li" sx={{ '& > img': { mr: margin, flexShrink: 0, backgroundColor: 'primary' }}}>
+          <Box
+            {...props}
+            component="li"
+            sx={{
+              "&> img": {
+                mr: margin,
+                flexShrink: 0,
+                backgroundColor: "primary",
+              },
+            }}
+          >
             <img
               loading="lazy"
               width="20"
@@ -60,23 +75,23 @@ export const CountrySelect: React.FC<CountrySelectProps<string>> = (props) => {
             />
             <DText text={`${countries[option]} (${option})`} />
           </Box>
-        )
+        );
       }}
       renderInput={(params) => (
         <TextField
           {...params}
-          sx={{ fontFamily: 'sans-serif', fontWeight: 'light' }}
-          variant='standard'
-          color='primary'
+          sx={{ fontFamily: "sans-serif", fontWeight: "light" }}
+          variant="standard"
+          color="primary"
           inputProps={{
             ...params.inputProps,
-            autoComplete: 'new-password', // disable autocomplete and autofill
+            autoComplete: "new-password", // disable autocomplete and autofill
           }}
           InputProps={{
             ...params.InputProps,
             startAdornment: (
               <InputAdornment position="start">
-                {leading ?? <PublicIcon fontSize='small' />}
+                {leading ?? <PublicIcon fontSize="small" />}
               </InputAdornment>
             ),
           }}
@@ -84,4 +99,4 @@ export const CountrySelect: React.FC<CountrySelectProps<string>> = (props) => {
       )}
     />
   );
-}
+};

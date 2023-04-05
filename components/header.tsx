@@ -2,7 +2,7 @@
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { DividerGradient, DText } from "components";
+import { DividerGradient, DText, ColorModeContext } from "components";
 import { padding } from "lib/constants";
 import {
   Box,
@@ -12,17 +12,13 @@ import {
 } from "@mui/material";
 import { margin } from "lib/constants";
 import React from "react";
-import { ColorModeContext } from "components/app";
 import { Brightness7, Brightness4 } from "@mui/icons-material";
-import Image from 'next/image'
-import logo from 'public/logo_transparent.png'
+import Image from "next/image";
+import logo from "public/logo_transparent.png";
 
 const navItems = {
   "/": {
     name: "Dashboard",
-  },
-  "/newdeal": {
-    name: "Create New",
   },
   "/editor": {
     name: "Editor",
@@ -30,8 +26,8 @@ const navItems = {
 };
 
 function ToggleThemeMode() {
-  const theme = useTheme();
-  const colorMode = React.useContext(ColorModeContext);
+  const { mode, toggleColorMode } = React.useContext(ColorModeContext);
+
   return (
     <Box
       sx={{
@@ -46,10 +42,10 @@ function ToggleThemeMode() {
     >
       <IconButton
         sx={{ ml: 1 }}
-        onClick={colorMode.toggleColorMode}
+        onClick={toggleColorMode.toggle}
         color="inherit"
       >
-        {theme.palette.mode === "dark" ? <Brightness7 /> : <Brightness4 />}
+        {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
       </IconButton>
     </Box>
   );
@@ -58,12 +54,7 @@ function ToggleThemeMode() {
 function Logo() {
   return (
     <Link aria-label="Folder.AI" href="/">
-      <Image
-        src={logo}
-        alt="Folder.AI"
-        width={125}
-        height={125}
-      />
+      <Image src={logo} alt="Folder.AI" width={110} height={110} />
     </Link>
   );
 }
@@ -79,7 +70,7 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
     >
       <Link
         key={path}
-        href={path}
+        href={"/"}
         className={clsx(
           "transition-all hover:text-neutral-800 dark:hover:text-neutral-200 py-[5px] px-[10px]",
           "flex flex-col items-center justify-evenly"
@@ -104,7 +95,6 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
 interface HeaderProps {}
 
 export const Header: React.FC<HeaderProps> = (props) => {
-
   let pathname = usePathname() || "/";
   if (pathname.includes("/blog/")) {
     pathname = "/blog";
@@ -116,13 +106,10 @@ export const Header: React.FC<HeaderProps> = (props) => {
     <Box
       sx={{
         padding,
-        // position: "sticky",
-        // top: 0,
-        // zIndex: 1,
       }}
     >
-      <Grid container spacing={2}>
-        <Grid xs={2}>
+      <Grid container>
+        <Grid xs={2} display="flex" alignItems="center">
           <Logo />
         </Grid>
         <Grid xs={8} container>
@@ -133,8 +120,8 @@ export const Header: React.FC<HeaderProps> = (props) => {
               <Grid
                 xs={12 / entries.length}
                 key={i}
-                display='flex'
-                alignItems='center'
+                display="flex"
+                alignItems="center"
               >
                 <HeaderItem path={path} name={name} active={isActive} />
               </Grid>

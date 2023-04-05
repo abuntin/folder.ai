@@ -4,11 +4,7 @@
 import * as React from 'react' 
 import { Checkbox, CheckboxProps } from '@mui/material'
 
-interface DCheckboxProps extends CheckboxProps {
-    
-} 
-
-export const DCheckbox: React.FC<DCheckboxProps> = (props) => {
+export const DCheckbox: React.FC<CheckboxProps> = (props) => {
 
     const { sx, ...rest } = props
 

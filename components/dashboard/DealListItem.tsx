@@ -3,20 +3,17 @@
 import { KeyboardArrowRightSharp, EditSharp } from "@mui/icons-material";
 import {
   Box,
-  Button,
   IconButton,
   IconButtonProps,
   BoxProps,
   styled,
   Unstable_Grid2 as Grid,
-  useTheme,
 } from "@mui/material";
 import { DText, HoverAnimation } from "components";
-import { padding } from "lib/constants";
 import { formatDate } from "lib/functions";
 import { Deal } from "lib/models";
 import { useAppDispatch, useAppSelector } from "lib/redux";
-import { set_action_pane } from "lib/redux/reducers";
+import { set_action_pane } from "lib/redux";
 import * as React from "react";
 import { ProgressBar } from "./ProgressBar";
 
@@ -48,7 +45,6 @@ const EditButton = styled((props: EditButtonProps) => {
 })(({ theme, disabled }) => ({}));
 
 export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
-  const theme = useTheme();
 
   const dispatch = useAppDispatch();
 
@@ -85,7 +81,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
         display="flex"
         justifyContent="space-between"
       >
-        <Grid xs={12} container direction="row">
+        <Grid xs={12} container>
           <Grid xs={1}>
             <DText text={type.toLocaleUpperCase()} variant="subtitle1" />
           </Grid>
@@ -93,7 +89,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
             <DText text={title} variant="body1" fontWeight="medium" />
             <DText text={`Created: ${formatDate(created)}`} variant="caption" />
           </Grid>
-          <Grid xs={5} container direction="row">
+          <Grid xs={5} container>
             <Grid xs={10}>
               <ProgressBar progress="10%" />
             </Grid>
@@ -103,13 +99,7 @@ export const DashboardListItem: React.FC<DashboardListItemProps> = (props) => {
               </EditButton>
             </Grid>
           </Grid>
-          <Grid
-            xs={3}
-            container
-            direction="row"
-            display="flex"
-            justifyContent="end"
-          >
+          <Grid xs={3} container display="flex" justifyContent="end">
             <Grid
               xs={6}
               display="flex"

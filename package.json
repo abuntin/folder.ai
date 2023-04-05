@@ -9,6 +9,8 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@faker-js/faker": "^7.6.0",
+    "@mongez/events": "^2.0.0",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.12",
     "@mui/x-date-pickers": "^6.0.2",
@@ -39,6 +41,7 @@
     "rehype-slug": "^5.1.0",
     "remark-gfm": "^3.0.1",
     "server-only": "^0.0.1",
+    "sharp": "^0.32.0",
     "shiki": "^0.13.0",
     "short-uuid": "^4.2.2",
     "swr": "^2.0.3"
