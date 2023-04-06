@@ -15,8 +15,7 @@ import { Snackbar, Alert } from "@mui/material";
  */
 
 export const DashboardProvider = ({ children, ...rest }) => {
-
-  const { current: kernel } = React.useRef(new Kernel())
+  const { current: kernel } = React.useRef(new Kernel());
 
   // const abortController = React.useRef<AbortController>();
 
@@ -106,9 +105,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
   // Listen for load event
 
   React.useEffect(() => {
-    const loadEvent = kernel.on("load", (srcFolder: Folder) =>
-      kernel.load(srcFolder).catch(e => setError(e.message))
-    );
+    const loadEvent = kernel.on("load", (srcFolder: Folder) => load(srcFolder));
 
     return () => {
       loadEvent.unsubscribe();
@@ -171,4 +168,4 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
 export * from "./DealList";
 export * from "./Dashboard";
-export * from './DashboardContext'
+export * from "./DashboardContext";

@@ -44,6 +44,8 @@ export const DashboardListContent: React.FC<DashboardListContentProps> = (
     [view, selected, kernel.folders]
   );
 
+  console.log(kernel.folders)
+
   return (
     <AppearAnimationParent>
       <Grid
@@ -110,6 +112,11 @@ export const DashboardListContent: React.FC<DashboardListContentProps> = (
             padding,
           }}
         >
+          <Grid xs={12}>
+            {
+              kernel.currentDirectory
+            }
+          </Grid>
           {kernel.folders.map((folder: Folder, i) => {
             return (
               <Grid
