@@ -33,7 +33,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
     }) : ({
         common: { black: '#111010', white: '#fafafa'},
         primary: { main: '#fafafa', light: '#1b1a22' },
-        secondary: { main: '#fca311' }, // yellow 
+        secondary: { main: '#110010' }, // black 
         error: { main: '#ff0033' }, // red 
         warning: { main: '#fca311' }, // yellow
         info: { main: '#14213d' }, // blue

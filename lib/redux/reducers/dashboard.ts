@@ -1,17 +1,16 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import { updateObject } from "lib/functions";
-import { Deal, sampleIOU } from "lib/models";
 
 
 interface DashboardState {
-    deals: Deal[]
+    deals: any[]
     table: {
         activeDealId: string 
     }
 }
 
 const initialState = {
-    deals: [sampleIOU, {...sampleIOU, id: '2'}, { ...sampleIOU, id: '3'}],
+    deals: [],
     table: {
         activeDealId: '' 
     }

@@ -1,10 +1,11 @@
 "use client";
 
-import { Box } from "@mui/material";
+import { Box, Unstable_Grid2 as Grid } from "@mui/material";
 import dynamic from "next/dynamic";
 import * as React from "react";
 import { useDashboard } from ".";
-import { padding } from "lib/constants";
+import { borderRadius, padding } from "lib/constants";
+import { AppearAnimationParent } from "components/animation";
 
 interface DashboardListProps {}
 
@@ -13,7 +14,15 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
 
   const { folders } = kernel;
 
-  const Component = React.useMemo(() => {
+  const HeaderComponent = React.useMemo(
+    () =>
+      dynamic(() =>
+        import("./DashboardLIstHeader").then((_) => _.DashboardListHeader)
+      ),
+    []
+  );
+
+  const BodyComponent = React.useMemo(() => {
     console.log("Component changed, loading...");
     if (folders && !loading.state)
       return dynamic(() =>
@@ -27,7 +36,23 @@ export const DashboardList: React.FC<DashboardListProps> = (props) => {
 
   return (
     <Box sx={{ paddingLeft: padding * 2, paddingRight: padding * 2 }}>
-      <Component />
+      <AppearAnimationParent>
+        <Grid
+          container
+          spacing={4}
+          display="flex"
+          justifyContent="space-between"
+          sx={{
+            pl: padding * 2,
+            pr: padding * 2,
+            borderRadius,
+            bgColor: (theme) => theme.palette.common.white,
+          }}
+        >
+          <HeaderComponent />
+          <BodyComponent />
+        </Grid>
+      </AppearAnimationParent>
     </Box>
   );
 };
