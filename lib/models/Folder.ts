@@ -1,4 +1,4 @@
-import { PropType } from "lib/types";
+import { StorageReference, FullMetadata } from "firebase/storage";
 
 export class Folder {
 
@@ -11,11 +11,15 @@ export class Folder {
      */
     name: string;
     /**
-    * File full path to root
+    * File full path to user root
     */
     path: string;
     /**
-    * URL to Cloud Storage
+    * Path in browser - for upload tasks
+    */
+    localPath?: string;
+    /**
+    * Cloud Storage URL
     */
     url: string;
     /**
@@ -64,4 +68,16 @@ export class Folder {
             
         }
     }
+
+    static fromStorageReference = async (metadata: FullMetadata, isDirectory = false) => ({
+        name: metadata.name,
+        path: metadata.fullPath,
+        url: metadata.ref.toString(),
+        size: metadata.size,
+        isDirectory,
+        children: [],
+        linkedFolders: [],
+        metadata,
+        id: 'randomstr'
+    } as Folder)
 }

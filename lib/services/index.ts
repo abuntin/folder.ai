@@ -35,7 +35,8 @@ class FileManagerService implements FileManagerServiceInterface  {
     /**
      * {@inheritDoc}
      */
-    public list(directoryPath: string): Promise<any> {
+    public async list(directoryPath: string): Promise<any> {
+
         return new Promise(resolve => {
           setTimeout(() => {
             resolve({

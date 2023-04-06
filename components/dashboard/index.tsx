@@ -1,12 +1,10 @@
-import { Kernel, Folder, rootFolder } from "lib/models";
+import { Kernel, Folder } from "lib/models";
 import React from "react";
-
-export * from "./DealList";
-export * from "./Dashboard";
+import { Snackbar, Alert } from '@mui/material'
 
 export const DashboardContext = React.createContext<{
   kernel: Kernel;
-  current: Folder;
+  current: Folder[];
   root: Folder;
   loading: boolean;
   selected: Folder;
@@ -21,35 +19,36 @@ export const useDashboard = () => {
   return context;
 };
 
-export const DashboardProvider = ({ children, rootPath, ...rest }) => {
+export const DashboardProvider = ({ children, ...rest }) => {
   const { current: kernel } = React.useRef(new Kernel());
 
-  const [loading, setLoadingComponent] = React.useState(true);
+  const [isPending, startTransition] = React.useTransition()
+
+  const [loading, setLoading] = React.useState(true);
 
   const [root, setRoot] = React.useState<Folder>(null);
 
-  const [current, setCurrent] = React.useState<Folder>(null);
+  const [current, setCurrent] = React.useState<Folder[]>([]);
 
   const [selected, setSelected] = React.useState<Folder>(null);
 
   const [view, setView] = React.useState<"grid" | "tile">("grid");
 
-  const load = React.useCallback(
-    (path: string, isRoot = false) => {
-      setLoadingComponent(true);
+  const [error, setError] = React.useState('')
 
-      if (isRoot) kernel.setRootPath(path);
+  const setErrorMessage = (m: string) => startTransition(() => setError(m))
+
+  const load = React.useCallback(
+    (srcFolder: Folder, isRoot = false) => {
+      setLoading(true);
+
+      if (isRoot) setRoot(srcFolder)
 
       kernel
-        .load(path)
-        .then((folder) => {
-          setCurrent(folder);
-
-          if (isRoot) {
-            setRoot(folder);
-          }
-        })
-        .finally(() => setLoadingComponent(false));
+        .load(srcFolder)
+        .then((folders) => setCurrent(folders))
+        .catch(e => setError(e.message))
+        .finally(() => startTransition(() => setLoading(false)));
     },
     [kernel]
   );
@@ -57,10 +56,8 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
   // Load root path
 
   React.useEffect(() => {
-    if (!rootPath) return;
-
-    load(rootPath, true);
-  }, [rootPath, kernel, load]);
+    kernel.getRootFolder().then(rootFolder => load(rootFolder, true)).catch(e => setErrorMessage(e.message))
+  }, []);
 
   // Listen for change view event
 
@@ -85,9 +82,9 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
   // Listen for loading event
 
   React.useEffect(() => {
-    const loadingEvent = kernel.on("loading", () => setLoadingComponent(true));
+    const loadingEvent = kernel.on("loading", () => setLoading(true));
 
-    const loadEvent = kernel.on("load", () => setLoadingComponent(false));
+    const loadEvent = kernel.on("load", () => startTransition(() => setLoading(false)));
 
     return () => {
       loadingEvent.unsubscribe();
@@ -101,14 +98,36 @@ export const DashboardProvider = ({ children, rootPath, ...rest }) => {
     const event = kernel.on("directoryChange", setCurrent);
 
     return () => event.unsubscribe();
+
   }, [kernel]);
+
+  // Clear error
+
+  React.useEffect(() => {
+    if (error !== null) setTimeout(() => setErrorMessage(''), 7000)
+  }, [error])
+
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+  };
 
   return (
     <DashboardContext.Provider
       value={{ kernel, current, root, loading, selected, view }} // Provide filesystem properties as context
       {...rest}
     >
+      <Snackbar open={error !== ''} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
       {children}
     </DashboardContext.Provider>
   );
 };
+
+
+export * from "./DealList";
+export * from "./Dashboard";
