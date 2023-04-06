@@ -3,11 +3,13 @@ import { FolderManagerHandler, FolderManagerRequest, FolderManagerResponse } fro
 
 const handler: FolderManagerHandler = async (req: FolderManagerRequest, res: FolderManagerResponse) => {
 
-
   const handleRes = (response) => {
-    if (response instanceof Error) throw response;
 
-    else return res.status(200).json({ payload: response })
+    console.log('Obtained FolderManagerResponse, processing...')
+    
+    if (response instanceof Error) res.status(500).json({ error: response });
+
+    else res.status(200).json({ payload: response })
   }
 
 
@@ -18,21 +20,30 @@ const handler: FolderManagerHandler = async (req: FolderManagerRequest, res: Fol
 
   const { type } = data;
 
+
+  console.log('Initialised FolderManagerRequest.')
+
   switch (type) {
     case "list":
+      console.log('list req')
       let listRes = await folderManagerService.list(data);
 
-      return handleRes(listRes)
+      handleRes(listRes)
+      break
 
     case "upload":
       let urlRes = await folderManagerService.upload(data);
 
-      return handleRes(urlRes)
+      handleRes(urlRes)
+
+      break
     
     case 'init':
       let initRes = await folderManagerService.init(data);
 
-      return handleRes(initRes)
+      handleRes(initRes)
+
+      break
 
 
     default:

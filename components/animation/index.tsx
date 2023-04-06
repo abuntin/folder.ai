@@ -121,9 +121,17 @@ export const BlinkAnimation: React.FC<AnimationProps> = ({
   ...rest
 }) => (
   <m.div
-    initial={{ opacity: 0.2 }}
-    animate={{ opacity: 0.8 }}
-    transition={{ opacity: { duration: 0.7, ease: [0, 0.71, 0.2, 1.01], repeat: Infinity } }}
+    initial={{ opacity: 0.9 }}
+    animate={{ opacity: 0.2 }}
+    exit={{ opacity: 0.9 }}
+    transition={{
+      opacity: {
+        type: "tween",
+        duration: 1.5,
+        damping: 10,
+        repeat: Infinity,
+      },
+    }}
   >
     {children}
   </m.div>

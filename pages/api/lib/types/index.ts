@@ -2,29 +2,31 @@ import { Folder } from "lib/models";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export type FolderManagerRequest = NextApiRequest & {
-  body: { type: "upload" | "list", [k:string]: any }
+  body: { type: "upload" | "list"; [k: string]: any };
 };
 
-export type FolderManagerResponse = NextApiResponse & {
+export type FolderManagerResponse = NextApiResponse & {};
 
-}
+export type FolderManagerHandler = (
+  req: FolderManagerRequest,
+  res: FolderManagerResponse
+) => Promise<void>;
 
-export type FolderManagerHandler = (req: FolderManagerRequest, res: FolderManagerResponse) => Promise<void>
-
-export interface FolderManagerServiceInterface {
-
-  /** 
-   * 
+export interface FolderManagerInterface {
+  /**
+   *
    * @param data with no attributes for now TODO: Add User ID
    * @returns path to root folder TODO: Expand init return vals
-  */
-  init: (data: any) => Promise<{ rootFolder: Folder } | Error>
+   */
+  init: (data: any) => Promise<{ rootFolder: Folder } | Error>;
   /**
    *
    * @param data with src Folder attribute
    * @returns Payload of Folders and Directories | Error
    */
-  list: (data: any) => Promise<{ folders: Folder[], directories: Folder[] } | Error>;
+  list: (
+    data: any
+  ) => Promise<{ folders: Folder[]; directories: Folder[] } | Error>;
 
   /**
    * Create new directory
@@ -60,7 +62,7 @@ export interface FolderManagerServiceInterface {
   /**
    * Upload the given folders into the given directory path
    * @param data
-   * @returns GStorage url 
+   * @returns GStorage url
    */
   upload: (data: any) => Promise<{ url: string } | Error>;
 }

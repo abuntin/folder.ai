@@ -1,11 +1,11 @@
 import { ref, StorageReference } from "firebase/storage";
-import { FolderManagerServiceInterface } from "../../types";
+import { FolderManagerInterface } from "../../types";
 import { root } from "../firebase";
 import { listFolder } from "./list";
 import { uploadFolder } from "./upload";
-import { initFolderService } from './init'
+import { initFolderManager } from "./init";
 
-export class FolderManagerService implements FolderManagerServiceInterface {
+export class FolderManager implements FolderManagerInterface {
   root: StorageReference;
 
   constructor(rootPath = "") {
@@ -15,7 +15,7 @@ export class FolderManagerService implements FolderManagerServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public init = initFolderService;
+  public init = initFolderManager;
   /**
    * {@inheritDoc}
    */
