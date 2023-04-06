@@ -12,11 +12,11 @@ interface DashboardListProps {}
 
 export const DashboardList: React.FC<DashboardListProps> = (props) => {
 
-  const { loading, kernel } = useDashboard()
+  const { loading, kernel, current } = useDashboard()
 
   const Component = React.useMemo(() => (
-    loading ? dynamic(() => import('components/common').then(_ => _.LoadingComponent))
-    : dynamic(() => import('./DashboardListContent').then(_ => _.DashboardListContent))
+    current && !loading ? dynamic(() => import('./DashboardListContent').then(_ => _.DashboardListContent))
+    : dynamic(() => import('components/common').then(_ => _.LoadingComponent))
   ), [loading, kernel])
 
   return <Box sx={{ paddingLeft: padding * 2, paddingRight: padding * 2 }}> <Component /> </Box>
