@@ -60,19 +60,6 @@ interface FileManagerProps {
 }
 
 export const Dashboard: React.FC<FileManagerProps> = (props) => {
-
-  // React.useEffect(() => {
-  //   kernel.on("directoryChange", (newCurrentDirectory: Folder) => {
-  //     if (newCurrentDirectory.path !== folder.path && isActiveFolder) {
-  //       // setIsActiveFolder(false);
-  //     } else if (newCurrentDirectory.path === folder.path && !isActiveFolder) {
-  //       // setIsActiveFolder(true);
-  //     }
-  //   });
-  // return () => event.unsubscribe();
-  // }, [kernel, isActiveFolder, folder.path]);
-
-
   return (
     <DashboardProvider rootPath={rootFolder.path}>
       <DashboardList />

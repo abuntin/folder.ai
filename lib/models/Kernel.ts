@@ -17,46 +17,37 @@ export type KernelEvent =
  */
 
 export class Kernel {
-  protected rootPath = "/";
 
-  protected currDirPath = "/";
+  public current: Folder = null;
 
-  protected currDir?: Folder = null;
+  protected prev: Folder = null;
 
   protected rootFolder: Folder = null;
 
   public folders: Folder[] = null;
 
   /**
-   * Set root path
-   * @param path string
-   */
-  set root(path: string) {
-    this.rootPath = path;
-  }
-
-  /**
-   * Set current path
-   * @param path string
-   */
-  set currentPath(path: string) {
-    this.currDirPath = path;
-  }
-
-  /**
    * Set current directory
    * @param folder Folder
    */
   set currentDirectory(folder: Folder) {
-    this.currDir = folder;
+    this.current = folder;
+  }
+
+   /**
+   * Set prev directory
+   * @param folder Folder
+   */
+   set prevDirectory(folder: Folder) {
+    this.prev = folder;
   }
 
   /**
    * Set root folder
    * @param path string
    */
-  set folder(path: string) {
-    this.rootPath = path;
+  set rootF(folder: Folder) {
+    this.rootFolder = folder;
   }
 
   /**
@@ -66,6 +57,21 @@ export class Kernel {
   set currentFolders(folders: Folder[]) {
     this.folders = folders;
   }
+
+  get isRoot() {
+    return this.current.id === this.rootFolder.id
+  }
+
+  /**
+   * Navigates to previous Folder
+   */
+
+  public goBack = cache(async () => {
+    if (this.isRoot || !this.prev) return;
+
+    this.trigger('load', this.prev)
+
+  })
 
   /**
    * Loads root path from Firebase Storage TODO: Expand with user ID
@@ -99,7 +105,8 @@ export class Kernel {
 
         throw error as Error;
       } else {
-        this.root = payload.rootPath;
+
+        this.rootF = payload.rootFolder
 
         this.trigger("idle", "Loaded Root Folder");
 
@@ -142,8 +149,10 @@ export class Kernel {
 
         return { folders: [], directories: [] };
       } else {
-        if (this.currDirPath !== folder.path) {
-          this.trigger("directoryChange", folder.path);
+        if (this.current.path !== folder.path) {
+          let temp = this.current
+          this.currentDirectory = folder
+          !this.isRoot && (this.prevDirectory = temp)
         }
         this.trigger("idle");
         return payload;
