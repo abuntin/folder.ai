@@ -2,20 +2,22 @@ import { root } from "../firebase";
 import { uploadBytesResumable, ref, getDownloadURL } from "firebase/storage";
 import { Folder } from "lib/models";
 import { PropType } from "lib/types";
-import { FolderManagerServiceInterface } from "../../types";
+import { FolderManagerInterface } from "../../types";
 
-
-export const uploadFolder: PropType<FolderManagerServiceInterface, 'upload'> = async (data: any) => {
-
+export const uploadFolder: PropType<FolderManagerInterface, "upload"> = async (
+  data: any
+) => {
   try {
-
     const { folder } = data;
 
     let destination = folder as Folder;
 
     const destinationRef = ref(root, `${destination.path}/`);
 
-    const uploadTask = uploadBytesResumable(destinationRef, folder.localPath ?? "");
+    const uploadTask = uploadBytesResumable(
+      destinationRef,
+      folder.localPath ?? ""
+    );
 
     uploadTask.on(
       "state_changed",
@@ -35,6 +37,6 @@ export const uploadFolder: PropType<FolderManagerServiceInterface, 'upload'> = a
     );
   } catch (e) {
     console.log(e);
-    return e
+    return e;
   }
 };

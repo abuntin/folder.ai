@@ -1,53 +1,62 @@
-import { Kernel, Folder } from "lib/models";
+import { Folder, Kernel } from "lib/models";
+import { DashboardContext } from "./DashboardContext";
 import React from "react";
-import { Snackbar, Alert } from '@mui/material'
+import { Snackbar, Alert } from "@mui/material";
 
-export const DashboardContext = React.createContext<{
-  kernel: Kernel;
-  current: Folder[];
-  root: Folder;
-  loading: boolean;
-  selected: Folder;
-  view: "grid" | "tile";
-}>(null);
-
-export const useDashboard = () => {
-  const context = React.useContext(DashboardContext);
-
-  if (!context) throw new Error("Dashboard components only");
-
-  return context;
-};
+/**
+ * Wrapper component defining DashboardContext and managing UI state updates
+ * @param React Component default props
+ * @method load: Memoised React function that loads a Folder through the Kernel and performs UI state updates
+ * @member loading: PropType<DashboardContext, 'loading'>
+ * @member selected: PropType<DashboardContext, 'selected'>
+ * @member view: PropType<DashboardContext, 'view'>
+ * @member error: Controls the Snackbar error for user feedback
+ * @returns DashboardProvider Component
+ */
 
 export const DashboardProvider = ({ children, ...rest }) => {
-  const { current: kernel } = React.useRef(new Kernel());
 
-  const [isPending, startTransition] = React.useTransition()
+  const { current: kernel } = React.useRef(new Kernel())
 
-  const [loading, setLoading] = React.useState(true);
+  // const abortController = React.useRef<AbortController>();
 
-  const [root, setRoot] = React.useState<Folder>(null);
+  const [isPending, startTransition] = React.useTransition();
 
-  const [current, setCurrent] = React.useState<Folder[]>([]);
+  const [loading, setLoadingState] = React.useState({ state: true, text: "" });
 
   const [selected, setSelected] = React.useState<Folder>(null);
 
   const [view, setView] = React.useState<"grid" | "tile">("grid");
 
-  const [error, setError] = React.useState('')
+  const [error, setError] = React.useState("");
 
-  const setErrorMessage = (m: string) => startTransition(() => setError(m))
+  const setErrorMessage = (m: string) => startTransition(() => setError(m));
+
+  const setLoading = (state: boolean, text = "") =>
+    startTransition(() => setLoadingState({ state, text }));
+
+  // React.useEffect(() => {
+  //   // If there is a pending fetch request with associated AbortController, abort
+  //   if (abortController.current) {
+  //     abortController.current.abort();
+  //   }
+  //   // Assign a new AbortController for the latest fetch to our useRef variable
+  //   abortController.current = new AbortController();
+  // }, [abortController, loading]);
 
   const load = React.useCallback(
     (srcFolder: Folder, isRoot = false) => {
       setLoading(true);
 
-      if (isRoot) setRoot(srcFolder)
+      if (isRoot) kernel.currentDirectory = srcFolder;
 
       kernel
         .load(srcFolder)
-        .then((folders) => setCurrent(folders))
-        .catch(e => setError(e.message))
+        .then(
+          ({ folders, directories }) =>
+            (kernel.currentFolders = folders.concat(directories))
+        )
+        .catch((e) => setError(e.message))
         .finally(() => startTransition(() => setLoading(false)));
     },
     [kernel]
@@ -56,7 +65,10 @@ export const DashboardProvider = ({ children, ...rest }) => {
   // Load root path
 
   React.useEffect(() => {
-    kernel.getRootFolder().then(rootFolder => load(rootFolder, true)).catch(e => setErrorMessage(e.message))
+    kernel
+      .getRootFolder()
+      .then((rootFolder) => load(rootFolder, true))
+      .catch((e) => setErrorMessage(e.message));
   }, []);
 
   // Listen for change view event
@@ -82,44 +94,73 @@ export const DashboardProvider = ({ children, ...rest }) => {
   // Listen for loading event
 
   React.useEffect(() => {
-    const loadingEvent = kernel.on("loading", () => setLoading(true));
-
-    const loadEvent = kernel.on("load", () => startTransition(() => setLoading(false)));
+    const loadingEvent = kernel.on("loading", (text) =>
+      setLoading(true, text ?? "")
+    );
 
     return () => {
       loadingEvent.unsubscribe();
+    };
+  }, [kernel]);
+
+  // Listen for load event
+
+  React.useEffect(() => {
+    const loadEvent = kernel.on("load", (srcFolder: Folder) =>
+      kernel.load(srcFolder).catch(e => setError(e.message))
+    );
+
+    return () => {
       loadEvent.unsubscribe();
+    };
+  }, [kernel]);
+
+  // Listen for idle event
+
+  React.useEffect(() => {
+    const idleEvent = kernel.on("idle", (text) =>
+      setLoading(false, text ?? "")
+    );
+
+    return () => {
+      idleEvent.unsubscribe();
     };
   }, [kernel]);
 
   // Listen for directory change event
 
   React.useEffect(() => {
-    const event = kernel.on("directoryChange", setCurrent);
+    const event = kernel.on("directoryChange", () => {});
 
     return () => event.unsubscribe();
-
   }, [kernel]);
 
   // Clear error
 
   React.useEffect(() => {
-    if (error !== null) setTimeout(() => setErrorMessage(''), 7000)
-  }, [error])
+    if (error !== null) setTimeout(() => setErrorMessage(""), 7000);
+  }, [error]);
 
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
       return;
     }
   };
 
   return (
     <DashboardContext.Provider
-      value={{ kernel, current, root, loading, selected, view }} // Provide filesystem properties as context
+      value={{ kernel, loading, selected, view }} // Provide filesystem service (kernel) & UI properties as context
       {...rest}
     >
-      <Snackbar open={error !== ''} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+      <Snackbar
+        open={error !== ""}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
           {error}
         </Alert>
       </Snackbar>
@@ -128,6 +169,6 @@ export const DashboardProvider = ({ children, ...rest }) => {
   );
 };
 
-
 export * from "./DealList";
 export * from "./Dashboard";
+export * from './DashboardContext'

@@ -22,14 +22,14 @@ export const DashboardListContent: React.FC<DashboardListContentProps> = (
 ) => {
   const { scrollYProgress } = useScroll();
 
-  const { current, view, kernel, selected } = useDashboard();
+  const { view, kernel, selected } = useDashboard();
 
   const handleSelect = (e: any, folder: Folder) => {
     kernel.trigger("select", folder);
   };
 
   const handleNavigate = (e: any, folder: Folder) => {
-    if (folder.isDirectory) kernel.load(folder)
+    if (folder.isDirectory) kernel.trigger('load', folder)
   };
 
   const FolderComponent = React.useMemo(
@@ -41,7 +41,7 @@ export const DashboardListContent: React.FC<DashboardListContentProps> = (
         : dynamic(() =>
             import("./DashboardItemIcon").then((_) => _.DashboardItemIcon)
           ),
-    [view, selected, current]
+    [view, selected, kernel.folders]
   );
 
   return (
@@ -110,7 +110,7 @@ export const DashboardListContent: React.FC<DashboardListContentProps> = (
             padding,
           }}
         >
-          {current.map((folder: Folder, i) => {
+          {kernel.folders.map((folder: Folder, i) => {
             return (
               <Grid
                 key={i}

@@ -1,14 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { BlinkAnimation } from "components";
+import { BlinkAnimation, useDashboard } from "components";
 import Image from "next/image";
 import logo from "public/logo_transparent.png";
-import { DText } from "./DText";
+import { DText } from "../common/DText";
 
-interface LoadingComponentProps {}
+interface LoadingComponentProps {
+  text?: string
+}
 
-export const LoadingComponent: React.FC<LoadingComponentProps> = (props) => {
+export const LoadingComponent: React.FC<LoadingComponentProps> = ({ text }) => {
 
   return (
     <div
@@ -22,20 +24,16 @@ export const LoadingComponent: React.FC<LoadingComponentProps> = (props) => {
       }}
     >
       <BlinkAnimation>
-        <Image
-          alt="Folder.AI Loading"
-          src={logo}
-          width={250}
-          height={250}
-        />
-        <DText
-          text="Loading..."
+        <Image alt="Folder.AI Loading" src={logo} width={250} height={250} />
+      </BlinkAnimation>
+      <DText
+          text={text ?? 'Loading...'}
           fontWeight="medium"
           fontSize={24}
           textAlign="center"
-          color={theme => theme.palette.common.white}
+          color={(theme) => theme.palette.common.white}
+          sx={{ opacity: 0.5 }}
         />
-      </BlinkAnimation>
     </div>
   );
 };
