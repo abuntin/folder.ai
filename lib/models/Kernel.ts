@@ -1,6 +1,6 @@
 import { Folder } from ".";
 import { cache } from "react";
-import _ from 'lodash'
+import _ from "lodash";
 import events, { EventSubscription } from "@mongez/events";
 
 export type KernelEvent =
@@ -13,7 +13,7 @@ export type KernelEvent =
 
 /**
  * @class Kernel
- * @member rootPath - 
+ * @member rootPath -
  */
 
 export class Kernel {
@@ -32,7 +32,7 @@ export class Kernel {
    * @param path string
    */
   set root(path: string) {
-    this.rootPath = path
+    this.rootPath = path;
   }
 
   /**
@@ -40,7 +40,7 @@ export class Kernel {
    * @param path string
    */
   set currentPath(path: string) {
-    this.currDirPath = path
+    this.currDirPath = path;
   }
 
   /**
@@ -48,7 +48,7 @@ export class Kernel {
    * @param folder Folder
    */
   set currentDirectory(folder: Folder) {
-    this.currDir = folder
+    this.currDir = folder;
   }
 
   /**
@@ -56,7 +56,7 @@ export class Kernel {
    * @param path string
    */
   set folder(path: string) {
-    this.rootPath = path
+    this.rootPath = path;
   }
 
   /**
@@ -64,7 +64,7 @@ export class Kernel {
    * @param folders Folder[]
    */
   set currentFolders(folders: Folder[]) {
-    this.folders = folders
+    this.folders = folders;
   }
 
   /**
@@ -73,38 +73,40 @@ export class Kernel {
    * @returns rootFolder - Folder[]
    */
 
-  public getRootFolder = cache(async (signal: AbortSignal = null): Promise<Folder> => {
-    console.log("Initialised Kernel.getRootFolder()");
+  public getRootFolder = cache(
+    async (signal: AbortSignal = null): Promise<Folder> => {
+      console.log("Initialised Kernel.getRootFolder()");
 
-    this.trigger("loading", "Initialising...");
+      this.trigger("loading", "Initialising...");
 
-    let res = await fetch("api/folder-manager", {
-      body: JSON.stringify({
-        type: "init",
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      signal
-    });
+      let res = await fetch("api/folder-manager", {
+        body: JSON.stringify({
+          type: "init",
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        signal,
+      });
 
-    const { payload, error } = await res.json();
+      const { payload, error } = await res.json();
 
-    console.log("Obtained Kernel.getRootFolder() response", payload, error);
+      console.log("Obtained Kernel.getRootFolder() response", payload, error);
 
-    if (error) {
-      this.trigger("idle", error);
+      if (error) {
+        this.trigger("idle", error);
 
-      throw error as Error;
-    } else {
-      this.root = payload.rootPath;
+        throw error as Error;
+      } else {
+        this.root = payload.rootPath;
 
-      this.trigger("idle", "Loaded Root Folder");
+        this.trigger("idle", "Loaded Root Folder");
 
-      return payload.rootFolder;
+        return payload.rootFolder;
+      }
     }
-  })
+  );
 
   /**
    * Load the given folder
@@ -128,7 +130,7 @@ export class Kernel {
           "Content-Type": "application/json",
         },
         method: "POST",
-        signal
+        signal,
       });
 
       console.log("Obtained Kernel.load() response", res);
@@ -140,14 +142,14 @@ export class Kernel {
 
         return { folders: [], directories: [] };
       } else {
-        // if (this.currDirPath !== path) {
-        //   this.trigger('directoryChange', path)
-        // }
-        this.trigger('idle')
+        if (this.currDirPath !== folder.path) {
+          this.trigger("directoryChange", folder.path);
+        }
+        this.trigger("idle");
         return payload;
       }
     }
-  )
+  );
 
   /**
    * Add event listener to the given event

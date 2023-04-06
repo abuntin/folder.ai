@@ -5,7 +5,7 @@ const handler: FolderManagerHandler = async (req: FolderManagerRequest, res: Fol
 
   const handleRes = (response) => {
 
-    console.log('Obtained FolderManagerResponse, processing...')
+    console.log('Obtained FolderManagerResponse, processing...', response)
     
     if (response instanceof Error) res.status(500).json({ error: response });
 
@@ -25,7 +25,7 @@ const handler: FolderManagerHandler = async (req: FolderManagerRequest, res: Fol
 
   switch (type) {
     case "list":
-      console.log('list req')
+      console.log(data.folder.path)
       let listRes = await folderManagerService.list(data);
 
       handleRes(listRes)
