@@ -11,17 +11,15 @@ import {
 import { padding } from "lib/constants";
 import { DButton, DText } from "components";
 import { capitalise, formatDate, repaymentRange } from "lib/functions";
-import { IOU } from "lib/models";
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "lib/redux";
 import { CloseSharp, EditSharp } from "@mui/icons-material";
 import { set_action_pane } from "lib/redux";
 import { Party } from "lib/types";
-import { getCosignersStatus, getPartyStatus } from "./DealType";
 import { useRouter } from "next/navigation";
 
 interface ActionPaneProps {
-  deal: IOU;
+  deal: any;
   open?: boolean;
 }
 
@@ -61,7 +59,7 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
       return (
         <Grid xs={12} container spacing={2}>
           <Grid xs={6}>
-            <DText text={`${party.name}`} /> {getPartyStatus(party)}
+            <DText text={`${party.name}`} />
           </Grid>
           <Grid xs={6}>
             <DText text={`${party.email}`} />

@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import { Deal } from "lib/models";
 
 export const randomSubstring = (str: string, len: number) => {
 
@@ -36,17 +35,17 @@ export const formatDate = (dateStr: string) => {
 
 }
 
-export const dealProgress = (deal: Deal) => {
+// export const dealProgress = (deal: any) => {
 
-    let total = Object.keys(deal).length;
+//     let total = Object.keys(deal).length;
 
-    let count = 0;
+//     let count = 0;
 
-    for (let val of Object.values(deal)) if (isCompleted(val)) count++
+//     for (let val of Object.values(deal)) if (isCompleted(val)) count++
 
 
-    return (count / total) * 100
-}
+//     return (count / total) * 100
+// }
 
 export const updateObject = (oldObject: object, updatedProperties: object) => {
     return {
