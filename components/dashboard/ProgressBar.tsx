@@ -2,7 +2,6 @@
 
 
 import { Box, BoxProps } from '@mui/system'
-import { DBox } from 'components'
 import { padding, borderRadius } from 'lib/constants'
 import * as React from 'react' 
 

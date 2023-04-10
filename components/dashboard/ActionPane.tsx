@@ -28,7 +28,7 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
 
   const dispatch = useAppDispatch();
 
-  const closeActionPane = (e: any) => {
+  const closeActionPane = (e: React.SyntheticEvent) => {
     dispatch(set_action_pane(""));
   };
 
@@ -52,7 +52,7 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
 
   const router = useRouter();
 
-  const toEditor = (e: any) => router.push("/editor");
+  const toEditor = (e: React.SyntheticEvent) => router.push("/editor");
 
   const renderParty = React.useCallback(
     (party: Party) => {

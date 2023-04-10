@@ -1,15 +1,22 @@
-import { ref, StorageReference } from "firebase/storage";
-import { FolderManagerInterface } from "../../types";
-import { root } from "../firebase";
-import { listFolder } from "./list";
-import { uploadFolder } from "./upload";
-import { initFolderManager } from "./init";
+import { ref, StorageReference } from 'firebase/storage';
+import { FolderManagerInterface } from '../../types';
+import { root } from '../firebase';
+import { listFolder } from './list';
+import { uploadFolder } from './upload';
+import { initFolderManager } from './init';
 
 export class FolderManager implements FolderManagerInterface {
   root: StorageReference;
 
-  constructor(rootPath = "") {
+  constructor(data: Partial<FolderManager>, rootPath = '') {
     this.root = ref(root, rootPath);
+
+    let keys = Object.keys(this);
+
+    for (let key of keys) {
+      if (Object.prototype.hasOwnProperty.call(data, key))
+        this[key] = data[key];
+    }
   }
 
   /**

@@ -1,4 +1,6 @@
+import { useTheme } from "@mui/material";
 import { m, LazyMotion, domAnimation, MotionProps } from "framer-motion";
+import { borderRadius } from "lib/constants";
 
 interface AnimationProps extends MotionProps {}
 
@@ -136,3 +138,24 @@ export const BlinkAnimation: React.FC<AnimationProps> = ({
     {children}
   </m.div>
 );
+
+
+export const FolderAnimation: React.FC<AnimationProps> = ({
+  children,
+  ...rest
+}) => {
+
+  const theme = useTheme()
+
+  return (
+  <m.div
+    style={{ borderRadius }}
+    initial={{ opacity: 1, backgroundColor: 'transparent' }}
+    whileHover={{ transition: { duration: 0.2, ease: [0, 0.71, 0.2, 1.01], } }}
+    {...rest}
+  >
+      {children}
+    </m.div>
+
+  )
+}

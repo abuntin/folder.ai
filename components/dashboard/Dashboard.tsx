@@ -1,8 +1,8 @@
-import { Folder, Kernel, rootFolder } from "lib/models";
+import { Folder, rootFolder } from 'lib/models';
 
-import React from "react";
-import { DashboardProvider, useDashboard } from ".";
-import { DashboardList } from "./DashboardList";
+import React from 'react';
+import { DashboardProvider} from '.';
+import { Container } from './Container';
 
 interface FileManagerProps {
   /**
@@ -59,10 +59,10 @@ interface FileManagerProps {
   onDownload?: (folder: Folder) => void;
 }
 
-export const Dashboard: React.FC<FileManagerProps> = (props) => {
+export const Dashboard: React.FC<FileManagerProps> = props => {
   return (
     <DashboardProvider rootPath={rootFolder.path}>
-      <DashboardList />
+      <Container />
     </DashboardProvider>
   );
 };

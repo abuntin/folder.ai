@@ -1,32 +1,30 @@
-import { Folder } from "lib/models";
-import { NextApiRequest, NextApiResponse } from "next";
+import { Folder } from 'lib/models';
+import { NextApiHandler } from 'next';
 
-export type FolderManagerRequest = NextApiRequest & {
-  body: { type: "upload" | "list"; [k: string]: any };
-};
-
-export type FolderManagerResponse = NextApiResponse & {};
-
-export type FolderManagerHandler = (
-  req: FolderManagerRequest,
-  res: FolderManagerResponse
-) => Promise<void>;
-
+export interface File extends Blob {
+  readonly lastModified: number;
+  readonly name: string;
+  readonly webkitRelativePath: string;
+}
 export interface FolderManagerInterface {
   /**
    *
    * @param data with no attributes for now TODO: Add User ID
-   * @returns path to root folder TODO: Expand init return vals
+   * @returns root Folder
    */
-  init: (data: any) => Promise<{ rootFolder: Folder } | Error>;
+  init: NextApiHandler<{ data: Folder | null; error: string | null }>; 
   /**
    *
    * @param data with src Folder attribute
    * @returns Payload of Folders and Directories | Error
    */
-  list: (
-    data: any
-  ) => Promise<{ folders: Folder[]; directories: Folder[] } | Error>;
+  list: NextApiHandler<{
+    data: {
+      folders: Folder[];
+      directories: Folder[];
+    } | null;
+    error: string | null;
+  }>;
 
   /**
    * Create new directory
@@ -50,19 +48,24 @@ export interface FolderManagerInterface {
   rename: () => void;
 
   /**
-   * Copy the given folders/directories to the given destination
+   * Copy the given Folders/Directories to the given destination
    */
   copy: () => void;
 
   /**
-   * Move the given folders/directories to the given destination
+   * Move the given Folders/Directories to the given destination
    */
   move: () => void;
 
   /**
-   * Upload the given folders into the given directory path
-   * @param data
-   * @returns GStorage url
+   * Upload the given Folders into the given directory path
+   * @param Folders to upload as formidable.FileList, destination Folder TODO: Expand to user ID
+   * @returns GStorage url[]
    */
-  upload: (data: any) => Promise<{ url: string } | Error>;
+  upload: NextApiHandler<{
+    data: {
+      url: string | string[];
+    } | null;
+    error: string | null;
+  }>;
 }

@@ -1,3 +1,3 @@
-export * from "./Dashboard";
-export * from "./DashboardContext";
-export * from './DashboardProvider'
+export * from './Dashboard';
+export * from './Context';
+export * from './Provider';

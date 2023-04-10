@@ -2,6 +2,7 @@ import { Folder } from ".";
 import { cache } from "react";
 import _ from "lodash";
 import events, { EventSubscription } from "@mongez/events";
+import axios from 'axios'
 
 export type KernelEvent =
   | "loading"
@@ -9,7 +10,10 @@ export type KernelEvent =
   | "directoryChange"
   | "load"
   | "select"
-  | "view";
+  | "view"
+  | "upload"
+  | 'error'
+  | 'refresh'
 
 /**
  * @class Kernel
@@ -17,14 +21,15 @@ export type KernelEvent =
  */
 
 export class Kernel {
-
   public current: Folder = null;
 
   protected prev: Folder = null;
 
-  protected rootFolder: Folder = null;
+  public rootFolder: Folder = null;
 
   public folders: Folder[] = null;
+
+  protected folderManagerUrl = (path: string) => `api/folder-manager/${path}`
 
   /**
    * Set current directory
@@ -34,11 +39,11 @@ export class Kernel {
     this.current = folder;
   }
 
-   /**
+  /**
    * Set prev directory
    * @param folder Folder
    */
-   set prevDirectory(folder: Folder) {
+  set prevDirectory(folder: Folder) {
     this.prev = folder;
   }
 
@@ -59,7 +64,7 @@ export class Kernel {
   }
 
   get isRoot() {
-    return this.current.id === this.rootFolder.id
+    return this.current.id === this.rootFolder.id;
   }
 
   /**
@@ -69,97 +74,180 @@ export class Kernel {
   public goBack = cache(async () => {
     if (this.isRoot || !this.prev) return;
 
-    this.trigger('load', this.prev)
-
-  })
+    this.trigger("load", this.prev);
+  });
 
   /**
-   * Loads root path from Firebase Storage TODO: Expand with user ID
+   * Gets root folder from Firebase Storage TODO: Expand with user ID
    * @param signal AbortSignal. Defaults to null
-   * @returns rootFolder - Folder[]
    */
 
-  public getRootFolder = cache(
-    async (signal: AbortSignal = null): Promise<Folder> => {
+  public init = cache(
+    async (signal: AbortSignal = null): Promise<void> => {
       console.log("Initialised Kernel.getRootFolder()");
 
       this.trigger("loading", "Initialising...");
 
-      let res = await fetch("api/folder-manager", {
-        body: JSON.stringify({
-          type: "init",
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        signal,
-      });
+      try {
+        let res = await fetch(this.folderManagerUrl('init'), {
+          body: JSON.stringify({
+            type: "init",
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          signal,
+        });
 
-      const { payload, error } = await res.json();
+        const { data: rootFolder, error }: {
+          data: Folder | null;
+          error: string | null;
+        } = await res.json();
 
-      console.log("Obtained Kernel.getRootFolder() response", payload, error);
+        console.log("Obtained Kernel.getRootFolder() response");
 
-      if (error) {
-        this.trigger("idle", error);
-
-        throw error as Error;
-      } else {
-
-        this.rootF = payload.rootFolder
-
-        this.trigger("idle", "Loaded Root Folder");
-
-        return payload.rootFolder;
+        if (error || !rootFolder) throw new Error(error ?? 'Missing Kernel.init() response data');
+        else {
+          this.rootF = rootFolder;
+          this.currentDirectory = rootFolder
+          this.trigger("idle", "Obtained root folder");
+        }
+      } catch (e) {
+        this.trigger("error", e.message);
+        throw e
       }
     }
   );
 
   /**
-   * Load the given folder
-   * @returns Promise<{ folders: Folder[], directories: Folder[] }>
+   * Load the given folder onto kernel 
    */
   public load = cache(
     async (
       folder: Folder,
       signal: AbortSignal = null
-    ): Promise<{ folders: Folder[]; directories: Folder[] }> => {
-      console.log("Initialised Kernel.load()", folder);
-      // trigger loading event
+    ): Promise<void> => {
+      console.log("Initialised Kernel.load()");
+
       this.trigger("loading");
 
-      let res = await fetch("/api/folder-manager", {
-        body: JSON.stringify({
-          folder,
-          type: "list",
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        signal,
-      });
+      try {
+        let res = await fetch(this.folderManagerUrl('list'), {
+          body: JSON.stringify({
+            folder,
+            type: "list",
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          signal,
+        });
 
-      console.log("Obtained Kernel.load() response", res);
+        console.log("Obtained Kernel.load() response");
 
-      const { payload, error } = await res.json();
+        const { data, error }: {
+          data:{
+            folders: Folder[],
+            directories: Folder[]
+          } | null;
+          error: string | null;
+        } = await res.json();
 
-      if (error) {
-        this.trigger("idle", error);
-
-        return { folders: [], directories: [] };
-      } else {
-        if (this.current.path !== folder.path) {
-          let temp = this.current
-          this.currentDirectory = folder
-          !this.isRoot && (this.prevDirectory = temp)
+        if (error || !data) throw new Error(error ?? 'Missing Kernel.load() response data');
+        else {
+          const { folders, directories } = data
+          if (this.current.path !== folder.path) {
+            let temp = this.current;
+            this.currentDirectory = folder;
+            !this.isRoot && (this.prevDirectory = temp);
+          }
+          this.currentFolders = folders.concat(directories)
+          this.trigger("idle", "Loaded Folder children");
         }
-        this.trigger("idle");
-        return payload;
+      } catch (e) {
+        this.trigger("error", e.message);
       }
     }
   );
 
+  /**
+   * Refreshes the current folder
+   */
+
+  public refresh = cache(async () => {
+
+    if (!this.current) return
+
+    return this.load(this.current)
+
+  })
+  /**
+   * Upload files to given folder
+   * @param payload { folder: Folder, files: File[] }
+   */
+
+  public upload = cache(
+    async (
+      payload: { folder: Folder; files: File[] },
+      onUploadProgress = null
+    ): Promise<string[]> => {
+
+      const { folder, files } = payload;
+
+      console.log("Initialised Kernel.upload()");
+      try {
+        console.log(files, 'payload')
+
+        //this.trigger('uploading', `Uploading ${files.length === 0 ? files[0].name : `${files.length} files`}...`)
+
+        let formData = new FormData();
+
+        formData.append( 'type', 'upload' );
+        formData.append( 'folder', JSON.stringify(folder))
+        files.forEach((file) => formData.append("media", file));
+    
+        const res = await fetch(this.folderManagerUrl('upload'), {
+          method: "POST",
+          body: formData,
+        });
+
+        // const res = await axios.request({
+        //   method: 'POST',
+        //   url: this.folderManagerUrl('upload'),
+        //   data: formData,
+        //   onUploadProgress,
+        // })
+    
+        const {
+          data,
+          error,
+        }: {
+          data:{
+            url: string | string[];
+          } | null;
+          error: string | null;
+        } = await res.json();
+    
+        if (error || !data) throw new Error(error ?? 'Missing Kernel.upload() response data')
+    
+        console.log("File was uploaded successfully:", payload);
+
+        this.trigger("idle", `Uploaded ${files.length === 0 ? files[0].name : `${files.length} files`}.`);
+
+        //alert(`File available to download at ${Array.isArray(data.url) ? data.url : [data.url]}`)]]
+
+        console.log(data.url)
+        
+        return Array.isArray(data.url) ? data.url : [data.url];
+
+      } catch (error) {
+        console.error(error);
+        this.trigger("error", error.message);
+      }
+    }
+  );
   /**
    * Add event listener to the given event
    * @param event KernelEvent
