@@ -1,6 +1,6 @@
 "use client";
 
-export * from "./AddButton";
+export * from "../dashboard/AddButton";
 export * from "./DateInput";
 export * from "./DividerGradient";
 export * from "./DAutocomplete";

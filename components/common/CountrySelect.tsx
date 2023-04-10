@@ -27,7 +27,7 @@ export const CountrySelect: React.FC<CountrySelectProps<string>> = (props) => {
   );
 
   const handleChange = (
-    e: any,
+    e: React.SyntheticEvent,
     value: string,
     reason: "createOption" | "selectOption" | "removeOption" | "blur" | "clear"
   ) => {
