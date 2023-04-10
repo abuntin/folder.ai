@@ -24,7 +24,7 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
 
   const { useUpload, kernel } = useDashboard();
 
-  const { dragOver, handleDrag, handleDrop, uploadProgress } = useUpload();
+  const { dragOver, handleDrag, handleDrop } = useUpload();
 
   return (
     <AppearAnimationChild>
@@ -43,9 +43,9 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
             '&:hover': { backgroundColor: 'background.paper' },
           }}
           onDrop={e => handleDrop(e, kernel, folder)}
-          onDragEnter={handleDrag}
-          onDragOver={handleDrag}
-          onDragLeave={handleDrag}
+          onDragEnter={e => handleDrag(e, true)}
+          onDragOver={e => handleDrag(e, true)}
+          onDragLeave={e => handleDrag(e, true)}
           {...rest}
         >
           <form action="" onSubmit={e => e.preventDefault()}>
@@ -82,7 +82,6 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
             color={theme => theme.palette.common.white}
             fontWeight="regular"
           />
-          {uploadProgress !== '' && <ProgressBar progress={uploadProgress} />}
         </Box>
       </FolderAnimation>
     </AppearAnimationChild>

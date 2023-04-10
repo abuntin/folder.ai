@@ -29,7 +29,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
         mode,
         grey: 600 as Partial<Color>,
         text:  { secondary: '#110010', primary: '#fafafa', disabled: '#E5E5E5' },
-        background: { paper: 'rgba(229,229,229,0.3)', default: 'rgba(235, 235, 235, 0.3)'},
+        background: { paper: 'rgba(229,229,229,0.3)', default: 'rgba(250, 250, 250, 0.3)'},
     }) : ({
         common: { black: '#111010', white: '#fafafa'},
         primary: { main: '#fafafa', light: '#1b1a22' },
@@ -41,7 +41,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
         mode,
         grey: 600 as Partial<Color>,
         text:  { primary: '#fafafa', secondary: '#110010', disabled: '#E5E5E5' },
-        background: { paper: 'rgba(229,229,229,0.3)', default: 'rgba(235, 235, 235, 0.5)'},
+        background: { paper: 'rgba(229,229,229,0.3)', default: 'rgba(250, 250, 250, 0.5)'},
     }) as PaletteOptions
 
 

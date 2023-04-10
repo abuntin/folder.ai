@@ -6,6 +6,7 @@ export interface DashboardContextInterface {
   kernel: Kernel;
   loading: { state: boolean; text: string };
   uploading: { state: boolean; progress: string };
+  parentDragOver: { state: boolean; setParentDragOver: React.Dispatch<React.SetStateAction<boolean>>}
   selected: Folder;
   view: 'grid' | 'tile';
   useUpload: typeof useUpload;
@@ -38,6 +39,8 @@ export const useUpload = () => {
 
   const [uploadProgress, setUploadProgress] = React.useState('');
 
+  const { parentDragOver } = useDashboard()
+
   // handle upload progress
 
   const onUploadProgress = progressEvent => {
@@ -55,12 +58,13 @@ export const useUpload = () => {
     setUploadPane(state ?? uploadPane ? false : true);
 
   // handle drag events
-  const handleDrag = function (e: React.SyntheticEvent) {
+  const handleDrag = function (e: React.SyntheticEvent, isChild = false) {
     e.preventDefault();
     e.stopPropagation();
 
     if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragOver(true);
+      isChild ? parentDragOver.setParentDragOver(false) : parentDragOver.setParentDragOver(true)
     } else if (e.type === 'dragleave') {
       setDragOver(false);
     }
@@ -76,6 +80,8 @@ export const useUpload = () => {
     e.stopPropagation();
 
     setDragOver(false);
+
+    parentDragOver.setParentDragOver(false)
 
     if (!e.dataTransfer.files) {
       kernel.trigger('error', 'Error adding files to folder');
