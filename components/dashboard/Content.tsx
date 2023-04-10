@@ -13,7 +13,11 @@ import * as React from 'react';
 interface ContentProps {}
 
 export const Content: React.FC<ContentProps> = props => {
-  const { view, kernel, selected } = useDashboard();
+  const { view, kernel, selected, useUpload, parentDragOver } = useDashboard();
+
+  let { current } = kernel;
+
+  const { dragOver, handleDrag, handleDrop, uploadProgress } = useUpload();
 
   const handleSelect = (e: React.SyntheticEvent, folder: Folder) => {
     kernel.trigger('select', folder);
@@ -40,9 +44,14 @@ export const Content: React.FC<ContentProps> = props => {
         mt: margin * 2,
         mb: margin * 2,
         borderRadius,
-        backgroundColor: 'background.default',
+        backgroundColor:
+          (parentDragOver.state && dragOver) ? 'background.default' : 'background.paper',
         padding,
       }}
+      onDrop={e => handleDrop(e, kernel, current)}
+      onDragEnter={handleDrag}
+      onDragOver={handleDrag}
+      onDragLeave={handleDrag}
     >
       <Grid
         xs={12}

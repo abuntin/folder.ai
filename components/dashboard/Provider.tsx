@@ -2,6 +2,7 @@ import { Folder, Kernel } from 'lib/models';
 import { DashboardContext, useUpload } from './Context';
 import React from 'react';
 import { Snackbar, Alert } from '@mui/material';
+import { borderRadius } from 'lib/constants'
 
 /**
  * Wrapper component defining DashboardContext and managing UI state updates
@@ -23,11 +24,17 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
   const [selected, setSelected] = React.useState<Folder>(null);
 
+  const [parentDragOver, setParentDragOver] = React.useState(false)
+
   const [view, setView] = React.useState<'grid' | 'tile'>('grid');
 
   const [error, setError] = React.useState('');
 
   const [success, setSuccess] = React.useState('');
+
+  const [warning, setWarning] = React.useState('');
+
+  const setWarningMessage = (m: string) => startTransition(() => setWarning(m));
 
   const setErrorMessage = (m: string) => startTransition(() => setError(m));
 
@@ -104,11 +111,26 @@ export const DashboardProvider = ({ children, ...rest }) => {
     };
   }, [kernel]);
 
+   // Listen for warning event
+
+   React.useEffect(() => {
+    const warningEvent = kernel.on('warning', warning => {
+      setWarningMessage(warning ?? '');
+    });
+
+    return () => {
+      warningEvent.unsubscribe();
+    };
+  }, [error]);
+
+
   // Listen for idle event
 
   React.useEffect(() => {
     const idleEvent = kernel.on('idle', success => {
       setLoading(false);
+      setErrorMessage('')
+      setWarningMessage('')
       setSuccessMessage(success ?? '');
     });
 
@@ -141,17 +163,23 @@ export const DashboardProvider = ({ children, ...rest }) => {
     return () => refreshEvent.unsubscribe();
   });
 
+  // Clear warning
+
+  React.useEffect(() => {
+    if (error && error !== '') setTimeout(() => setErrorMessage(''), 6000);
+  }, [error]);
+
   // Clear error
 
   React.useEffect(() => {
-    if (error && error !== '') setTimeout(() => setErrorMessage(''), 7000);
+    if (error && error !== '') setTimeout(() => setErrorMessage(''), 6000);
   }, [error]);
 
   // Clear success
 
   React.useEffect(() => {
     if (success && success !== '')
-      setTimeout(() => setSuccessMessage(''), 7000);
+      setTimeout(() => setSuccessMessage(''), 6000);
   }, [success]);
 
   const handleClose = (
@@ -174,25 +202,17 @@ export const DashboardProvider = ({ children, ...rest }) => {
         view,
         useUpload,
         uploading: { state: false, progress: '0' },
+        parentDragOver: { state: parentDragOver, setParentDragOver } 
       }} // Provide filesystem service (kernel) & UI properties as context
       {...rest}
     >
       <Snackbar
-        open={error !== ''}
-        autoHideDuration={6000}
+        open={(error !== '' || warning !== '' || success !== '')}
+        //autoHideDuration={6000}
         onClose={handleClose}
       >
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          {error}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={success !== ''}
-        autoHideDuration={6000}
-        onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          {success}
+        <Alert onClose={handleClose} severity={ error !== '' ? "error" : warning !== '' ? 'warning' : 'success'} sx={{ width: '100%', borderRadius }}>
+          {error !== '' ? error: warning !== '' ? warning : success}
         </Alert>
       </Snackbar>
       {children}

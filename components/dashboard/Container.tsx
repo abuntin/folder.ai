@@ -12,7 +12,7 @@ interface ContainerProps {}
 export const Container: React.FC<ContainerProps> = props => {
   const { loading, kernel } = useDashboard();
 
-  const { folders } = kernel;
+  const { folders, current } = kernel;
 
   const HeaderComponent = React.useMemo(
     () => dynamic(() => import('./Header').then(_ => _.Header)),
@@ -21,7 +21,7 @@ export const Container: React.FC<ContainerProps> = props => {
 
   const BodyComponent = React.useMemo(() => {
     console.log('Component changed, loading...');
-    if (folders && !loading.state)
+    if (folders && current && !loading.state)
       return dynamic(() => import('./Content').then(_ => _.Content));
     else
       return dynamic(() => import('./Loading').then(_ => _.LoadingComponent));
