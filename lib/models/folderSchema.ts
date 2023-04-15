@@ -14,7 +14,7 @@ const newFolder = (): Folder => {
         isDirectory: false,
         name: faker.system.fileName(),
         path: faker.system.directoryPath(),
-        size: faker.datatype.number({ min: 1, max: 100000 }),
+        //size: faker.datatype.number({ min: 1, max: 100000 }),
     }
 
     return node;
