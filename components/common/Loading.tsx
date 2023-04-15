@@ -26,14 +26,14 @@ export const LoadingComponent: React.FC<LoadingComponentProps> = ({ text }) => {
       <BlinkAnimation>
         <Image alt="Folder.AI Loading" src={logo} width={250} height={250} />
       </BlinkAnimation>
-      <DText
+      {/* <DText
           text={text ?? 'Loading...'}
           fontWeight="medium"
           fontSize={24}
           textAlign="center"
           color={(theme) => theme.palette.common.white}
           sx={{ opacity: 0.5 }}
-        />
+        /> */}
     </div>
   );
 };

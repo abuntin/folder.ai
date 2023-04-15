@@ -1,7 +1,8 @@
 import { Folder, rootFolder } from 'lib/models';
+import dynamic from 'next/dynamic';
 
 import React from 'react';
-import { DashboardProvider} from '.';
+import { DashboardProvider, useDashboard} from '.';
 import { Container } from './Container';
 
 interface FileManagerProps {

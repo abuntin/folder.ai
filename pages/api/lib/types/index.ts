@@ -1,4 +1,4 @@
-import { Folder } from 'lib/models';
+import { Directory, Folder } from 'lib/models';
 import { NextApiHandler } from 'next';
 
 export interface File extends Blob {
@@ -10,61 +10,86 @@ export interface FolderManagerInterface {
   /**
    *
    * @param data with no attributes for now TODO: Add User ID
-   * @returns root Folder
+   * @returns Root Directory | Error message
    */
-  init: NextApiHandler<{ data: Folder | null; error: string | null }>; 
+  init: NextApiHandler<{ data: Directory | null; error: string | null }>;
   /**
    *
    * @param data with src Folder attribute
-   * @returns Payload of Folders and Directories | Error
+   * @returns Payload of Folders and Directories | Error message
    */
   list: NextApiHandler<{
     data: {
       folders: Folder[];
-      directories: Folder[];
+      directories: Directory[];
     } | null;
     error: string | null;
   }>;
 
   /**
-   * Create new directory
+   * Create new Directory TODO: Add metadata hidden file
    *
    * First parameter will be the directory name,
    * second parameter will be the directory path that will be created into.
    */
-  createDirectory: () => void;
+  create: NextApiHandler<{
+    data: { url: string },
+    error: string | null
+  }>;
 
   /**
-   * Delete directories/folders
+   * Delete Directory | Folder
+   * @param Folder to delete
+   * @returns Trivial boolean to indicate delete success | Error message
    */
-  delete: () => void;
+  delete: NextApiHandler<{
+    data: boolean | null;
+    error: string | null;
+  }>;
 
   /**
-   * Rename directory | folder
+   * Rename Directory | Folder
    *
    * The first parameter will be the old path,
    * the second parameter will be the new path.
    */
-  rename: () => void;
+  rename: NextApiHandler<{
+    data: { url: string },
+    error: string | null
+  }>;
 
   /**
-   * Copy the given Folders/Directories to the given destination
+   * Copy the given Folders to the given destination Directory
+   * @returns GStorage url[] of new Folder locations | Error message
    */
-  copy: () => void;
+  copy: NextApiHandler<{
+    data: {
+      urls: string[];
+    } | null;
+    error: string | null;
+  }>;
 
   /**
-   * Move the given Folders/Directories to the given destination
+   * Move the given Folders | Directories to the given destination
+   * @param folder Folder to move
+   * @param destination Destination Directory
+   * @returns GStorage url[] of new Folder locations | Error message
    */
-  move: () => void;
+  move: NextApiHandler<{
+    data: {
+      urls: string[];
+    } | null;
+    error: string | null;
+  }>;
 
   /**
-   * Upload the given Folders into the given directory path
-   * @param Folders to upload as formidable.FileList, destination Folder TODO: Expand to user ID
-   * @returns GStorage url[]
+   * Upload the given Folders into the given Directory
+   * @param Folders to upload as formidable.FileList, destination Directory TODO: Expand to user ID
+   * @returns S3.PresignedPost[]
    */
   upload: NextApiHandler<{
     data: {
-      url: string | string[];
+      urls: string[];
     } | null;
     error: string | null;
   }>;

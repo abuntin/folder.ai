@@ -10,7 +10,7 @@ import { AppearAnimationParent } from 'components/animation';
 interface ContainerProps {}
 
 export const Container: React.FC<ContainerProps> = props => {
-  const { loading, kernel } = useDashboard();
+  const { loading, kernel, appbar } = useDashboard();
 
   const { folders, current } = kernel;
 
@@ -28,7 +28,7 @@ export const Container: React.FC<ContainerProps> = props => {
   }, [loading, folders]);
 
   return (
-    <Box sx={{ paddingLeft: padding * 2, paddingRight: padding * 2 }}>
+    <Box sx={{ paddingLeft: padding * 2, paddingRight: padding * 2 }} onContextMenu={e => e.preventDefault()}>
       <AppearAnimationParent>
         <Grid
           container
@@ -41,6 +41,7 @@ export const Container: React.FC<ContainerProps> = props => {
             borderRadius,
             bgColor: theme => theme.palette.common.white,
           }}
+          //onClick={e => kernel.trigger('select', null)}
         >
           <HeaderComponent />
           <BodyComponent />
