@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
-import { deleteFn, copyS3 } from '../../functions';
+import { deleteFn, copyS3, copy } from '../../functions';
 
 export const renameFolder: PropType<FolderManagerInterface, 'rename'> = async (
   req,
@@ -45,16 +45,16 @@ export const renameFolder: PropType<FolderManagerInterface, 'rename'> = async (
 
     let src = { ..._src, name, path: newPath } as Folder
 
-    let etag = await copyS3(src, dest);
+    let url = await copy(src, dest) //await copyS3(src, dest);
 
-    if (etag) {
+    if (url) {
       let value = await deleteFn(_src);
 
       if (value) {
         
         console.log(`Renamed ${_src.name} to ${name} in ${directory.name}`)
 
-        return res.status(200).json({ data: { url: etag }, error: null})
+        return res.status(200).json({ data: { url }, error: null})
 
       } else
         return res.status(500).json({

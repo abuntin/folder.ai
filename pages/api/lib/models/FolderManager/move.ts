@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
-import { deleteFn, copyS3 } from '../../functions';
+import { deleteFn, copyS3, copy } from '../../functions';
 
 export const moveFolders: PropType<FolderManagerInterface, 'move'> = async (
   req,
@@ -44,13 +44,13 @@ export const moveFolders: PropType<FolderManagerInterface, 'move'> = async (
     let urls = [];
 
     for (let src of srcList) {
-      let etag = await copyS3(src, dest);
+      let url = await copy(src, dest) //await copyS3(src, dest);
 
-      if (etag) {
+      if (url) {
         let value = await deleteFn(src);
 
         if (value) {
-          urls.push(etag);
+          urls.push(url);
         } else
           return res.status(500).json({
             data: null,

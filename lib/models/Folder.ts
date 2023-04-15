@@ -1,5 +1,6 @@
 import { GetObjectCommandOutput, _Object as S3Object } from '@aws-sdk/client-s3'
 import { Troubleshoot } from '@mui/icons-material';
+import { FullMetadata } from 'firebase/storage';
 
 export class Folder {
   /**
@@ -34,7 +35,19 @@ export class Folder {
   /**
    * Folder.AI + Google Cloud storage metadata
    */
-  metadata: GetObjectCommandOutput = null;
+  metadata?: GetObjectCommandOutput = null;
+
+  /**
+   * GStorage URL
+   */
+
+  url?: string;
+
+  /**
+   * GStorage Metadata
+   */
+
+  fullMetadata?: FullMetadata = null;
 
   constructor(data: any) {
     const keys = Object.keys(this);
@@ -57,6 +70,17 @@ export class Folder {
 
     return parts[parts.length - 2] == '' ? parts[0] : isDirectory ? parts[parts.length - 2] : parts[parts.length - 1] 
   }
+
+  static fromStorageReference = async (fullMetadata: FullMetadata, isDirectory = false) => ({
+    name: fullMetadata.name,
+    path: fullMetadata.fullPath,
+    url: fullMetadata.ref.toString(),
+    isDirectory,
+    children: [],
+    linkedFolders: [],
+    fullMetadata,
+    id: fullMetadata.generation
+} as Folder)
 
   static fromAWS = (
     metadata: GetObjectCommandOutput,

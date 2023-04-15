@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
-import { copyS3 } from '../../functions';
+import { copyS3, copy } from '../../functions';
 
 export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
   req,
@@ -34,9 +34,9 @@ export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
     let urls = [];
 
     for (let src of srcList) {
-      let etag = await copyS3(src, dest);
+      let url = await copy(src, dest); //await copyS3(src, dest)
 
-      urls.push(etag);
+      urls.push(url);
     }
 
     if (urls.length === folders.length) {

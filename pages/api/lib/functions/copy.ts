@@ -6,7 +6,7 @@ import { upload } from './upload';
 export const copy = (
   src: Folder,
   dest: Directory
-): Promise<{ urls: string[] }> =>
+): Promise<string> =>
   new Promise(async (resolve, reject) => {
     try {
       console.log(src, dest);
@@ -42,9 +42,9 @@ export const copy = (
 
       const buffer = await getBytes(srcRef);
 
-      let value = await upload(buffer, newMetadata, destRef);
+      let url = await upload(buffer, newMetadata, destRef);
 
-      resolve(value);
+      resolve(url);
     } catch (e) {
       reject(e.message);
     }
