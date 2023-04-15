@@ -22,9 +22,11 @@ interface DashboardItemProps extends BoxProps {
 export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
   const { folder, selected, ...rest } = props;
 
-  const { useUpload, kernel } = useDashboard();
+  const { useUpload, useDashboardApi, kernel } = useDashboard();
 
-  const { dragOver, handleDrag, handleDrop } = useUpload();
+  const { clipboard } = useDashboardApi();
+
+  const { dragOver, handleDrag, handleDrop } = useUpload()
 
   return (
     <AppearAnimationChild>

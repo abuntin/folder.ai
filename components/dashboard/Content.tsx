@@ -15,7 +15,7 @@ interface ContentProps {}
 export const Content: React.FC<ContentProps> = props => {
   const { view, kernel, selected, useUpload, parentDragOver } = useDashboard();
 
-  let { current } = kernel;
+  let { current, folders } = kernel;
 
   const { dragOver, handleDrag, handleDrop, uploadProgress } = useUpload();
 
@@ -35,6 +35,44 @@ export const Content: React.FC<ContentProps> = props => {
     [view, kernel.folders]
   );
 
+  const handleKeyPress = React.useMemo(() => {
+    let index = selected ? folders.indexOf(selected) : -1
+    if (view == 'tile') {
+      return (e: React.KeyboardEvent<HTMLDivElement>) => {
+        console.log(e.key)
+        if (e.key == 'ArrowDown') {
+          if (index == -1 || index == folders.length - 1) kernel.trigger('select', folders[0])
+          else kernel.trigger('select', folders[index + 1])
+        }
+
+        else if (e.key == 'ArrowUp') {
+          if (index == -1 || index == 0) kernel.trigger('select', folders[folders.length - 1])
+          else kernel.trigger('select', folders[index - 1])
+        }
+        else if (e.key == 'Enter' && selected && selected.isDirectory) {
+          handleNavigate(e, selected)
+        }
+      }
+    }
+
+    else return (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key == 'ArrowRight') {
+        if (index == -1 || index == folders.length - 1) kernel.trigger('select', folders[0])
+        else kernel.trigger('select', folders[index + 1])
+      }
+
+      else if (e.key == 'ArrowLeft') {
+        if (index == -1 || index == 0) kernel.trigger('select', folders[folders.length - 1])
+        else kernel.trigger('select', folders[index - 1])
+      }
+      else if (e.key == 'Enter' && selected && selected.isDirectory) {
+        handleNavigate(e, selected)
+      }
+    }
+    
+  }, [view, folders, selected])
+
+
   return (
     <Grid
       xs={12}
@@ -52,35 +90,44 @@ export const Content: React.FC<ContentProps> = props => {
       onDragEnter={handleDrag}
       onDragOver={handleDrag}
       onDragLeave={handleDrag}
+      //onClick={e => kernel.trigger('select', null)}
     >
       <Grid
         xs={12}
         container
         spacing={4}
         display="flex"
-        justifyContent="flex-start"
-        alignItems="flex-start"
+        justifyContent="space-between"
+        alignItems="stretch"
       >
-        <Grid xs={2}>
+        <Grid xs={4}>
           {!kernel.isRoot && (
             <IconButton onClick={e => kernel.goBack()} color="secondary">
               <KeyboardArrowLeft fontSize="medium" />
             </IconButton>
           )}
         </Grid>
-        <Grid xs={2} display="flex" justifyContent="flex-start">
+        <Grid xs={4} display="flex" justifyContent="center">
           <DText text={kernel.current.name} variant="h6" fontWeight="medium" />
         </Grid>
-        <Grid xs />
+        <Grid xs={4} />
       </Grid>
 
-      {kernel.folders.map((folder: Folder, i) => {
+      {
+        !folders.length && (
+          <Grid xs={12} display='flex' alignItems='center' justifyContent='center'>
+            <DText text='Nothing to see here yet! Drop some files or create a new Directory' variant='body1' fontWeight='medium' />
+          </Grid>
+        )
+      }
+      {folders.length !== 0 && folders.map((folder: Folder, i) => {
         return (
           <Grid
             key={i}
             xs={view === 'grid' ? 4 : 12}
             onDoubleClick={e => handleNavigate(e, folder)}
             onClick={e => handleSelect(e, folder)}
+            onKeyDown={handleKeyPress}
           >
             <HoverAnimation>
               <FolderComponent

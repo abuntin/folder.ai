@@ -1,8 +1,9 @@
 import { Folder, Kernel } from 'lib/models';
-import { DashboardContext, useUpload } from './Context';
+import { DashboardContext, useDashboardApi, useUpload } from './Context';
 import React from 'react';
 import { Snackbar, Alert } from '@mui/material';
-import { borderRadius } from 'lib/constants'
+import { borderRadius } from 'lib/constants';
+import { DashboardApiProvider } from './ApiProvider';
 
 /**
  * Wrapper component defining DashboardContext and managing UI state updates
@@ -18,15 +19,19 @@ import { borderRadius } from 'lib/constants'
 export const DashboardProvider = ({ children, ...rest }) => {
   const { current: kernel } = React.useRef(new Kernel());
 
+  const controller = new AbortController();
+
   const [isPending, startTransition] = React.useTransition();
 
   const [loading, setLoadingState] = React.useState({ state: true, text: '' });
 
   const [selected, setSelected] = React.useState<Folder>(null);
 
-  const [parentDragOver, setParentDragOver] = React.useState(false)
+  const [parentDragOver, setParentDragOver] = React.useState(false);
 
   const [view, setView] = React.useState<'grid' | 'tile'>('grid');
+
+  const [appbar, setAppBar] = React.useState<'min' | 'max' | null>(null);
 
   const [error, setError] = React.useState('');
 
@@ -50,11 +55,21 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
   React.useEffect(() => {
     try {
-      kernel.init().then(() => kernel.load(kernel.rootFolder));
+      kernel.init().then(() => kernel.load(kernel.rootDirectory));
     } catch (e) {
       setErrorMessage(e.message);
     }
   }, []);
+
+  // Listen for change appbar event
+
+  React.useEffect(() => {
+    const appbarEvent = kernel.on('appbar', setAppBar);
+
+    return () => {
+      appbarEvent.unsubscribe();
+    };
+  }, [kernel]);
 
   // Listen for change view event
 
@@ -69,7 +84,12 @@ export const DashboardProvider = ({ children, ...rest }) => {
   // Listen for select event
 
   React.useEffect(() => {
-    const selectEvent = kernel.on('select', setSelectedFolder);
+    const selectEvent = kernel.on('select', (folder: Folder) => {
+      if (folder != null && appbar == 'min') {
+        kernel.trigger('appbar', 'max');
+      }
+      setSelectedFolder(folder);
+    });
 
     return () => {
       selectEvent.unsubscribe();
@@ -104,16 +124,19 @@ export const DashboardProvider = ({ children, ...rest }) => {
   // Listen for load event
 
   React.useEffect(() => {
-    const loadEvent = kernel.on('load', kernel.load);
+    const loadEvent = kernel.on('load', directory => {
+      kernel.load(directory);
+      setSelectedFolder(null);
+    });
 
     return () => {
       loadEvent.unsubscribe();
     };
   }, [kernel]);
 
-   // Listen for warning event
+  // Listen for warning event
 
-   React.useEffect(() => {
+  React.useEffect(() => {
     const warningEvent = kernel.on('warning', warning => {
       setWarningMessage(warning ?? '');
     });
@@ -123,14 +146,13 @@ export const DashboardProvider = ({ children, ...rest }) => {
     };
   }, [error]);
 
-
   // Listen for idle event
 
   React.useEffect(() => {
     const idleEvent = kernel.on('idle', success => {
       setLoading(false);
-      setErrorMessage('')
-      setWarningMessage('')
+      setErrorMessage('');
+      setWarningMessage('');
       setSuccessMessage(success ?? '');
     });
 
@@ -198,24 +220,31 @@ export const DashboardProvider = ({ children, ...rest }) => {
       value={{
         kernel,
         loading,
+        appbar,
         selected,
         view,
+        parentDragOver: { state: parentDragOver, setParentDragOver },
+        useDashboardApi,
         useUpload,
-        uploading: { state: false, progress: '0' },
-        parentDragOver: { state: parentDragOver, setParentDragOver } 
       }} // Provide filesystem service (kernel) & UI properties as context
       {...rest}
     >
       <Snackbar
-        open={(error !== '' || warning !== '' || success !== '')}
+        open={error !== '' || warning !== '' || success !== ''}
         //autoHideDuration={6000}
         onClose={handleClose}
       >
-        <Alert onClose={handleClose} severity={ error !== '' ? "error" : warning !== '' ? 'warning' : 'success'} sx={{ width: '100%', borderRadius }}>
-          {error !== '' ? error: warning !== '' ? warning : success}
+        <Alert
+          onClose={handleClose}
+          severity={
+            error !== '' ? 'error' : warning !== '' ? 'warning' : 'success'
+          }
+          sx={{ width: '100%', borderRadius }}
+        >
+          {error !== '' ? error : warning !== '' ? warning : success}
         </Alert>
       </Snackbar>
-      {children}
+      <DashboardApiProvider>{children}</DashboardApiProvider>
     </DashboardContext.Provider>
   );
 };

@@ -16,29 +16,14 @@ import {
 } from '@mui/material';
 import { Folder } from 'lib/models';
 import * as React from 'react';
-import { DText, useDashboard } from 'components';
+import { DText, useDashboard, ExpandMoreButton } from 'components';
 
 interface DashboardItemTileProps extends BoxProps {
   folder: Folder;
   selected: boolean;
 }
 
-interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean;
-}
-
 interface EditButtonProps extends IconButtonProps {}
-
-const ExpandMoreButton = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-  marginLeft: 'auto',
-  transition: theme.transitions.create('transform', {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
 
 const EditButton = styled((props: EditButtonProps) => {
   const { disabled, ...other } = props;
@@ -46,7 +31,7 @@ const EditButton = styled((props: EditButtonProps) => {
 })(({ theme, disabled }) => ({}));
 
 export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
-  const { folder, selected } = props;
+  const { folder, selected, ...rest } = props;
 
   const { name } = folder;
 
@@ -65,7 +50,11 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
       onDragEnter={e => handleDrag(e, true)}
       onDragOver={e => handleDrag(e, true)}
       onDragLeave={e => handleDrag(e, true)}
+      {...rest}
     >
+      <form action="" onSubmit={e => e.preventDefault()}>
+        <input type="file" style={{ display: 'none' }} name="file" multiple />
+      </form>
       <Grid
         container
         spacing={2}
@@ -100,9 +89,7 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
                 justifyContent="space-around"
                 alignItems="center"
               >
-                <ExpandMoreButton expand={selected}>
-                  <KeyboardArrowRightSharp />
-                </ExpandMoreButton>
+                <ExpandMoreButton expand={false} />
               </Grid>
             )}
           </Grid>

@@ -6,6 +6,9 @@ export const ColorModeContext = React.createContext<{ mode: PaletteMode, toggleC
     toggleColorMode: { toggle: () => {}}
 });
 
+export const bgAppbarLight = `rgba(100, 100, 100, 1)`
+
+export const bgAppbarDark = `rgba(100, 100, 100, 1)`
 
 export const bgLight = `linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(43,54,200,1) 100%),
 linear-gradient(45deg, rgba(124,199,185,1) 0%, rgba(254,177,121,1) 65%, rgba(255,255,0,1) 100%)`
@@ -26,6 +29,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
         info: { main: '#14213d' }, // blue
         success: { main: '#578346' }, // green
         disabled: { main: `rgba(229,229,229,0.5)`},
+        error: { main: '#ff0033' }, // red 
         mode,
         grey: 600 as Partial<Color>,
         text:  { secondary: '#110010', primary: '#fafafa', disabled: '#E5E5E5' },

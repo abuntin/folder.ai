@@ -5,13 +5,20 @@ import React from 'react';
 export interface DashboardContextInterface {
   kernel: Kernel;
   loading: { state: boolean; text: string };
-  uploading: { state: boolean; progress: string };
   parentDragOver: { state: boolean; setParentDragOver: React.Dispatch<React.SetStateAction<boolean>>}
   selected: Folder;
   view: 'grid' | 'tile';
+  appbar: 'min' | 'max',
+  useDashboardApi: typeof useDashboardApi;
   useUpload: typeof useUpload;
 }
 
+export interface DashboardApiContextInterface {
+  clipboard: Folder[];
+}
+
+
+export const DashboardApiContext = React.createContext<DashboardApiContextInterface>(null)
 /**
  * DashboardContext Object
  * @type React.Context<DashboardContextInterface>
@@ -26,6 +33,18 @@ export const DashboardContext =
  */
 export const useDashboard = () => {
   const context = React.useContext(DashboardContext);
+
+  if (!context) throw new Error('Dashboard components only');
+
+  return context;
+};
+
+/**
+ * Hook to access filesystem service and state from DashboardProvider children
+ * @returns DashboardContext
+ */
+export const useDashboardApi = () => {
+  const context = React.useContext(DashboardApiContext);
 
   if (!context) throw new Error('Dashboard components only');
 
@@ -101,7 +120,7 @@ export const useUpload = () => {
       kernel.trigger(
         'upload',
         {
-          folder: folder ?? kernel.current,
+          directory: folder ?? kernel.current,
           files: validFiles,
         },
         onUploadProgress
@@ -126,7 +145,7 @@ export const useUpload = () => {
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
       kernel.trigger('upload', {
-        folder: folder ?? kernel.current,
+        directory: folder ?? kernel.current,
         files: e.dataTransfer.files,
       });
     }
@@ -142,3 +161,26 @@ export const useUpload = () => {
     uploadProgress,
   };
 };
+
+
+export const useContextMenu = () => {
+  const [clicked, setClicked] = React.useState(false);
+  const [points, setPoints] = React.useState({
+    x: 0,
+    y: 0,
+  });
+  React.useEffect(() => {
+    const handleClick = () => setClicked(false);
+    document.addEventListener("click", handleClick);
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  }, []);
+  return {
+    clicked,
+    setClicked,
+    points,
+    setPoints,
+  };
+};
+export default useContextMenu;

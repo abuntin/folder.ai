@@ -4,7 +4,7 @@ import { join } from 'path';
 import * as dateFn from 'date-fns';
 import formidable from 'formidable';
 import { mkdir, stat } from 'fs/promises';
-import { Folder } from 'lib/models';
+import { Directory } from 'lib/models';
 
 export const FormidableError = formidable.errors.FormidableError;
 
@@ -13,7 +13,7 @@ export const parseForm = async (
 ): Promise<{
   fields: formidable.Fields;
   files: formidable.Files;
-  folder: Folder;
+  directory: Directory;
 }> => {
   return new Promise(async (resolve, reject) => {
     const uploadDir = join(
@@ -56,21 +56,21 @@ export const parseForm = async (
     form.parse(req, function (err, fields, files) {
       if (err) reject(err);
       else {
-        const { type, folder: _folder } = fields;
+        const { type, directory: dir } = fields;
 
         if (type !== 'upload') {
           reject('Unknown NextApiRequest');
           return
         }
 
-        if (!_folder || Array.isArray(_folder) || typeof _folder !== 'string') {
+        if (!dir || Array.isArray(dir) || typeof dir !== 'string') {
           reject('No Cloud directory provided');
           return
         }
 
-        let folder = JSON.parse(_folder) as Folder;
+        let directory = JSON.parse(dir) as Directory;
 
-        resolve({ fields, files, folder });
+        resolve({ fields, files, directory });
       }
     });
   });

@@ -2,8 +2,13 @@ import { ref, StorageReference } from 'firebase/storage';
 import { FolderManagerInterface } from '../../types';
 import { root } from '../firebase';
 import { listFolder } from './list';
-import { uploadFolder } from './upload';
+import { uploadFolders } from './upload';
 import { initFolderManager } from './init';
+import { deleteFolders } from './delete';
+import { copyFolders } from './copy';
+import { moveFolders } from './move';
+import { createDirectory } from './create';
+import { renameFolder } from './rename'
 
 export class FolderManager implements FolderManagerInterface {
   root: StorageReference;
@@ -31,30 +36,30 @@ export class FolderManager implements FolderManagerInterface {
   /**
    * {@inheritDoc}
    */
-  public createDirectory = () => {};
+  public create = createDirectory;
 
   /**
    * {@inheritDoc}
    */
-  public delete = () => {};
+  public delete = deleteFolders;
 
   /**
    * {@inheritDoc}
    */
-  public rename = () => {};
+  public rename = renameFolder;
 
   /**
    * {@inheritDoc}
    */
-  public copy = () => {};
+  public copy = copyFolders
 
   /**
    * {@inheritDoc}
    */
-  public move = () => {};
+  public move = moveFolders
 
   /**
    * {@inheritDoc}
    */
-  public upload = uploadFolder;
+  public upload = uploadFolders
 }

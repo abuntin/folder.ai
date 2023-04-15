@@ -9,42 +9,49 @@ import {
 import { DInput, AddButton } from 'components/common';
 import * as React from 'react';
 import { useDashboard } from './Context';
-import { UploadPane } from './UploadPane';
+import dynamic from 'next/dynamic'
 
 interface HeaderProps {}
 
 export const Header: React.FC<HeaderProps> = props => {
-  const { kernel, view, useUpload } = useDashboard();
+  const { kernel, view, useUpload, loading, appbar } = useDashboard();
 
   const { toggleUploadPane, uploadPane } = useUpload();
 
+  const KernelBar = React.useMemo(() => {
+    return (
+      (!loading.state && appbar !=  null) ? (appbar == 'min' ? dynamic(() => import('./AppBarButton').then(_ => _.AppBarButton))
+      : dynamic(() => import('./AppBar').then(_ => _.AppBar)))
+      : React.Fragment
+    )
+  }, [appbar, loading])
   return (
     <Grid
       xs={12}
       container
       display="flex"
-      alignItems="stretch"
+      alignItems="center"
       justifyContent="space-between"
     >
-      <Grid xs={6} display="flex" alignItems="flex-start">
-        <DInput placeholder="Search" color="primary" />
+      <Grid xs={10} display="flex" alignItems="flex-start">
+          <KernelBar />
       </Grid>
       <Grid
         container
-        xs={4}
+        xs={2}
         display="flex"
         alignItems="flex-start"
         justifyContent="space-between"
       >
         <Grid xs={6} display="flex" justifyContent="center">
-          <AddButton onClick={toggleUploadPane} />
-          <UploadPane open={uploadPane} toggle={toggleUploadPane} />
+          <AddButton disabled={loading.state} />
         </Grid>
         <Grid xs={6} display="flex" justifyContent="start">
           <ToggleButtonGroup
             value={view}
             exclusive
             onChange={(e, newVal) => kernel.trigger('view', newVal)}
+            disabled={loading.state}
           >
             <ToggleButton value="grid" size="small">
               <GridViewSharp color={view === 'grid' ? 'info' : 'disabled'} />

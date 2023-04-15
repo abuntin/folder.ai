@@ -132,6 +132,7 @@ export const BlinkAnimation: React.FC<AnimationProps> = ({
         duration: 1.5,
         damping: 10,
         repeat: Infinity,
+        ease: [0.36, 0, 0.66, -0.56]
       },
     }}
   >
@@ -152,6 +153,8 @@ export const FolderAnimation: React.FC<AnimationProps> = ({
     style={{ borderRadius }}
     initial={{ opacity: 1, backgroundColor: 'transparent' }}
     whileHover={{ transition: { duration: 0.2, ease: [0, 0.71, 0.2, 1.01], } }}
+    drag
+    dragSnapToOrigin
     {...rest}
   >
       {children}
