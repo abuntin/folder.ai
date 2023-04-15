@@ -54,6 +54,7 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
           kernel.copy({ folders: payload.folders, directory: payload.directory });
         } else
           kernel.trigger('error', 'Missing source or destination Folders');
+          kernel.trigger('cut', [])
       }
     );
 
@@ -70,6 +71,7 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
           kernel.move({ folders: payload.folders, directory: payload.directory });
         } else
           kernel.trigger('error', 'Missing source or destination Folders');
+          kernel.trigger('cut', [])
       }
     );
 
@@ -79,7 +81,15 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
   // Listen for delete event
 
   React.useEffect(() => {
-    const deleteEvent = kernel.on('delete', kernel.delete);
+    const deleteEvent = kernel.on('delete', (folders: Folder[]) => {
+      if (folders) {
+        kernel.delete(folders);
+      } else
+        kernel.trigger('error', 'Missing Folders to delete');
+        kernel.trigger('cut', [])
+      kernel.trigger('select', null);
+    });
+
 
     return () => deleteEvent.unsubscribe();
   }, [kernel]);

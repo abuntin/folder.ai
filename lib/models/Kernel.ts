@@ -493,15 +493,15 @@ export class Kernel {
    */
 
   public delete = cache(
-    async (folder: Folder, signal: AbortSignal = null): Promise<void> => {
+    async (folders: Folder[], signal: AbortSignal = null): Promise<void> => {
       console.log('Initialised Kernel.delete()');
 
       try {
-        this.trigger('warning', `Deleting ${folder.name}...`);
+        this.trigger('warning', `Deleting ${folders.length} Folders...`);
 
         let res = await fetch(this.folderManagerUrl('delete'), {
           body: JSON.stringify({
-            folder,
+            folders,
             type: 'delete',
           }),
           headers: {
@@ -526,7 +526,7 @@ export class Kernel {
         else {
           this.trigger('cut', []);
           this.trigger('refresh');
-          this.trigger('idle', `Deleted ${folder.name}`);
+          this.trigger('idle', `Deleted ${folders.length} Folders`);
         }
       } catch (e) {
         if (signal.aborted) {

@@ -9,13 +9,9 @@ export const upload = (
   data: Buffer | Blob | ArrayBuffer,
   metadata,
   destinationRef: StorageReference
-): Promise<{
-  urls: string[];
-}> =>
+): Promise<string> =>
   new Promise(async (resolve, reject) => {
     try {
-      let urls = [];
-
       const uploadTask = uploadBytesResumable(
         destinationRef,
         data instanceof Blob ? data : new Uint8Array(data),
@@ -39,11 +35,12 @@ export const upload = (
           // download url
           let url = await getDownloadURL(uploadTask.snapshot.ref);
 
-          urls.push(url);
+          unsubscribe()
+
+          resolve(url)
         }
       );
 
-      resolve({ urls });
     } catch (e) {
       reject(e.message);
     }

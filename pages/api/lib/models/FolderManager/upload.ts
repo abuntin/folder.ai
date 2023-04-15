@@ -1,7 +1,9 @@
+import { ref } from 'firebase/storage';
 import fs_extra from 'fs-extra';
 import { PropType } from 'lib/types';
-import { parseForm, uploadS3 } from '../../functions';
+import { parseForm, upload, uploadS3 } from '../../functions';
 import { FolderManagerInterface } from '../../types';
+import { root } from '../firebase';
 
 export const uploadFolders: PropType<FolderManagerInterface, 'upload'> = async (
   req,
@@ -32,20 +34,32 @@ export const uploadFolders: PropType<FolderManagerInterface, 'upload'> = async (
     for (let file of files) {
       let buffer = await fs_extra.readFile(file.filepath);
 
-      let fileObj = {
+      let destinationRef = ref(
+        root,
+        `${directory.path}/${file.originalFilename}`
+      );
+
+      // let fileObj = {
+      //   name: file.originalFilename,
+      //   type: file.mimetype,
+      //   body: buffer,
+      // };
+
+      const metadata = {
         name: file.originalFilename,
-        type: file.mimetype,
-        body: buffer,
+        size: file.size,
+        contentType: file.mimetype,
       };
 
-      let etag = await uploadS3(fileObj, directory);
+      let url = await upload(buffer, metadata, destinationRef); //await uploadS3(metadata, directory);
 
-      urls.push(etag);
+      urls.push(url);
     }
 
-    if (urls.length === files.length)
+    if (urls.length === files.length) {
+      console.log(`Uploaded ${files.length} Folders to ${directory.name}`)
       return res.status(200).json({ data: { urls }, error: null });
-    else throw new Error('Unable to upload some files ');
+    } else throw new Error('Unable to upload some files ');
   } catch (e) {
     console.error(e);
     res

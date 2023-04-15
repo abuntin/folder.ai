@@ -68,7 +68,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
 
   const handleMove = (e: React.SyntheticEvent) => {
     kernel.trigger('move', {
-      folder: clipboard,
+      folders: clipboard,
       directory: destination,
     });
   };
@@ -92,8 +92,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
       return;
     }
 
-    kernel.trigger('delete', selected);
-    kernel.trigger('select', null);
+    kernel.trigger('delete', [selected]);
   };
 
   const handleClear = (e: React.SyntheticEvent) => {
@@ -298,20 +297,6 @@ export const AppBar: React.FC<AppBarProps> = props => {
                     </IconButton>
                   </Stack>
                 </NavAnimation>
-              ) : recentAction == 'delete' ? (
-                <NavAnimation>
-                  <Stack>
-                    <DText text={`Delete ${selected.name}?`} />
-                    <Stack direction="row">
-                      <IconButton onClick={handleClear} color="inherit">
-                        <CloseSharp />
-                      </IconButton>
-                      <IconButton onClick={handleDelete} color="inherit">
-                        <DoneSharp />
-                      </IconButton>
-                    </Stack>
-                  </Stack>
-                </NavAnimation>
               ) : (
                 <PanDownAnimation>
                   <Stack
@@ -338,9 +323,25 @@ export const AppBar: React.FC<AppBarProps> = props => {
                 </PanDownAnimation>
               )
             ) : selected ? (
-              <PanDownAnimation>
-                <DText text={`Selected: ${selected.name}`} color="primary" />
-              </PanDownAnimation>
+              recentAction == 'delete' ? (
+                <NavAnimation>
+                  <Stack>
+                    <DText text={`Delete ${selected.name}?`} />
+                    <Stack direction="row">
+                      <IconButton onClick={handleClear} color="inherit">
+                        <CloseSharp />
+                      </IconButton>
+                      <IconButton onClick={handleDelete} color="inherit">
+                        <DoneSharp />
+                      </IconButton>
+                    </Stack>
+                  </Stack>
+                </NavAnimation>
+              ) : (
+                <PanDownAnimation>
+                  <DText text={`Selected: ${selected.name}`} color="primary" />
+                </PanDownAnimation>
+              )
             ) : (
               <NavAnimation>
                 <DText text="Idle" color="warning.main" />
