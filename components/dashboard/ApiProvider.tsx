@@ -24,12 +24,11 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
 
   React.useEffect(() => {
     const selectEvent = kernel.on('select', folder => {
-      setClipboard([])
-    })
+      setClipboard([]);
+    });
 
-    return () => selectEvent.unsubscribe()
-
-  }, [kernel])
+    return () => selectEvent.unsubscribe();
+  }, [kernel]);
 
   // Listen for copy and cut events
 
@@ -49,12 +48,14 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
   React.useEffect(() => {
     const pasteEvent = kernel.on(
       'paste',
-      (payload: {folders: Folder[], directory: Directory}) => {
+      (payload: { folders: Folder[]; directory: Directory }) => {
         if (payload.folders && payload.directory) {
-          kernel.copy({ folders: payload.folders, directory: payload.directory });
-        } else
-          kernel.trigger('error', 'Missing source or destination Folders');
-          kernel.trigger('cut', [])
+          kernel.copy({
+            folders: payload.folders,
+            directory: payload.directory,
+          });
+        } else kernel.trigger('error', 'Missing source or destination Folders');
+        kernel.trigger('cut', []);
       }
     );
 
@@ -66,12 +67,17 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
   React.useEffect(() => {
     const moveEvent = kernel.on(
       'move',
-      (payload: {folders: Folder[], directory: Directory}) => {
+      (payload: { folders: Folder[]; directory: Directory }) => {
         if (payload.folders && payload.directory) {
-          kernel.move({ folders: payload.folders, directory: payload.directory });
-        } else
+          kernel.move({
+            folders: payload.folders,
+            directory: payload.directory,
+          });
+        } else {
           kernel.trigger('error', 'Missing source or destination Folders');
-          kernel.trigger('cut', [])
+        }
+        kernel.trigger('cut', []);
+        kernel.trigger('select', null)
       }
     );
 
@@ -84,12 +90,10 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
     const deleteEvent = kernel.on('delete', (folders: Folder[]) => {
       if (folders) {
         kernel.delete(folders);
-      } else
-        kernel.trigger('error', 'Missing Folders to delete');
-        kernel.trigger('cut', [])
+      } else kernel.trigger('error', 'Missing Folders to delete');
+      kernel.trigger('cut', []);
       kernel.trigger('select', null);
     });
-
 
     return () => deleteEvent.unsubscribe();
   }, [kernel]);
@@ -97,11 +101,10 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
   // Listen for create event
 
   React.useEffect(() => {
-    const createEvent = kernel.on('create', kernel.create)
+    const createEvent = kernel.on('create', kernel.create);
 
-    return () => createEvent.unsubscribe()
-    
-  }, [kernel])
+    return () => createEvent.unsubscribe();
+  }, [kernel]);
 
   return (
     <DashboardApiContext.Provider

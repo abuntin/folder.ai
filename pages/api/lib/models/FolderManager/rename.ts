@@ -38,24 +38,21 @@ export const renameFolder: PropType<FolderManagerInterface, 'rename'> = async (
         .status(400)
         .json({ data: null, error: 'Destination Folder is not a Directory' });
 
+    let parts = _src.path.split('/');
 
-    let parts = _src.path.split('/')
+    let newPath = parts.slice(0, parts.length - 1).join('/') + `/${name}`;
 
-    let newPath = (parts.slice(0, parts.length - 1)).join('/') + `/${name}`
+    let src = { ..._src, name, path: newPath } as Folder;
 
-    let src = { ..._src, name, path: newPath } as Folder
-
-    let url = await copy(src, dest) //await copyS3(src, dest);
+    let url = await copy(src, dest); //await copyS3(src, dest);
 
     if (url) {
       let value = await deleteFn(_src);
 
       if (value) {
-        
-        console.log(`Renamed ${_src.name} to ${name} in ${directory.name}`)
+        console.log(`Renamed ${_src.name} to ${name} in ${directory.name}`);
 
-        return res.status(200).json({ data: { url }, error: null})
-
+        return res.status(200).json({ data: { url }, error: null });
       } else
         return res.status(500).json({
           data: null,
@@ -65,9 +62,8 @@ export const renameFolder: PropType<FolderManagerInterface, 'rename'> = async (
       return res
         .status(500)
         .json({ data: null, error: 'Unable to copy Folders in rename fn' });
-
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return res
       .status(500)
       .json({ data: null, error: e.message ?? 'Unable to rename Folder' });

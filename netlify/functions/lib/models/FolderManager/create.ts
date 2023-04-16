@@ -3,20 +3,20 @@ import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { BUCKET_NAME, s3 } from '../s3';
+import { HandlerEvent, HandlerContext } from '@netlify/functions';
+import { netlifyResponse } from '../../functions';
 
 export const createDirectory: PropType<
   FolderManagerInterface,
   'create'
-> = async (req, res) => {
+> = async (event: HandlerEvent, context: HandlerContext) => {
   try {
     console.log('Initialised FolderManager.create()');
 
-    const { name, directory, type } = req.body;
+    const { name, directory, type } = JSON.parse(event.body);
 
     if (!type || type !== 'create')
-      return res
-        .status(405)
-        .json({ data: null, error: 'Invalid NextApiRequest type' });
+      return netlifyResponse(405, { data: null, error: 'Invalid NextApiRequest type' })
 
     let dest = directory as Directory;
 
@@ -24,14 +24,10 @@ export const createDirectory: PropType<
       !Object.prototype.hasOwnProperty.call(dest, 'path') ||
       !dest.isDirectory
     )
-      return res
-        .status(405)
-        .json({ data: null, error: 'Invalid Directory in create' });
+      return netlifyResponse(405, { data: null, error: 'Invalid Directory in create' });
   } catch (e) {
     console.error(e);
-    return res
-      .status(500)
-      .json({ data: null, error: e.message ?? 'Unable to create Directory' });
+    return netlifyResponse(500, { data: null, error: e.message ?? 'Unable to create Directory' });
   }
 };
 
@@ -42,7 +38,7 @@ export const createDirectory: PropType<
 //   try {
 //     console.log('Initialised FolderManager.create()');
 
-//     const { name, directory, type } = req.body;
+//     const { name, directory, type } = JSON.parse(event.body);
 
 //     if (!type || type !== 'create')
 //       return res

@@ -1,7 +1,8 @@
+import { HandlerEvent, HandlerContext } from '@netlify/functions';
 import { ref, listAll, getMetadata } from 'firebase/storage';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
-import { list } from '../../functions';
+import { list, netlifyResponse } from '../../functions';
 import { FolderManagerInterface } from '../../types';
 import { root } from '../firebase';
 
@@ -12,7 +13,7 @@ import { root } from '../firebase';
 //   try {
 //     console.log('Initilaised FolderManager.list()');
 
-//     const { directory, type } = req.body;
+//     const { directory, type } = JSON.parse(event.body);
 
 //     if (!type || type !== 'list')
 //       return res
@@ -48,29 +49,40 @@ import { root } from '../firebase';
 // };
 
 export const listFolder: PropType<FolderManagerInterface, 'list'> = async (
-  req,
-  res
+  event: HandlerEvent,
+  context: HandlerContext
 ) => {
+  if (event.httpMethod !== 'POST') {
+    return netlifyResponse(200, {
+      data: null,
+      error: 'Method Not Allowed',
+    });
+  }
   try {
     console.log('Initialised FolderManager.list()');
-    const { directory, type } = req.body;
+    const { directory, type } = JSON.parse(event.body);
 
     if (!type || type !== 'list')
-      return res
-        .status(405)
-        .json({ data: null, error: 'Invalid NextApiRequest type' });
+      return netlifyResponse(405, {
+        data: null,
+        error: 'Invalid NextApiRequest type',
+      });
 
     let src = directory as Directory;
 
     //console.log(src, directory);
 
     if (!Object.prototype.hasOwnProperty.call(src, 'path'))
-      return res
-        .status(400)
-        .json({ data: null, error: "Invalid directory: Missing 'path'" });
+      return netlifyResponse(400, {
+        data: null,
+        error: "Invalid directory: Missing 'path'",
+      });
 
     if (!src.isDirectory)
-      res.status(400).json({ data: null, error: 'Called list on Folder' });
+      return netlifyResponse(400, {
+        data: null,
+        error: 'Called list on Folder',
+      });
 
     const srcRef = ref(root, `${src.path}/`);
 
@@ -112,11 +124,16 @@ export const listFolder: PropType<FolderManagerInterface, 'list'> = async (
 
     console.log('Obtained Folder children');
 
-    return res
-      .status(200)
-      .json({ data: { folders, directories }, error: null });
+    return netlifyResponse(200, {
+      data: { folders, directories },
+      error: null,
+    });
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ data: null, error: 'Unable to load Folder' });
+
+    return netlifyResponse(500, {
+      data: null,
+      error: e.message ?? 'Unable to load Folder',
+    });
   }
 };

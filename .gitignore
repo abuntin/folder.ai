@@ -42,3 +42,5 @@ next-env.d.ts
 #utils
 
 /uploads
+# Local Netlify folder
+.netlify
