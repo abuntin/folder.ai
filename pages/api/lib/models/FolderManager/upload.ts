@@ -25,6 +25,8 @@ export const uploadFolders: PropType<FolderManagerInterface, 'upload'> = async (
 
     const _files = formidableFiles.media;
     const files = Array.isArray(_files) ? _files : [_files];
+
+    console.log('formidablefiles', files)
     let filePaths = Array.isArray(_files)
       ? files.map(f => f.filepath)
       : [_files.filepath];

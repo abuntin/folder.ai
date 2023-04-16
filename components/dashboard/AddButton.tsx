@@ -23,7 +23,9 @@ import { useDashboard } from './Context';
 export const AddButton: React.FC<IconButtonProps> = props => {
   const { useUpload, kernel } = useDashboard();
 
-  const { uploadPane, toggleUploadPane } = useUpload();
+  const { handleAdd } = useUpload();
+
+  const hiddenFileInput = React.useRef(null);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -46,6 +48,14 @@ export const AddButton: React.FC<IconButtonProps> = props => {
   const itemClick = e => {
     console.log('Item Clicked ' + e.detail);
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleAdd(e, kernel);
+    handleClose();
+  };
+
+  const handleUpload = (e: React.SyntheticEvent) =>
+    hiddenFileInput.current.click();
 
   return (
     <Box
@@ -73,25 +83,41 @@ export const AddButton: React.FC<IconButtonProps> = props => {
           horizontal: 'left',
         }}
         sx={{ minWidth: '60%', borderRadius: borderRadius * 2, mt: margin * 4 }}
-        MenuListProps={{ sx: { backgroundColor: 'secondary.main' }}}
+        MenuListProps={{ sx: { backgroundColor: 'secondary.main' } }}
       >
         <MenuItem onClick={handleClose} divider>
-          <Stack direction="row" spacing={3} sx={{ display: 'flex', alignItems: 'center' }}>
+          <Stack
+            direction="row"
+            spacing={3}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
             <CreateNewFolderSharp sx={{ fontSize: 30 }} color="disabled" />
             <DText variant="subtitle1" text="Create New Folder" />
           </Stack>
         </MenuItem>
-        <MenuItem onClick={handleClose} divider>
-          <Stack direction="row" spacing={3} sx={{ display: 'flex', alignItems: 'center' }}>
+        <MenuItem onClick={handleUpload} divider>
+          <input
+            multiple
+            ref={hiddenFileInput}
+            type="file"
+            style={{ display: 'none' }}
+            onChange={handleChange}
+          />
+          <Stack
+            direction="row"
+            spacing={3}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
             <DriveFolderUploadSharp sx={{ fontSize: 30 }} color="disabled" />
-            <DText
-              variant="subtitle1"
-              text="Upload new Files"
-            />
+            <DText variant="subtitle1" text="Upload new Files" />
           </Stack>
         </MenuItem>
         <MenuItem onClick={handleClose}>
-          <Stack direction="row" spacing={3} sx={{ display: 'flex', alignItems: 'center' }}>
+          <Stack
+            direction="row"
+            spacing={3}
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
             <AddToDriveSharp sx={{ fontSize: 30 }} color="disabled" />
             <DText variant="subtitle1" text="Import from Google Docs" />
             <CallMadeSharp sx={{ fonSize: 20 }} />

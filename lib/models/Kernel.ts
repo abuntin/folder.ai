@@ -293,7 +293,7 @@ export class Kernel {
 
         formData.append('type', 'upload');
         formData.append('directory', JSON.stringify(directory));
-        files.forEach(file => formData.append('media', file));
+        files.forEach((file, i) => formData.append(`media`, file));
 
         const res = await fetch(this.folderManagerUrl('upload'), {
           method: 'POST',
@@ -324,7 +324,7 @@ export class Kernel {
 
         return data.urls;
       } catch (error) {
-        if (signal.aborted) {
+        if (signal && signal.aborted) {
           this.trigger('idle');
           return;
         }
@@ -401,7 +401,7 @@ export class Kernel {
           );
         }
       } catch (e) {
-        if (signal.aborted) {
+        if (signal && signal.aborted) {
           this.trigger('idle');
           return;
         }
@@ -478,7 +478,7 @@ export class Kernel {
           );
         }
       } catch (e) {
-        if (signal.aborted) {
+        if (signal && signal.aborted) {
           this.trigger('idle');
           return;
         }
@@ -529,7 +529,7 @@ export class Kernel {
           this.trigger('idle', `Deleted ${folders.length} Folders`);
         }
       } catch (e) {
-        if (signal.aborted) {
+        if (signal && signal.aborted) {
           this.trigger('idle');
           return;
         }
@@ -595,7 +595,7 @@ export class Kernel {
           );
         }
       } catch (e) {
-        if (signal.aborted) {
+        if (signal && signal.aborted) {
           this.trigger('idle');
           return;
         }
@@ -663,7 +663,7 @@ export class Kernel {
           );
         }
       } catch (e) {
-        if (signal.aborted) {
+        if (signal && signal.aborted) {
           this.trigger('idle');
           return;
         }

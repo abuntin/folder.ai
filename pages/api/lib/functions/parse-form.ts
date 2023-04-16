@@ -35,6 +35,7 @@ export const parseForm = async (
 
     const form = formidable({
       maxFiles: 5,
+      multiples: true,
       maxFileSize: 200 * 1024 * 1024, // 200mb
       uploadDir,
       filename: (_name, _ext, part) => {
@@ -47,7 +48,7 @@ export const parseForm = async (
       filter: part => {
         return (
           //part.name === "media" && (part.mimetype?.includes("image") || false)
-          part.name === 'media' || false
+          part.name.includes('media') || false
         );
       },
       

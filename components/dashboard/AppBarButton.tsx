@@ -30,7 +30,7 @@ export const AppBarButton: React.FC<AppBarButtonProps> = props => {
           duration: 0.1
         },
       }}
-      onClick={e => kernel.trigger('appbar', 'max')}
+      //onClick={e => kernel.trigger('appbar', 'max')}
       // style={{ position: 'fixed', bottom: 2, left: '41.5%' }}
     >
       <Image

@@ -18,13 +18,17 @@ export const Header: React.FC<HeaderProps> = props => {
 
   const { toggleUploadPane, uploadPane } = useUpload();
 
-  const KernelBar = React.useMemo(() => {
-    return (
-      (!loading.state && appbar !=  null) ? (appbar == 'min' ? dynamic(() => import('./AppBarButton').then(_ => _.AppBarButton))
-      : dynamic(() => import('./AppBar').then(_ => _.AppBar)))
-      : React.Fragment
-    )
-  }, [appbar, loading])
+  const KernelBar = dynamic(() => import('./AppBar').then(_ => _.AppBar))
+
+  const AIButton = dynamic(() => import('./AppBarButton').then(_ => _.AppBarButton))
+
+  // const KernelBar = React.useMemo(() => {
+  //   return (
+  //     (!loading.state && appbar !=  null) ? (appbar == 'min' ? dynamic(() => import('./AppBarButton').then(_ => _.AppBarButton))
+  //     : dynamic(() => import('./AppBar').then(_ => _.AppBar)))
+  //     : React.Fragment
+  //   )
+  // }, [appbar, loading])
   return (
     <Grid
       xs={12}
@@ -33,8 +37,9 @@ export const Header: React.FC<HeaderProps> = props => {
       alignItems="center"
       justifyContent="space-between"
     >
-      <Grid xs={10} display="flex" alignItems="flex-start">
+      <Grid xs={10} display="flex" alignItems="stretch">
           <KernelBar />
+          <AIButton />
       </Grid>
       <Grid
         container

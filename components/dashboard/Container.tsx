@@ -14,10 +14,7 @@ export const Container: React.FC<ContainerProps> = props => {
 
   const { folders, current } = kernel;
 
-  const HeaderComponent = React.useMemo(
-    () => dynamic(() => import('./Header').then(_ => _.Header)),
-    []
-  );
+  const HeaderComponent = dynamic(() => import('./Header').then(_ => _.Header))
 
   const BodyComponent = React.useMemo(() => {
     console.log('Component changed, loading...');
