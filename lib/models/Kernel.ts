@@ -37,7 +37,7 @@ export class Kernel {
 
   public folders: Folder[] = null;
 
-  protected folderManagerUrl = (path: string) => `api/folder-manager/${path}`;
+  protected folderManagerUrl = (fn: string) => `${process.env.BASE_URL ?? 'http://localhost:8888'}/api/${fn}`;
 
   /**
    * Set current directory
@@ -180,6 +180,7 @@ export class Kernel {
         }
       } catch (e) {
         this.trigger('error', e.message);
+        this.trigger('idle')
       }
     }
   );
@@ -308,7 +309,7 @@ export class Kernel {
             urls: string[];
           } | null;
           error: string | null;
-        } = await res.json();
+        } =  await res.json();
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.upload() response data');

@@ -8,8 +8,10 @@ import {
   ListObjectsCommandInput,
   ListObjectsCommand,
 } from '@aws-sdk/client-s3';
+import { HandlerContext, HandlerEvent } from '@netlify/functions';
+import { netlifyResponse } from '../../functions';
 
-// export const initFolderManager: PropType<FolderManagerInterface, 'init'> = async (req, res) => {
+// export const initFolderManager: PropType<FolderManagerInterface, 'init'> = async (event: HandlerEvent, context: HandlerContext) => {
 
 //   try {
 //     console.log('Initialised FolderManager.init()')
@@ -55,7 +57,13 @@ import {
 export const initFolderManager: PropType<
   FolderManagerInterface,
   'init'
-> = async (req, res) => {
+> = async (event: HandlerEvent, context: HandlerContext) => {
+  if (event.httpMethod !== 'POST') {
+    return netlifyResponse(200, {
+      data: null,
+      error: 'Method Not Allowed',
+    });
+  }
   try {
     console.log('Initialised FolderManager.init()');
 
@@ -73,11 +81,16 @@ export const initFolderManager: PropType<
 
     console.log('Obtained root folder');
 
-    return res.status(200).json({ data: rootDirectory, error: null });
+    return netlifyResponse(200, { data: rootDirectory, error: null });
   } catch (e) {
     console.error(e);
-    return res
-      .status(500)
-      .json({ data: null, error: 'Unable to fetch root folder' });
+
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        data: null,
+        error: e.message ?? 'Unable to fetch root folder',
+      }),
+    };
   }
 };
