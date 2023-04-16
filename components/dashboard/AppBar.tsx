@@ -2,25 +2,25 @@
 
 import {
   ArrowForwardSharp,
-  CloseSharp,
   CloseFullscreenSharp,
+  CloseSharp,
   DeleteSharp,
   DoneSharp,
   DriveFileMoveSharp,
+  EditSharp,
   FolderCopySharp,
   FolderDeleteSharp,
   FolderSharp,
-  EditSharp,
 } from '@mui/icons-material';
-import Tippy from '@tippyjs/react';
 import {
   Box,
-  IconButton,
   Divider,
+  IconButton,
   Stack,
   Unstable_Grid2 as Grid,
   useTheme,
 } from '@mui/material';
+import Tippy from '@tippyjs/react';
 import { NavAnimation, PanDownAnimation } from 'components/animation';
 import {
   DText,
@@ -29,7 +29,7 @@ import {
   TippedIconButton,
 } from 'components/common';
 import { m } from 'framer-motion';
-import { borderRadius, margin, padding } from 'lib/constants';
+import { borderRadius, margin } from 'lib/constants';
 import { Folder } from 'lib/models';
 import * as React from 'react';
 import { useDashboard } from './Context';
@@ -209,9 +209,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
                   tooltip="Copy"
                   sx={{
                     backgroundColor:
-                      recentAction == 'copy'
-                        ? 'background.paper'
-                        : 'background.default',
+                      recentAction == 'copy' ? 'background.paper' : 'inherit',
                   }}
                   color="primary"
                   disabled={folderActions.copy.state}
@@ -238,6 +236,11 @@ export const AppBar: React.FC<AppBarProps> = props => {
                   disabled={folderActions.delete.state}
                   onClick={e => {
                     setRecentAction('delete');
+                    kernel.trigger('cut', []);
+                  }}
+                  sx={{
+                    backgroundColor:
+                      recentAction == 'delete' ? 'background.paper' : 'inherit',
                   }}
                 >
                   <FolderDeleteSharp />
@@ -258,7 +261,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
                     alignItems: 'center',
                   }}
                 >
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction="row" spacing={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <DText
                       color="primary"
                       fontWeight="regular"
@@ -325,16 +328,14 @@ export const AppBar: React.FC<AppBarProps> = props => {
             ) : selected ? (
               recentAction == 'delete' ? (
                 <NavAnimation>
-                  <Stack>
+                  <Stack direction="row" spacing={[2, 1, 1]} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <DText text={`Delete ${selected.name}?`} />
-                    <Stack direction="row">
-                      <IconButton onClick={handleClear} color="inherit">
-                        <CloseSharp />
-                      </IconButton>
-                      <IconButton onClick={handleDelete} color="inherit">
-                        <DoneSharp />
-                      </IconButton>
-                    </Stack>
+                    <IconButton onClick={handleClear} color="inherit">
+                      <CloseSharp />
+                    </IconButton>
+                    <IconButton onClick={handleDelete} color="inherit">
+                      <DoneSharp />
+                    </IconButton>
                   </Stack>
                 </NavAnimation>
               ) : (
@@ -349,6 +350,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
             )}
           </NavAnimation>
         </Grid>
+        <Divider flexItem orientation="vertical" sx={{ mr: margin * 2 }} />
         <Grid xs display="flex" justifyContent="end">
           <TippedIconButton
             tooltip="Minimise"
