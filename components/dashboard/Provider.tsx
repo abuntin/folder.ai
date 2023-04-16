@@ -85,9 +85,9 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
   React.useEffect(() => {
     const selectEvent = kernel.on('select', (folder: Folder) => {
-      if (folder != null && appbar == 'min') {
-        kernel.trigger('appbar', 'max');
-      }
+      // if (folder != null && appbar == 'min') {
+      //   kernel.trigger('appbar', 'max');
+      // }
       setSelectedFolder(folder);
     });
 
@@ -102,6 +102,8 @@ export const DashboardProvider = ({ children, ...rest }) => {
     const errorEvent = kernel.on('error', message => {
       setLoading(false);
       setErrorMessage(message ?? '');
+      setWarningMessage('')
+      setSuccessMessage('')
     });
 
     return () => {
@@ -139,6 +141,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
   React.useEffect(() => {
     const warningEvent = kernel.on('warning', warning => {
       setWarningMessage(warning ?? '');
+      setSuccessMessage('')
     });
 
     return () => {

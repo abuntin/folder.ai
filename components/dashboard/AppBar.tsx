@@ -28,7 +28,7 @@ import {
   FolderSelect,
   TippedIconButton,
 } from 'components/common';
-import { m } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { borderRadius, margin } from 'lib/constants';
 import { Folder } from 'lib/models';
 import * as React from 'react';
@@ -113,16 +113,6 @@ export const AppBar: React.FC<AppBarProps> = props => {
     kernel.trigger('copy', [selected]);
   };
 
-  const folderActions = React.useMemo(
-    () => ({
-      copy: { state: selected == null },
-      move: { state: selected == null },
-      delete: { state: selected == null },
-      rename: { state: selected == null },
-    }),
-    [selected, current, folders, clipboard]
-  );
-
   const currentDir = React.useMemo(
     () =>
       current && folders ? (
@@ -148,6 +138,9 @@ export const AppBar: React.FC<AppBarProps> = props => {
   );
 
   return (
+    <AnimatePresence>
+
+    
     <Box
       sx={{
         padding: 1,
@@ -196,7 +189,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
                 <TippedIconButton
                   tooltip="Rename"
                   color="primary"
-                  disabled={folderActions.rename.state}
+                  disabled={selected == null}
                   onClick={handleRename}
                   sx={{
                     backgroundColor:
@@ -212,7 +205,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
                       recentAction == 'copy' ? 'background.paper' : 'inherit',
                   }}
                   color="primary"
-                  disabled={folderActions.copy.state}
+                  disabled={selected == null}
                   onClick={handleCopy}
                 >
                   <FolderCopySharp />
@@ -220,7 +213,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
                 <TippedIconButton
                   tooltip="Move"
                   color="primary"
-                  disabled={folderActions.move.state}
+                  disabled={selected == null}
                   onClick={handleCut}
                   sx={{
                     backgroundColor:
@@ -233,7 +226,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
                 <TippedIconButton
                   tooltip="Delete"
                   color="error"
-                  disabled={folderActions.delete.state}
+                  disabled={selected == null}
                   onClick={e => {
                     setRecentAction('delete');
                     kernel.trigger('cut', []);
@@ -261,7 +254,15 @@ export const AppBar: React.FC<AppBarProps> = props => {
                     alignItems: 'center',
                   }}
                 >
-                  <Stack direction="row" spacing={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
                     <DText
                       color="primary"
                       fontWeight="regular"
@@ -328,7 +329,15 @@ export const AppBar: React.FC<AppBarProps> = props => {
             ) : selected ? (
               recentAction == 'delete' ? (
                 <NavAnimation>
-                  <Stack direction="row" spacing={[2, 1, 1]} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Stack
+                    direction="row"
+                    spacing={[2, 1, 1]}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
                     <DText text={`Delete ${selected.name}?`} />
                     <IconButton onClick={handleClear} color="inherit">
                       <CloseSharp />
@@ -350,7 +359,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
             )}
           </NavAnimation>
         </Grid>
-        <Divider flexItem orientation="vertical" sx={{ mr: margin * 2 }} />
+        {/* <Divider flexItem orientation="vertical" sx={{ mr: margin * 2 }} />
         <Grid xs display="flex" justifyContent="end">
           <TippedIconButton
             tooltip="Minimise"
@@ -359,8 +368,9 @@ export const AppBar: React.FC<AppBarProps> = props => {
           >
             <CloseFullscreenSharp />
           </TippedIconButton>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
+    </AnimatePresence>
   );
 };

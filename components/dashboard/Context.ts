@@ -5,10 +5,13 @@ import React from 'react';
 export interface DashboardContextInterface {
   kernel: Kernel;
   loading: { state: boolean; text: string };
-  parentDragOver: { state: boolean; setParentDragOver: React.Dispatch<React.SetStateAction<boolean>>}
+  parentDragOver: {
+    state: boolean;
+    setParentDragOver: React.Dispatch<React.SetStateAction<boolean>>;
+  };
   selected: Folder;
   view: 'grid' | 'tile';
-  appbar: 'min' | 'max',
+  appbar: 'min' | 'max';
   useDashboardApi: typeof useDashboardApi;
   useUpload: typeof useUpload;
 }
@@ -17,8 +20,8 @@ export interface DashboardApiContextInterface {
   clipboard: Folder[];
 }
 
-
-export const DashboardApiContext = React.createContext<DashboardApiContextInterface>(null)
+export const DashboardApiContext =
+  React.createContext<DashboardApiContextInterface>(null);
 /**
  * DashboardContext Object
  * @type React.Context<DashboardContextInterface>
@@ -58,12 +61,12 @@ export const useUpload = () => {
 
   const [uploadProgress, setUploadProgress] = React.useState('');
 
-  const { parentDragOver } = useDashboard()
+  const { parentDragOver } = useDashboard();
 
   // handle upload progress
 
   const onUploadProgress = progressEvent => {
-    console.log(progressEvent)
+    console.log(progressEvent);
     setUploadProgress(
       parseFloat(
         ((progressEvent.loaded / progressEvent.total) * 100).toString()
@@ -83,7 +86,9 @@ export const useUpload = () => {
 
     if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragOver(true);
-      isChild ? parentDragOver.setParentDragOver(false) : parentDragOver.setParentDragOver(true)
+      isChild
+        ? parentDragOver.setParentDragOver(false)
+        : parentDragOver.setParentDragOver(true);
     } else if (e.type === 'dragleave') {
       setDragOver(false);
     }
@@ -100,7 +105,7 @@ export const useUpload = () => {
 
     setDragOver(false);
 
-    parentDragOver.setParentDragOver(false)
+    parentDragOver.setParentDragOver(false);
 
     if (!e.dataTransfer.files) {
       kernel.trigger('error', 'Error adding files to folder');
@@ -141,14 +146,20 @@ export const useUpload = () => {
   };
 
   // triggers when file is selected with click
-  const handleAdd = function (e: any, kernel: Kernel, folder = null) {
+  const handleAdd = function (e: any, kernel: Kernel, directory = null) {
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
+      let fileList = e.target.files as FileList;
+
+      let files = [] as File[];
+
+      for (let i = 0; i < fileList.length; i++) files.push(fileList[i]);
+
       kernel.trigger('upload', {
-        directory: folder ?? kernel.current,
-        files: e.dataTransfer.files,
+        directory: directory ?? kernel.current,
+        files,
       });
-    }
+    } else kernel.trigger('error', 'Missing files to upload');
   };
 
   return {
@@ -162,7 +173,6 @@ export const useUpload = () => {
   };
 };
 
-
 export const useContextMenu = () => {
   const [clicked, setClicked] = React.useState(false);
   const [points, setPoints] = React.useState({
@@ -171,9 +181,9 @@ export const useContextMenu = () => {
   });
   React.useEffect(() => {
     const handleClick = () => setClicked(false);
-    document.addEventListener("click", handleClick);
+    document.addEventListener('click', handleClick);
     return () => {
-      document.removeEventListener("click", handleClick);
+      document.removeEventListener('click', handleClick);
     };
   }, []);
   return {
