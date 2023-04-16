@@ -281,7 +281,6 @@ export class Kernel {
 
       console.log('Initialised Kernel.upload()');
       try {
-        console.log(files, 'payload');
 
         this.trigger(
           'warning',
@@ -348,7 +347,6 @@ export class Kernel {
       },
       signal: AbortSignal = null
     ): Promise<void> => {
-      console.log(payload);
 
       console.log('Initialised Kernel.copy()');
 
@@ -390,7 +388,6 @@ export class Kernel {
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.copy() response data');
         else {
-          console.log(data.urls);
           this.trigger('cut', []);
           this.trigger(
             'idle',
@@ -424,7 +421,6 @@ export class Kernel {
       },
       signal: AbortSignal = null
     ): Promise<void> => {
-      console.log(payload);
 
       console.log('Initialised Kernel.move()');
 
@@ -466,7 +462,6 @@ export class Kernel {
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.move() response data');
         else {
-          console.log(data.urls);
           this.trigger('cut', []);
           this.trigger('refresh');
           this.trigger(
