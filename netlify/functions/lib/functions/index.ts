@@ -19,7 +19,7 @@ export const netlifyResponse = (statusCode: number, body: any): Response => ({
   body: JSON.stringify(body),
   headers: {
     /* Required for CORS support to work */
-    'Access-Control-Allow-Origin': `${process.env.BASE_URL ?? 'http://localhost:3000'}`,
+    'Access-Control-Allow-Origin': `${process.env.BASE_URL ? `https://*${process.env.BASE_URL}` : 'http://localhost:3000'}`,
     'Access-Control-Allow-Headers': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   },
