@@ -1,9 +1,11 @@
 import { Folder, Kernel } from 'lib/models';
 import { DashboardContext, useDashboardApi, useUpload } from './Context';
 import React from 'react';
-import { Snackbar, Alert } from '@mui/material';
+import { Snackbar, Alert, Stack } from '@mui/material';
 import { borderRadius } from 'lib/constants';
 import { DashboardApiProvider } from './ApiProvider';
+import { ProgressBar } from './ProgressBar';
+import { AxiosProgressEvent } from 'axios';
 
 /**
  * Wrapper component defining DashboardContext and managing UI state updates
@@ -38,6 +40,10 @@ export const DashboardProvider = ({ children, ...rest }) => {
   const [success, setSuccess] = React.useState('');
 
   const [warning, setWarning] = React.useState('');
+
+  const [uploadProgress, setUploadProgress] = React.useState<number | null>(
+    null
+  );
 
   const setWarningMessage = (m: string) => startTransition(() => setWarning(m));
 
@@ -102,8 +108,9 @@ export const DashboardProvider = ({ children, ...rest }) => {
     const errorEvent = kernel.on('error', message => {
       setLoading(false);
       setErrorMessage(message ?? '');
-      setWarningMessage('')
-      setSuccessMessage('')
+      setWarningMessage('');
+      setUploadProgress(null)
+      setSuccessMessage('');
     });
 
     return () => {
@@ -141,7 +148,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
   React.useEffect(() => {
     const warningEvent = kernel.on('warning', warning => {
       setWarningMessage(warning ?? '');
-      setSuccessMessage('')
+      setSuccessMessage('');
     });
 
     return () => {
@@ -154,6 +161,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
   React.useEffect(() => {
     const idleEvent = kernel.on('idle', success => {
       setLoading(false);
+      setUploadProgress(null)
       setErrorMessage('');
       setWarningMessage('');
       setSuccessMessage(success ?? '');
@@ -175,7 +183,15 @@ export const DashboardProvider = ({ children, ...rest }) => {
   // Listen for upload event
 
   React.useEffect(() => {
-    const uploadEvent = kernel.on('upload', kernel.upload);
+    const uploadEvent = kernel.on('upload', payload => {
+      if (payload.directory && payload.files) {
+        kernel.upload(payload, (event: AxiosProgressEvent) => {
+          if (event.total) {
+            setUploadProgress(Math.round((event.loaded * 100) / event.total));
+          } else setUploadProgress(null);
+        });
+      }
+    });
 
     return () => uploadEvent.unsubscribe();
   }, [kernel]);
@@ -191,8 +207,9 @@ export const DashboardProvider = ({ children, ...rest }) => {
   // Clear warning
 
   React.useEffect(() => {
-    if (error && error !== '') setTimeout(() => setErrorMessage(''), 6000);
-  }, [error]);
+    if (warning && !uploadProgress && warning !== '')
+      setTimeout(() => setErrorMessage(''), 6000);
+  }, [warning]);
 
   // Clear error
 
@@ -244,7 +261,12 @@ export const DashboardProvider = ({ children, ...rest }) => {
           }
           sx={{ width: '100%', borderRadius }}
         >
-          {error !== '' ? error : warning !== '' ? warning : success}
+          <Stack>
+            {error !== '' ? error : warning !== '' ? warning : success}
+            {uploadProgress && (
+              <ProgressBar progress={uploadProgress} barWidth={300} />
+            )}
+          </Stack>
         </Alert>
       </Snackbar>
       <DashboardApiProvider>{children}</DashboardApiProvider>
