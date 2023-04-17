@@ -18,7 +18,7 @@ import {
 import { DText, TippedIconButton } from 'components/common';
 import { borderRadius, margin } from 'lib/constants';
 import * as React from 'react';
-import { useDashboard } from './Context';
+import { useDashboard } from './context';
 
 export const AddButton: React.FC<IconButtonProps> = props => {
   const { useUpload, kernel } = useDashboard();

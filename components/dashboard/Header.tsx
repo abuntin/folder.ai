@@ -6,29 +6,23 @@ import {
   ToggleButtonGroup,
   ToggleButton,
 } from '@mui/material';
-import { DInput, AddButton } from 'components/common';
 import * as React from 'react';
-import { useDashboard } from './Context';
-import dynamic from 'next/dynamic'
+import { useDashboard } from './context';
+import dynamic from 'next/dynamic';
 
 interface HeaderProps {}
 
 export const Header: React.FC<HeaderProps> = props => {
-  const { kernel, view, useUpload, loading, appbar } = useDashboard();
+  const { kernel, view, loading } = useDashboard();
 
-  const { toggleUploadPane, uploadPane } = useUpload();
+  const KernelBar = dynamic(() => import('./appbar').then(_ => _.AppBar));
 
-  const KernelBar = dynamic(() => import('./AppBar').then(_ => _.AppBar))
+  const AddButton = dynamic(() => import('./AddButton').then(_ => _.AddButton))
 
-  const AIButton = dynamic(() => import('./AppBarButton').then(_ => _.AppBarButton))
+  const AIButton = dynamic(() =>
+    import('./AppBarButton').then(_ => _.AppBarButton)
+  );
 
-  // const KernelBar = React.useMemo(() => {
-  //   return (
-  //     (!loading.state && appbar !=  null) ? (appbar == 'min' ? dynamic(() => import('./AppBarButton').then(_ => _.AppBarButton))
-  //     : dynamic(() => import('./AppBar').then(_ => _.AppBar)))
-  //     : React.Fragment
-  //   )
-  // }, [appbar, loading])
   return (
     <Grid
       xs={12}
@@ -38,8 +32,8 @@ export const Header: React.FC<HeaderProps> = props => {
       justifyContent="space-between"
     >
       <Grid xs={10} display="flex" alignItems="stretch">
-          <KernelBar />
-          <AIButton />
+        <KernelBar />
+        <AIButton />
       </Grid>
       <Grid
         container
