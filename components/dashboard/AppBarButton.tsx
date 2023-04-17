@@ -4,13 +4,10 @@ import * as React from 'react';
 import Image from 'next/image';
 import logo from 'public/logo_button.png';
 import { m } from 'framer-motion';
-import { useDashboard } from './Context';
 
 interface AppBarButtonProps {}
 
 export const AppBarButton: React.FC<AppBarButtonProps> = props => {
-  const { kernel } = useDashboard();
-
   return (
     <m.div
       initial={{ opacity: 0, x: '100%' }}
@@ -27,7 +24,7 @@ export const AppBarButton: React.FC<AppBarButtonProps> = props => {
           restDelta: 0.001,
         },
         opacity: {
-          duration: 0.1
+          duration: 0.1,
         },
       }}
       //onClick={e => kernel.trigger('appbar', 'max')}

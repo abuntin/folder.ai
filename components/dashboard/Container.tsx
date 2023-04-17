@@ -6,11 +6,12 @@ import * as React from 'react';
 import { useDashboard } from '.';
 import { borderRadius, padding } from 'lib/constants';
 import { AppearAnimationParent } from 'components/animation';
+import { Header } from './Header';
 
 interface ContainerProps {}
 
 export const Container: React.FC<ContainerProps> = props => {
-  const { loading, kernel, appbar } = useDashboard();
+  const { loading, kernel } = useDashboard();
 
   const { folders, current } = kernel;
 
@@ -26,7 +27,6 @@ export const Container: React.FC<ContainerProps> = props => {
 
   return (
     <Box sx={{ paddingLeft: padding * 2, paddingRight: padding * 2 }} onContextMenu={e => e.preventDefault()}>
-      <AppearAnimationParent>
         <Grid
           container
           spacing={4}
@@ -43,7 +43,6 @@ export const Container: React.FC<ContainerProps> = props => {
           <HeaderComponent />
           <BodyComponent />
         </Grid>
-      </AppearAnimationParent>
     </Box>
   );
 };

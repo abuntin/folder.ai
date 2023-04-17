@@ -11,7 +11,7 @@ import { DText } from 'components/common';
 import { padding, borderRadius, margin } from 'lib/constants';
 import { Folder } from 'lib/models';
 import * as React from 'react';
-import { useDashboard } from './Context';
+import { useDashboard } from './context';
 import { ProgressBar } from './ProgressBar';
 
 interface DashboardItemProps extends BoxProps {
@@ -26,7 +26,7 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
 
   const { clipboard } = useDashboardApi();
 
-  const { dragOver, handleDrag, handleDrop } = useUpload()
+  const { dragOver, handleDrag, handleDrop } = useUpload();
 
   return (
     <AppearAnimationChild>

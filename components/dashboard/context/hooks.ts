@@ -1,34 +1,7 @@
 import { validateFiles } from 'lib/functions';
-import { Kernel, Folder } from 'lib/models';
-import React from 'react';
-
-export interface DashboardContextInterface {
-  kernel: Kernel;
-  loading: { state: boolean; text: string };
-  parentDragOver: {
-    state: boolean;
-    setParentDragOver: React.Dispatch<React.SetStateAction<boolean>>;
-  };
-  selected: Folder;
-  view: 'grid' | 'tile';
-  appbar: 'min' | 'max';
-  useDashboardApi: typeof useDashboardApi;
-  useUpload: typeof useUpload;
-}
-
-export interface DashboardApiContextInterface {
-  clipboard: Folder[];
-}
-
-export const DashboardApiContext =
-  React.createContext<DashboardApiContextInterface>(null);
-/**
- * DashboardContext Object
- * @type React.Context<DashboardContextInterface>
- */
-
-export const DashboardContext =
-  React.createContext<DashboardContextInterface>(null);
+import { Kernel } from 'lib/models';
+import * as React from 'react';
+import { DashboardContext, DashboardApiContext } from './Context';
 
 /**
  * Hook to access filesystem service and state from DashboardProvider children
@@ -54,30 +27,14 @@ export const useDashboardApi = () => {
   return context;
 };
 
+/**
+ * Hook to handle file uploads by drag and drop / manual, exposes
+ * @returns Event handlers handleAdd, handleDrag, handleDrop, State dragOver
+ */
 export const useUpload = () => {
   const [dragOver, setDragOver] = React.useState(false);
 
-  const [uploadPane, setUploadPane] = React.useState(false);
-
-  const [uploadProgress, setUploadProgress] = React.useState('');
-
   const { parentDragOver } = useDashboard();
-
-  // handle upload progress
-
-  const onUploadProgress = progressEvent => {
-    console.log(progressEvent);
-    setUploadProgress(
-      parseFloat(
-        ((progressEvent.loaded / progressEvent.total) * 100).toString()
-      ).toFixed(2)
-    );
-  };
-
-  // handle add button click
-
-  const toggleUploadPane = (e: React.SyntheticEvent, state = false) =>
-    setUploadPane(state ?? uploadPane ? false : true);
 
   // handle drag events
   const handleDrag = function (e: React.SyntheticEvent, isChild = false) {
@@ -122,16 +79,10 @@ export const useUpload = () => {
     let { validFiles, invalidFiles } = validateFiles(files);
 
     if (validFiles.length > 0) {
-      kernel.trigger(
-        'upload',
-        {
-          directory: folder ?? kernel.current,
-          files: validFiles,
-        },
-        onUploadProgress
-      );
-
-      setUploadProgress('');
+      kernel.trigger('upload', {
+        directory: folder ?? kernel.current,
+        files: validFiles,
+      });
     } else {
       let str = '';
       for (let i = 0; i < invalidFiles.length; i++) {
@@ -167,30 +118,5 @@ export const useUpload = () => {
     handleDrag,
     handleDrop,
     handleAdd,
-    uploadPane,
-    toggleUploadPane,
-    uploadProgress,
   };
 };
-
-export const useContextMenu = () => {
-  const [clicked, setClicked] = React.useState(false);
-  const [points, setPoints] = React.useState({
-    x: 0,
-    y: 0,
-  });
-  React.useEffect(() => {
-    const handleClick = () => setClicked(false);
-    document.addEventListener('click', handleClick);
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  }, []);
-  return {
-    clicked,
-    setClicked,
-    points,
-    setPoints,
-  };
-};
-export default useContextMenu;

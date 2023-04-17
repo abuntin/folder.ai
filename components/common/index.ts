@@ -1,7 +1,6 @@
 "use client";
 
 export * from './Accordion'
-export * from "../dashboard/AddButton";
 export * from "./DateInput";
 export * from "./DividerGradient";
 export * from "./DAutocomplete";

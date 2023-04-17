@@ -1,10 +1,11 @@
 import { Folder, Kernel } from 'lib/models';
-import { DashboardContext, useDashboardApi, useUpload } from './Context';
+import { DashboardContext} from './Context';
+import { useDashboardApi, useUpload } from './hooks'
 import React from 'react';
 import { Snackbar, Alert, Stack } from '@mui/material';
 import { borderRadius } from 'lib/constants';
 import { DashboardApiProvider } from './ApiProvider';
-import { ProgressBar } from './ProgressBar';
+import { ProgressBar } from '../ProgressBar';
 import { AxiosProgressEvent } from 'axios';
 
 /**
@@ -32,8 +33,6 @@ export const DashboardProvider = ({ children, ...rest }) => {
   const [parentDragOver, setParentDragOver] = React.useState(false);
 
   const [view, setView] = React.useState<'grid' | 'tile'>('grid');
-
-  const [appbar, setAppBar] = React.useState<'min' | 'max' | null>(null);
 
   const [error, setError] = React.useState('');
 
@@ -67,16 +66,6 @@ export const DashboardProvider = ({ children, ...rest }) => {
     }
   }, []);
 
-  // Listen for change appbar event
-
-  React.useEffect(() => {
-    const appbarEvent = kernel.on('appbar', setAppBar);
-
-    return () => {
-      appbarEvent.unsubscribe();
-    };
-  }, [kernel]);
-
   // Listen for change view event
 
   React.useEffect(() => {
@@ -90,12 +79,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
   // Listen for select event
 
   React.useEffect(() => {
-    const selectEvent = kernel.on('select', (folder: Folder) => {
-      // if (folder != null && appbar == 'min') {
-      //   kernel.trigger('appbar', 'max');
-      // }
-      setSelectedFolder(folder);
-    });
+    const selectEvent = kernel.on('select', setSelectedFolder);
 
     return () => {
       selectEvent.unsubscribe();
@@ -109,7 +93,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
       setLoading(false);
       setErrorMessage(message ?? '');
       setWarningMessage('');
-      setUploadProgress(null)
+      setUploadProgress(null);
       setSuccessMessage('');
     });
 
@@ -161,7 +145,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
   React.useEffect(() => {
     const idleEvent = kernel.on('idle', success => {
       setLoading(false);
-      setUploadProgress(null)
+      setUploadProgress(null);
       setErrorMessage('');
       setWarningMessage('');
       setSuccessMessage(success ?? '');
@@ -240,7 +224,6 @@ export const DashboardProvider = ({ children, ...rest }) => {
       value={{
         kernel,
         loading,
-        appbar,
         selected,
         view,
         parentDragOver: { state: parentDragOver, setParentDragOver },
