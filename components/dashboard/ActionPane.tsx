@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Unstable_Grid2 as Grid,
@@ -7,29 +7,29 @@ import {
   Collapse,
   IconButton,
   Divider,
-} from "@mui/material";
-import { padding } from "lib/constants";
-import { DButton, DText } from "components";
-import { capitalise, formatDate, repaymentRange } from "lib/functions";
-import * as React from "react";
-import { useAppDispatch, useAppSelector } from "lib/redux";
-import { CloseSharp, EditSharp } from "@mui/icons-material";
-import { set_action_pane } from "lib/redux";
-import { Party } from "lib/types";
-import { useRouter } from "next/navigation";
+} from '@mui/material';
+import { padding } from 'lib/constants';
+import { DButton, DText } from 'components';
+import { capitalise, formatDate, repaymentRange } from 'lib/functions';
+import * as React from 'react';
+import { useAppDispatch, useAppSelector } from 'lib/redux';
+import { CloseSharp, EditSharp } from '@mui/icons-material';
+import { set_action_pane } from 'lib/redux';
+import { Party } from 'lib/types';
+import { useRouter } from 'next/navigation';
 
 interface ActionPaneProps {
   deal: any;
   open?: boolean;
 }
 
-export const ActionPane: React.FC<ActionPaneProps> = (props) => {
+export const ActionPane: React.FC<ActionPaneProps> = props => {
   const { deal, open } = props;
 
   const dispatch = useAppDispatch();
 
   const closeActionPane = (e: React.SyntheticEvent) => {
-    dispatch(set_action_pane(""));
+    dispatch(set_action_pane(''));
   };
 
   const {
@@ -52,7 +52,7 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
 
   const router = useRouter();
 
-  const toEditor = (e: React.SyntheticEvent) => router.push("/editor");
+  const toEditor = (e: React.SyntheticEvent) => router.push('/editor');
 
   const renderParty = React.useCallback(
     (party: Party) => {
@@ -79,14 +79,14 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
       justifyContent="space-between"
     >
       {[
-        { text: "Raise Issue", color: "warning" },
-        { text: "Share", color: "success" },
-        { text: "Edit", color: "primary" },
+        { text: 'Raise Issue', color: 'warning' },
+        { text: 'Share', color: 'success' },
+        { text: 'Edit', color: 'primary' },
       ].map(({ text, color }) => (
         <Grid xs={4}>
           <DButton
             endIcon={
-              text === "Edit" ? <EditSharp fontSize="small" /> : undefined
+              text === 'Edit' ? <EditSharp fontSize="small" /> : undefined
             }
             // color={
             //   color as
@@ -98,8 +98,8 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
             //     | "success"
             //     | "warning"
             // }
-            disabled={text !== "Edit"}
-            onClick={text === "Edit" ? toEditor : undefined}
+            disabled={text !== 'Edit'}
+            onClick={text === 'Edit' ? toEditor : undefined}
           >
             <DText text={text} />
           </DButton>
@@ -113,7 +113,7 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
       <Grid
         container
         spacing={2}
-        sx={{ padding, backgroundColor: "background.paper" }}
+        sx={{ padding, backgroundColor: 'background.paper' }}
       >
         <Grid xs display="flex" justifyContent="end">
           <IconButton onClick={closeActionPane}>
@@ -145,7 +145,7 @@ export const ActionPane: React.FC<ActionPaneProps> = (props) => {
         <Grid xs={12} container spacing={2} sx={{ padding }} direction="column">
           {cosigners &&
             cosigners.length !== 0 &&
-            cosigners.map((party) => renderParty(party))}
+            cosigners.map(party => renderParty(party))}
         </Grid>
         <Grid xs={6} container>
           <Grid xs={12}>

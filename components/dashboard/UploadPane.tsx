@@ -21,13 +21,11 @@ import {
 
 interface UploadPaneProps {
   open: boolean;
-  toggle?: (e: React.SyntheticEvent, state?: boolean) => void
+  toggle?: (e: React.SyntheticEvent, state?: boolean) => void;
 }
 
 export const UploadPane: React.FC<UploadPaneProps> = props => {
-
   const { open, toggle } = props;
-
 
   return (
     <Popover

@@ -34,7 +34,7 @@ export const useDashboardApi = () => {
 export const useUpload = () => {
   const [dragOver, setDragOver] = React.useState(false);
 
-  const { parentDragOver } = useDashboard();
+  const { parentDragOver, kernel } = useDashboard();
 
   // handle drag events
   const handleDrag = function (e: React.SyntheticEvent, isChild = false) {
@@ -42,6 +42,7 @@ export const useUpload = () => {
     e.stopPropagation();
 
     if (e.type === 'dragenter' || e.type === 'dragover') {
+      kernel.trigger('select', null)
       setDragOver(true);
       isChild
         ? parentDragOver.setParentDragOver(false)

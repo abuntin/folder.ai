@@ -6,28 +6,35 @@ import {
   CallMadeSharp,
   CreateNewFolderSharp,
   DriveFolderUploadSharp,
+  StarRateOutlined,
 } from '@mui/icons-material';
-import {
-  Box,
-  Divider,
-  IconButtonProps,
-  Menu,
-  MenuItem,
-  Stack,
-} from '@mui/material';
+import { Box, IconButtonProps, Menu, MenuItem, Stack } from '@mui/material';
 import { DText, TippedIconButton } from 'components/common';
 import { borderRadius, margin } from 'lib/constants';
+import dynamic from 'next/dynamic';
 import * as React from 'react';
 import { useDashboard } from './context';
+import { FormDialog } from './FormDialog';
 
 export const AddButton: React.FC<IconButtonProps> = props => {
   const { useUpload, kernel } = useDashboard();
+
+  const { folders, current } = kernel;
 
   const { handleAdd } = useUpload();
 
   const hiddenFileInput = React.useRef(null);
 
+  const [isPending, startTransition] = React.useTransition();
+
   const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const [createDialog, setCreateDialogState] = React.useState(false);
+
+  const [newDirectoryName, setDirName] = React.useState('');
+
+  const setCreateDialog = (state: boolean) =>
+    startTransition(() => setCreateDialogState(state));
 
   const handleClick = (e: React.SyntheticEvent) => {
     setAnchorEl(e.currentTarget);
@@ -57,6 +64,15 @@ export const AddButton: React.FC<IconButtonProps> = props => {
   const handleUpload = (e: React.SyntheticEvent) =>
     hiddenFileInput.current.click();
 
+  const createNewDirectoryInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => setDirName(e.target.value);
+
+  const CreateNewDirectory = React.useMemo(() => (
+    folders && current ? dynamic(() => import('./FormDialog').then(_ => _.FormDialog))
+    : React.Fragment
+  ), [kernel])
+
   return (
     <Box
       display="flex"
@@ -85,14 +101,14 @@ export const AddButton: React.FC<IconButtonProps> = props => {
         sx={{ minWidth: '60%', borderRadius: borderRadius * 2, mt: margin * 4 }}
         MenuListProps={{ sx: { backgroundColor: 'secondary.main' } }}
       >
-        <MenuItem onClick={handleClose} divider>
+        <MenuItem onClick={e => setCreateDialog(true)} divider>
           <Stack
             direction="row"
             spacing={3}
             sx={{ display: 'flex', alignItems: 'center' }}
           >
             <CreateNewFolderSharp sx={{ fontSize: 30 }} color="disabled" />
-            <DText variant="subtitle1" text="Create New Folder" />
+            <DText variant="subtitle1" text="Create New Directory" />
           </Stack>
         </MenuItem>
         <MenuItem onClick={handleUpload} divider>
@@ -109,7 +125,7 @@ export const AddButton: React.FC<IconButtonProps> = props => {
             sx={{ display: 'flex', alignItems: 'center' }}
           >
             <DriveFolderUploadSharp sx={{ fontSize: 30 }} color="disabled" />
-            <DText variant="subtitle1" text="Upload new Files" />
+            <DText variant="subtitle1" text="Upload new Folders" />
           </Stack>
         </MenuItem>
         <MenuItem onClick={handleClose}>
@@ -124,8 +140,20 @@ export const AddButton: React.FC<IconButtonProps> = props => {
           </Stack>
         </MenuItem>
       </Menu>
-
-      {/* <UploadPane open={uploadPane} toggle={toggleUploadPane} /> */}
+      <CreateNewDirectory
+        open={createDialog}
+        value={newDirectoryName}
+        title="Create a new Folder.AI Directory"
+        description="Folder.AI uses Directories to organise your Folders. Once created and indexed, you can perform full text and semantic search, chat to valid* documents, and more!"
+        handleClose={e => setCreateDialog(false)}
+        error={(value: string) => {
+          let isError = folders.filter(folder => folder.name == value).length !== 0
+          return isError ? 'Directory already exists' : ''
+        }}
+        inputChange={createNewDirectoryInputChange}
+        onConfirm={e => kernel.trigger('create', { name: newDirectoryName })}
+        inputLabel='Directory Name'
+      />
     </Box>
   );
 };
