@@ -1,6 +1,6 @@
 import { Folder, Kernel } from 'lib/models';
-import { DashboardContext} from './Context';
-import { useDashboardApi, useUpload } from './hooks'
+import { DashboardContext } from './Context';
+import { useDashboardApi, useUpload } from './hooks';
 import React from 'react';
 import { Snackbar, Alert, Stack } from '@mui/material';
 import { borderRadius } from 'lib/constants';
@@ -29,8 +29,6 @@ export const DashboardProvider = ({ children, ...rest }) => {
   const [loading, setLoadingState] = React.useState(true);
 
   const [selected, setSelected] = React.useState<Folder>(null);
-
-  const [parentDragOver, setParentDragOver] = React.useState(false);
 
   const [view, setView] = React.useState<'grid' | 'tile'>('grid');
 
@@ -226,7 +224,6 @@ export const DashboardProvider = ({ children, ...rest }) => {
         loading,
         selected,
         view,
-        parentDragOver: { state: parentDragOver, setParentDragOver },
         useDashboardApi,
         useUpload,
       }} // Provide filesystem service (kernel) & UI properties as context

@@ -47,7 +47,7 @@ export const DAutocomplete = <T extends { label?: string; name?: string, leading
             ...params.InputProps,
             startAdornment: (
               <InputAdornment position="start">
-                {props.leading ?? <FolderSharp fontSize="small" />}
+                {props.leading ?? <FolderSharp color='info' fontSize="small" />}
               </InputAdornment>
             ),
           }}

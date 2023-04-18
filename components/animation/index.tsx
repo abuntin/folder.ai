@@ -1,6 +1,6 @@
-import { useTheme } from "@mui/material";
-import { m, LazyMotion, domAnimation, MotionProps } from "framer-motion";
-import { borderRadius } from "lib/constants";
+import { useTheme } from '@mui/material';
+import { m, LazyMotion, domAnimation, MotionProps } from 'framer-motion';
+import { borderRadius } from 'lib/constants';
 
 interface AnimationProps extends MotionProps {}
 
@@ -13,14 +13,14 @@ export const NavAnimation: React.FC<AnimationProps> = ({
   ...rest
 }) => (
   <m.div
-    initial={{ opacity: 0, x: "100%" }}
-    animate={{ opacity: 1, x: "0%" }}
-    exit={{ opacity: 0, x: "-100%" }}
+    initial={{ opacity: 0, x: '100%' }}
+    animate={{ opacity: 1, x: '0%' }}
+    exit={{ opacity: 0, x: '-100%' }}
     transition={{
       duration: 0.1,
       ease: [0, 0.71, 0.2, 1.01],
       x: {
-        type: "spring",
+        type: 'spring',
         damping: 20,
         stiffness: 100,
         restDelta: 0.001,
@@ -37,13 +37,13 @@ export const PanDownAnimation: React.FC<AnimationProps> = ({
   ...rest
 }) => (
   <m.div
-    initial={{ opacity: 0, y: "-100%" }}
-    animate={{ opacity: 1, y: "0%" }}
+    initial={{ opacity: 0, y: '-100%' }}
+    animate={{ opacity: 1, y: '0%' }}
     transition={{
       duration: 0.3,
       ease: [0, 0.71, 0.2, 1.01],
       y: {
-        type: "spring",
+        type: 'spring',
         damping: 10,
         stiffness: 100,
         restDelta: 0.001,
@@ -96,7 +96,21 @@ export const AppearAnimationParent: React.FC<AnimationProps> = ({
   <m.div
     initial="hidden"
     animate="visible"
-    variants={{ visible: { opacity: 1 }, hidden: { opacity: 0 } }}
+    variants={{
+      visible: {
+        opacity: 1,
+        transition: {
+          when: 'beforeChildren',
+          staggerChildren: 0.3,
+        },
+      },
+      hidden: {
+        opacity: 0,
+        transition: {
+          when: 'afterChildren',
+        },
+      },
+    }}
     {...rest}
   >
     {children}
@@ -128,11 +142,11 @@ export const BlinkAnimation: React.FC<AnimationProps> = ({
     exit={{ opacity: 0.9 }}
     transition={{
       opacity: {
-        type: "tween",
+        type: 'tween',
         duration: 1.5,
         damping: 10,
         repeat: Infinity,
-        ease: [0.36, 0, 0.66, -0.56]
+        ease: [0.36, 0, 0.66, -0.56],
       },
     }}
   >
@@ -140,25 +154,23 @@ export const BlinkAnimation: React.FC<AnimationProps> = ({
   </m.div>
 );
 
-
 export const FolderAnimation: React.FC<AnimationProps> = ({
   children,
   ...rest
 }) => {
-
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
-  <m.div
-    style={{ borderRadius }}
-    initial={{ opacity: 1, backgroundColor: 'transparent' }}
-    whileHover={{ transition: { duration: 0.2, ease: [0, 0.71, 0.2, 1.01], } }}
-    drag
-    dragSnapToOrigin
-    {...rest}
-  >
+    <m.div
+      style={{ borderRadius }}
+      initial={{ opacity: 1, backgroundColor: 'transparent' }}
+      whileHover={{ transition: { duration: 0.2, ease: [0, 0.71, 0.2, 1.01] } }}
+      drag
+      dragSnapToOrigin
+      {...rest}
+      layout
+    >
       {children}
     </m.div>
-
-  )
-}
+  );
+};

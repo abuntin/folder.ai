@@ -6,10 +6,6 @@ import { useDashboardApi, useUpload } from './hooks';
 export interface DashboardContextInterface {
   kernel: Kernel;
   loading: boolean;
-  parentDragOver: {
-    state: boolean;
-    setParentDragOver: React.Dispatch<React.SetStateAction<boolean>>;
-  };
   selected: Folder;
   view: 'grid' | 'tile';
   useDashboardApi: typeof useDashboardApi;
@@ -23,14 +19,22 @@ type FolderActionType =
   | 'handleDelete'
   | 'handleMove'
   | 'handlePaste'
-  | 'handleRename'
+  | 'handleRename';
 
-type FolderActionState = 'expanded' | 'handleActionExpand' | 'destination' | 'setDestination' | 'recentAction' | 'setRecentAction'
+type FolderActionState =
+  | 'expanded'
+  | 'handleActionExpand'
+  | 'destination'
+  | 'setDestination'
+  | 'recentAction'
+  | 'setRecentAction';
 
 export interface DashboardApiContextInterface {
   clipboard: Folder[];
   state: { [key in FolderActionState]: any };
-  folderActions: { [key in FolderActionType]: (e: React.SyntheticEvent) => void };
+  folderActions: {
+    [key in FolderActionType]: (e: React.SyntheticEvent) => void;
+  };
 }
 
 export const DashboardApiContext =

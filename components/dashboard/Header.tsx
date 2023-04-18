@@ -17,7 +17,9 @@ export const Header: React.FC<HeaderProps> = props => {
 
   const KernelBar = dynamic(() => import('./appbar').then(_ => _.AppBar));
 
-  const AddButton = dynamic(() => import('./AddButton').then(_ => _.AddButton))
+  const AddButton = dynamic(() =>
+    import('./addbutton').then(_ => _.AddButton)
+  );
 
   const AIButton = dynamic(() =>
     import('./AppBarButton').then(_ => _.AppBarButton)

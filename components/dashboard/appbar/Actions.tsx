@@ -4,7 +4,7 @@ import {
   DriveFileMoveSharp,
   EditSharp,
   FolderCopySharp,
-  FolderDeleteSharp,
+  DeleteForeverSharp,
 } from '@mui/icons-material';
 import { Unstable_Grid2 as Grid, Stack } from '@mui/material';
 import Tippy from '@tippyjs/react';
@@ -106,7 +106,7 @@ export const Actions: React.FC<ActionsProps> = props => {
                       recentAction == 'delete' ? 'background.paper' : 'inherit',
                   }}
                 >
-                  <FolderDeleteSharp />
+                  <DeleteForeverSharp />
                 </TippedIconButton>
               </Stack>
             </m.div>

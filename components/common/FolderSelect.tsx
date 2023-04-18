@@ -28,6 +28,7 @@ export const FolderSelect: React.FC<FolderSelectProps<Folder>> = props => {
         return (
           <Box {...props} component="li">
             <FolderSharp
+              color='info'
               sx={{
                 fontSize:
                   variant == 'small' ? 10 : variant == 'medium' ? 12 : 14,
@@ -51,7 +52,7 @@ export const FolderSelect: React.FC<FolderSelectProps<Folder>> = props => {
             ...params.InputProps,
             startAdornment: (
               value ? (<InputAdornment position="start">
-                <FolderSharp sx={{ fontSize: variant == 'small' ? 10 : variant == 'medium' ? 12 : 14}} />
+                <FolderSharp color='info' sx={{ fontSize: variant == 'small' ? 10 : variant == 'medium' ? 12 : 14}} />
               </InputAdornment>) : <> </>
             ),
           }}
