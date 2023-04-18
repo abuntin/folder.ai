@@ -1,8 +1,7 @@
-import { Folder, rootFolder } from 'lib/models';
-import dynamic from 'next/dynamic';
+import { Folder } from 'lib/models';
 
 import React from 'react';
-import { DashboardProvider, useDashboard} from '.';
+import { DashboardProvider,} from '.';
 import { Container } from './Container';
 
 interface FileManagerProps {
@@ -62,7 +61,7 @@ interface FileManagerProps {
 
 export const Dashboard: React.FC<FileManagerProps> = props => {
   return (
-    <DashboardProvider rootPath={rootFolder.path}>
+    <DashboardProvider>
       <Container />
     </DashboardProvider>
   );

@@ -37,7 +37,7 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
 
   const { useUpload, kernel } = useDashboard();
 
-  const { dragOver, handleDrag, handleDrop, uploadProgress } = useUpload();
+  const { dragOver, handleDrag, handleDrop } = useUpload();
 
   return (
     <Box

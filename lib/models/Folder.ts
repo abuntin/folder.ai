@@ -1,5 +1,3 @@
-import { GetObjectCommandOutput, _Object as S3Object } from '@aws-sdk/client-s3'
-import { Troubleshoot } from '@mui/icons-material';
 import { FullMetadata } from 'firebase/storage';
 
 export class Folder {
@@ -33,11 +31,6 @@ export class Folder {
   isDirectory: boolean;
 
   /**
-   * Folder.AI + Google Cloud storage metadata
-   */
-  metadata?: GetObjectCommandOutput = null;
-
-  /**
    * GStorage URL
    */
 
@@ -66,36 +59,28 @@ export class Folder {
   }
 
   static nameFromPath = (str: string, isDirectory = false) => {
-    let parts = str.split('/')
+    let parts = str.split('/');
 
-    return parts[parts.length - 2] == '' ? parts[0] : isDirectory ? parts[parts.length - 2] : parts[parts.length - 1] 
-  }
+    return parts[parts.length - 2] == ''
+      ? parts[0]
+      : isDirectory
+      ? parts[parts.length - 2]
+      : parts[parts.length - 1];
+  };
 
-  static fromStorageReference = async (fullMetadata: FullMetadata, isDirectory = false) => ({
-    name: fullMetadata.name,
-    path: fullMetadata.fullPath,
-    url: fullMetadata.ref.toString(),
-    isDirectory,
-    children: [],
-    linkedFolders: [],
-    fullMetadata,
-    id: fullMetadata.generation
-} as Folder)
-
-  static fromAWS = (
-    metadata: GetObjectCommandOutput,
-    object: S3Object,
-    name: string = null,
-    path: string = null
+  static fromStorageReference = async (
+    fullMetadata: FullMetadata,
+    isDirectory = false
   ) =>
     ({
-      name: name ?? Folder.nameFromPath(object.Key),
-      path: path ?? object.Key,
-      isDirectory: false,
+      name: fullMetadata.name,
+      path: fullMetadata.fullPath,
+      url: fullMetadata.ref.toString(),
+      isDirectory,
       children: [],
       linkedFolders: [],
-      metadata,
-      id: object.ETag,
+      fullMetadata,
+      id: fullMetadata.generation,
     } as Folder);
 }
 
@@ -114,30 +99,28 @@ export class Directory extends Folder {
         if (data[key] == null)
           throw new Error(`Null/undefined in file constructor ${key}`);
         else {
-            if (key == 'isDirectory' && data[key] == false) throw new Error('Property isDirectory must be true')
+          if (key == 'isDirectory' && data[key] == false)
+            throw new Error('Property isDirectory must be true');
           val = data[key];
         }
       }
 
       this[key] = val;
     }
-
-    
   }
 
-  static fromAWS = (
-    metadata: GetObjectCommandOutput,
-    object: S3Object = null,
-    name: string,
-    path: string,
+  static fromStorageReference = async (
+    fullMetadata: FullMetadata,
+    isDirectory = true
   ) =>
     ({
-      name,
-      path,
-      isDirectory: true,
+      name: fullMetadata.name,
+      path: fullMetadata.fullPath,
+      url: fullMetadata.ref.toString(),
+      isDirectory,
       children: [],
       linkedFolders: [],
-      metadata,
-      id: metadata.ETag,
-    } as Directory);
+      fullMetadata,
+      id: fullMetadata.generation,
+    } as Folder);
 }

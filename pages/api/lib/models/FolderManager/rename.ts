@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
-import { deleteFn, copyS3, copy } from '../../functions';
+import { deleteFn, copy } from '../../functions';
 
 export const renameFolder: PropType<FolderManagerInterface, 'rename'> = async (
   req,
@@ -44,7 +44,7 @@ export const renameFolder: PropType<FolderManagerInterface, 'rename'> = async (
 
     let src = { ..._src, name, path: newPath } as Folder;
 
-    let url = await copy(src, dest); //await copyS3(src, dest);
+    let url = await copy(src, dest); 
 
     if (url) {
       let value = await deleteFn(_src);
