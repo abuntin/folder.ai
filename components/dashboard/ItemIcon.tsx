@@ -4,7 +4,7 @@ import { Box, BoxProps } from '@mui/material';
 import {
   FolderSharp,
   FolderOpenSharp,
-  InsertDriveFileSharp,
+  SnippetFolderSharp,
 } from '@mui/icons-material';
 import { AppearAnimationChild, FolderAnimation } from 'components/animation';
 import { DText } from 'components/common';
@@ -22,11 +22,9 @@ interface DashboardItemProps extends BoxProps {
 export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
   const { folder, selected, ...rest } = props;
 
-  const { useUpload, useDashboardApi, kernel } = useDashboard();
+  const { useUpload, kernel } = useDashboard();
 
-  const { clipboard } = useDashboardApi();
-
-  const { dragOver, handleDrag, handleDrop } = useUpload();
+  const { childDragOver, handleDrag, handleDrop, isDialog } = useUpload();
 
   return (
     <AppearAnimationChild>
@@ -40,14 +38,14 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
             paddingBottom: padding,
             paddingTop: padding,
             backgroundColor:
-              selected || dragOver ? 'background.paper' : 'transparent',
+              selected || childDragOver ? 'background.paper' : 'transparent',
             borderRadius,
             '&:hover': { backgroundColor: 'background.paper' },
           }}
-          onDrop={e => handleDrop(e, kernel, folder)}
-          onDragEnter={e => handleDrag(e, true)}
-          onDragOver={e => handleDrag(e, true)}
-          onDragLeave={e => handleDrag(e, true)}
+          onDrop={isDialog ? undefined : e => handleDrop(e, kernel, folder)}
+          onDragEnter={isDialog ? undefined : e => handleDrag(e, 'child')}
+          onDragOver={isDialog ? undefined : e => handleDrag(e, 'child')}
+          onDragLeave={isDialog ? undefined : e => handleDrag(e, 'child')}
           {...rest}
         >
           <form action="" onSubmit={e => e.preventDefault()}>
@@ -70,7 +68,7 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
               />
             )
           ) : (
-            <InsertDriveFileSharp
+            <SnippetFolderSharp
               color="primary"
               sx={{ mb: margin * 2, mt: margin * 2, fontSize: 60 }}
             />

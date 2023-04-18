@@ -1,10 +1,9 @@
 import { CloseSharp } from '@mui/icons-material';
 import {
   Button,
+  Unstable_Grid2 as Grid,
   Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogProps,
   DialogTitle,
   IconButton,
@@ -18,18 +17,20 @@ import * as React from 'react';
 
 interface FormDialogProps extends DialogProps {
   title: string;
-  description: string;
   open: boolean;
   value: string;
+  onConfirm: (e: React.SyntheticEvent) => void;
   handleClose: (e: React.SyntheticEvent) => void;
-  inputChange: (e: React.SyntheticEvent) => void;
   error?: string | ((value: string) => string);
   cancelAction?: string;
   confirmAction?: string;
-  onConfirm: (e: React.SyntheticEvent) => void;
   onCancel?: (e: React.SyntheticEvent) => void;
+  inputChange?: (e: React.SyntheticEvent) => void;
   inputLabel?: string;
   inputType?: string;
+  content?: React.ReactNode;
+  textfield?: boolean;
+  actions?: boolean
 }
 export const FormDialog: React.FC<FormDialogProps> = props => {
   const {
@@ -38,7 +39,6 @@ export const FormDialog: React.FC<FormDialogProps> = props => {
     open,
     handleClose,
     title,
-    description,
     cancelAction,
     confirmAction,
     inputChange,
@@ -46,6 +46,9 @@ export const FormDialog: React.FC<FormDialogProps> = props => {
     inputType,
     onConfirm,
     onCancel,
+    content,
+    textfield = true,
+    actions = true
   } = props;
 
   const [textfieldError, setTextfieldErrorState] = React.useState(
@@ -80,51 +83,47 @@ export const FormDialog: React.FC<FormDialogProps> = props => {
         sx: {
           borderRadius: borderRadius * 3,
           padding: padding * 3,
-          backgroundColor: 'background.default',
+          backgroundColor: 'action.active',
         },
       }}
     >
-        <DialogTitle sx={{ mb: margin * 4 }}>
-          <DText text={title} variant="h4" />
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: theme => theme.palette.primary.main,
-            }}
-          >
-            <CloseSharp />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent sx={{ mb: margin * 4 }}>
-          <Stack spacing={3}>
-            <DialogContentText>
-              <DText text={description} variant="h6" />{' '}
-            </DialogContentText>
-            <TextField
-              autoFocus
-              label={inputLabel ?? ''}
-              type={inputType ?? 'text'}
-              fullWidth
-              variant="standard"
-              onChange={inputChange}
-              error={textfieldError != ''}
-              helperText={<DText text={textfieldError} />}
-              value={value}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancel}>
-            <DText text={cancelAction ?? 'Cancel'} />{' '}
-          </Button>
-          <Button onClick={handleConfirm} disabled={textfieldError != ''}>
-            <DText text={confirmAction ?? 'Confirm'} />{' '}
-          </Button>
-        </DialogActions>
+      <DialogTitle sx={{ mb: margin * 4 }}>
+        <DText text={title} variant="h4" fontWeight="regular" />
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: theme => theme.palette.primary.main,
+          }}
+        >
+          <CloseSharp />
+        </IconButton>
+      </DialogTitle>
+      {content ?? <></>}
+      {textfield && (
+        <TextField
+          autoFocus
+          label={inputLabel ?? ''}
+          type={inputType ?? 'text'}
+          fullWidth
+          variant="standard"
+          onChange={inputChange}
+          error={textfieldError != ''}
+          helperText={<DText text={textfieldError} />}
+          value={value}
+        />
+      )}
+      {actions && <DialogActions>
+        <Button onClick={handleCancel}>
+          <DText text={cancelAction ?? 'Cancel'} />{' '}
+        </Button>
+        <Button onClick={handleConfirm} disabled={textfieldError != ''}>
+          <DText text={confirmAction ?? 'Confirm'} />{' '}
+        </Button>
+      </DialogActions>}
     </Dialog>
   );
 };

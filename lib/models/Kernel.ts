@@ -36,6 +36,10 @@ export class Kernel {
 
   public folders: Folder[] = null;
 
+  public foldersExcl: Folder[] = null;
+
+  public directoriesExcl: Directory[] = null;
+
   protected folderManagerUrl = (path: string) => `api/folder-manager/${path}`
 
 
@@ -175,6 +179,8 @@ export class Kernel {
             this.currentDirectory = directory;
             !this.isRoot && (this.prevDirectory = temp);
           }
+          this.foldersExcl = folders;
+          this.directoriesExcl = directories;
           this.currentFolders = folders.concat(directories);
           this.trigger('idle', 'Loaded Folder children');
         }

@@ -1,6 +1,6 @@
 'use client';
 
-import { FolderSharp, KeyboardArrowLeft } from '@mui/icons-material';
+import { FolderSharp, KeyboardArrowLeft, SnippetFolderSharp } from '@mui/icons-material';
 import {
   IconButton,
   Unstable_Grid2 as Grid,
@@ -20,11 +20,11 @@ interface ContentProps {}
 
 export const Content: React.FC<ContentProps> = props => {
   const theme = useTheme();
-  const { view, kernel, selected, useUpload, parentDragOver } = useDashboard();
+  const { view, kernel, selected, useUpload } = useDashboard();
 
   let { current, folders } = kernel;
 
-  const { dragOver, handleDrag, handleDrop } = useUpload();
+  const { parentDragOver, handleDrag, handleDrop, isDialog } = useUpload();
 
   const handleSelect = (e: React.SyntheticEvent, folder: Folder) => {
     kernel.trigger('select', folder);
@@ -85,15 +85,15 @@ export const Content: React.FC<ContentProps> = props => {
         mb: margin * 2,
         borderRadius,
         backgroundColor:
-          parentDragOver.state && dragOver
+          parentDragOver
             ? 'background.paper'
             : 'background.default',
         padding,
       }}
-      onDrop={e => handleDrop(e, kernel, current)}
-      onDragEnter={handleDrag}
-      onDragOver={handleDrag}
-      onDragLeave={handleDrag}
+      onDrop={isDialog ? undefined : e => handleDrop(e, kernel, current)}
+      onDragEnter={isDialog ? undefined : e => handleDrag(e, 'container')}
+      onDragOver={isDialog ? undefined : e => handleDrag(e, 'container')}
+      onDragLeave={isDialog ? undefined : e => handleDrag(e, 'container')}
       //onClick={e => kernel.trigger('select', null)}
     >
       <Grid
@@ -106,7 +106,7 @@ export const Content: React.FC<ContentProps> = props => {
       >
         <Grid xs={4}>
           {!kernel.isRoot && (
-            <IconButton onClick={e => kernel.goBack()} color="secondary">
+            <IconButton onClick={e => kernel.goBack()} color="primary">
               <KeyboardArrowLeft fontSize="medium" />
             </IconButton>
           )}
@@ -147,10 +147,19 @@ export const Content: React.FC<ContentProps> = props => {
                 alignItems="center"
                 ml={margin * 4}
               >
-                <DText text={folders.length} variant="h6" fontWeight="medium" />
-                <FolderSharp color="primary" sx={{ fontSize: 18 }} />
+                <DText text={kernel.foldersExcl.length} variant="h6" fontWeight="medium" />
+                <SnippetFolderSharp color="primary" sx={{ fontSize: 18 }} />
               </Box>
             </Box>
+            <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                ml={margin}
+              >
+                <DText text={kernel.directoriesExcl.length} variant="h6" fontWeight="medium" />
+                <FolderSharp color="primary" sx={{ fontSize: 18 }} />
+              </Box>
           </m.div>
         </Grid>
         <Grid xs={4} />
