@@ -61,20 +61,17 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
 
           {folder.isDirectory ? (
             folder.children ? (
-              <FolderSharp
-                color="primary"
-                sx={{ mb: margin * 2, mt: margin * 2, fontSize: 60 }}
-              />
+              <FolderSharp color="info" sx={{ fontSize: 120 }} />
             ) : (
               <FolderOpenSharp
                 fontSize="large"
-                color="disabled"
+                color="primary"
                 sx={{ mb: margin * 2, mt: margin * 2, fontSize: 60 }}
               />
             )
           ) : (
             <InsertDriveFileSharp
-              color="disabled"
+              color="primary"
               sx={{ mb: margin * 2, mt: margin * 2, fontSize: 60 }}
             />
           )}

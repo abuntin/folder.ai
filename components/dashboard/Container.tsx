@@ -5,8 +5,7 @@ import dynamic from 'next/dynamic';
 import * as React from 'react';
 import { useDashboard } from '.';
 import { borderRadius, padding } from 'lib/constants';
-import { AppearAnimationParent } from 'components/animation';
-import { Header } from './Header';
+
 
 interface ContainerProps {}
 
@@ -15,7 +14,7 @@ export const Container: React.FC<ContainerProps> = props => {
 
   const { folders, current } = kernel;
 
-  const HeaderComponent = dynamic(() => import('./Header').then(_ => _.Header))
+  const HeaderComponent = dynamic(() => import('./Header').then(_ => _.Header));
 
   const BodyComponent = React.useMemo(() => {
     console.log('Component changed, loading...');
@@ -26,23 +25,26 @@ export const Container: React.FC<ContainerProps> = props => {
   }, [loading, folders]);
 
   return (
-    <Box sx={{ paddingLeft: padding * 2, paddingRight: padding * 2 }} onContextMenu={e => e.preventDefault()}>
-        <Grid
-          container
-          spacing={4}
-          display="flex"
-          justifyContent="space-between"
-          sx={{
-            pl: padding * 2,
-            pr: padding * 2,
-            borderRadius,
-            bgColor: theme => theme.palette.common.white,
-          }}
-          //onClick={e => kernel.trigger('select', null)}
-        >
-          <HeaderComponent />
-          <BodyComponent />
-        </Grid>
+    <Box
+      sx={{ paddingLeft: padding * 2, paddingRight: padding * 2 }}
+      onContextMenu={e => e.preventDefault()}
+    >
+      <Grid
+        container
+        spacing={4}
+        display="flex"
+        justifyContent="space-between"
+        sx={{
+          pl: padding * 2,
+          pr: padding * 2,
+          borderRadius,
+          bgColor: theme => theme.palette.common.white,
+        }}
+        //onClick={e => kernel.trigger('select', null)}
+      >
+        <HeaderComponent />
+        <BodyComponent />
+      </Grid>
     </Box>
   );
 };

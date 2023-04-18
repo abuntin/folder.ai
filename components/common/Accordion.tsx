@@ -22,7 +22,7 @@ export const Accordion: React.FC<AccordionProps> = ({
         animate={{
           backgroundColor: expanded ? 'transparent' : 'background.paper',
         }}
-        style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}
+        style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
       >
         {children[0]}
       </m.div>
