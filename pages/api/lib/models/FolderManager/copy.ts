@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
-import {  copy } from '../../functions';
+import { copy } from '../../functions';
 
 export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
   req,
@@ -11,7 +11,7 @@ export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
   try {
     console.log('Initialised FolderManager.copy()');
 
-    const { folders, directory, type } = req.body;
+    const { folders, directory, type } = JSON.parse(req.body)
 
     if (!type || type !== 'copy')
       return res

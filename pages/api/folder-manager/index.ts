@@ -10,7 +10,7 @@ const handler: NextApiHandler = async (
   //   if (response instanceof Error) res.status(500).json({ error: response });
   //   else res.status(200).json({ payload: response });
   // };
-  // const data = req.body;
+  // const data = req.body
   // console.log(data.type);
   // if (!Object.prototype.hasOwnProperty.call(data, 'type')) {
   //   console.log('Missing type property in NextApiRequest');

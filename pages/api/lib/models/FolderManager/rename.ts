@@ -44,7 +44,7 @@ export const renameFolder: PropType<FolderManagerInterface, 'rename'> = async (
 
     let src = { ..._src, name, path: newPath } as Folder;
 
-    let url = await copy(src, dest); 
+    let url = await copy(src, dest);
 
     if (url) {
       let value = await deleteFn(_src);

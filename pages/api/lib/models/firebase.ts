@@ -9,6 +9,9 @@ import { renameFolder } from './FolderManager/rename';
 import { createDirectory } from './FolderManager/create';
 import { deleteFolders } from './FolderManager/delete';
 import { moveFolders } from './FolderManager/move';
+import { copyFolders } from './FolderManager/copy';
+
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -35,5 +38,6 @@ export const folderManagerService = new FolderManager({
   rename: renameFolder,
   create: createDirectory,
   delete: deleteFolders,
-  move: moveFolders
+  move: moveFolders,
+  copy: copyFolders
 });
