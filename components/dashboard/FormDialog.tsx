@@ -1,6 +1,5 @@
 import { CloseSharp } from '@mui/icons-material';
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -13,7 +12,7 @@ import {
   TextField,
 } from '@mui/material';
 import { DText } from 'components/common';
-import { margin, padding } from 'lib/constants';
+import { borderRadius, margin, padding } from 'lib/constants';
 import _ from 'lodash';
 import * as React from 'react';
 
@@ -74,13 +73,17 @@ export const FormDialog: React.FC<FormDialogProps> = props => {
   }, [value]);
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <Box
-        sx={{
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        sx: {
+          borderRadius: borderRadius * 3,
           padding: padding * 3,
           backgroundColor: 'background.default',
-        }}
-      >
+        },
+      }}
+    >
         <DialogTitle sx={{ mb: margin * 4 }}>
           <DText text={title} variant="h4" />
           <IconButton
@@ -122,7 +125,6 @@ export const FormDialog: React.FC<FormDialogProps> = props => {
             <DText text={confirmAction ?? 'Confirm'} />{' '}
           </Button>
         </DialogActions>
-      </Box>
     </Dialog>
   );
 };

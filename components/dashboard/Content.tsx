@@ -123,7 +123,7 @@ export const Content: React.FC<ContentProps> = props => {
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: theme.palette.info.main,
-              borderRadius: borderRadius * 5,
+              borderRadius: borderRadius * 3,
               paddingLeft: padding * 10,
               paddingRight: padding * 10,
               paddingTop: padding * 5,

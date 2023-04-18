@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic';
 import * as React from 'react';
 import { useDashboard } from '.';
 import { borderRadius, padding } from 'lib/constants';
+import { AppearAnimationParent } from 'components/animation';
+import { m } from 'framer-motion'
 
 
 interface ContainerProps {}
@@ -14,14 +16,20 @@ export const Container: React.FC<ContainerProps> = props => {
 
   const { folders, current } = kernel;
 
-  const HeaderComponent = dynamic(() => import('./Header').then(_ => _.Header));
-
   const BodyComponent = React.useMemo(() => {
     console.log('Component changed, loading...');
-    if (folders && current && !loading.state)
+    if (folders && current && !loading)
       return dynamic(() => import('./Content').then(_ => _.Content));
     else
       return dynamic(() => import('./Loading').then(_ => _.LoadingComponent));
+  }, [loading, folders]);
+
+  const HeaderComponent = React.useMemo(() => {
+    console.log('Component changed, loading...');
+    if (folders && current && !loading)
+      return dynamic(() => import('./Header').then(_ => _.Header));
+    else
+      return React.Fragment
   }, [loading, folders]);
 
   return (
@@ -29,22 +37,24 @@ export const Container: React.FC<ContainerProps> = props => {
       sx={{ paddingLeft: padding * 2, paddingRight: padding * 2 }}
       onContextMenu={e => e.preventDefault()}
     >
-      <Grid
-        container
-        spacing={4}
-        display="flex"
-        justifyContent="space-between"
-        sx={{
-          pl: padding * 2,
-          pr: padding * 2,
-          borderRadius,
-          bgColor: theme => theme.palette.common.white,
-        }}
-        //onClick={e => kernel.trigger('select', null)}
-      >
-        <HeaderComponent />
-        <BodyComponent />
-      </Grid>
+      <AppearAnimationParent>
+        <Grid
+          container
+          spacing={4}
+          display="flex"
+          justifyContent="space-between"
+          sx={{
+            pl: padding * 2,
+            pr: padding * 2,
+            borderRadius,
+            bgColor: theme => theme.palette.common.white,
+          }}
+          //onClick={e => kernel.trigger('select', null)}
+        >
+          <HeaderComponent />
+          <BodyComponent />
+        </Grid>
+      </AppearAnimationParent>
     </Box>
   );
 };

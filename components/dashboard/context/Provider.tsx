@@ -26,7 +26,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
   const [isPending, startTransition] = React.useTransition();
 
-  const [loading, setLoadingState] = React.useState({ state: true, text: '' });
+  const [loading, setLoadingState] = React.useState(true);
 
   const [selected, setSelected] = React.useState<Folder>(null);
 
@@ -50,8 +50,8 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
   const setSuccessMessage = (m: string) => startTransition(() => setSuccess(m));
 
-  const setLoading = (state: boolean, text = '') =>
-    startTransition(() => setLoadingState({ state, text }));
+  const setLoading = (state: boolean) =>
+    startTransition(() => setLoadingState(state));
 
   const setSelectedFolder = (folder: Folder) =>
     startTransition(() => setSelected(folder));
@@ -106,7 +106,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
   React.useEffect(() => {
     const loadingEvent = kernel.on('loading', (text: string) =>
-      setLoading(true, text ?? '')
+      setLoading(true)
     );
 
     return () => {

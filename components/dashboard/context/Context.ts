@@ -5,7 +5,7 @@ import { useDashboardApi, useUpload } from './hooks';
 
 export interface DashboardContextInterface {
   kernel: Kernel;
-  loading: { state: boolean; text: string };
+  loading: boolean;
   parentDragOver: {
     state: boolean;
     setParentDragOver: React.Dispatch<React.SetStateAction<boolean>>;
