@@ -16,10 +16,6 @@ export const AppBar: React.FC<AppBarProps> = props => {
     dynamic(() => import('./Info').then(_ => _.ActionInfo))
   );
 
-  const NavInfo = React.memo(
-    dynamic(() => import('./Nav').then(_ => _.NavInfo))
-  );
-
   return (
     <Grid
       container

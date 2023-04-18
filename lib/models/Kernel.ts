@@ -14,7 +14,6 @@ export type KernelEvent =
   | 'error'
   | 'refresh'
   | 'warning'
-  | 'appbar'
   | 'copy'
   | 'paste'
   | 'cut'
@@ -178,7 +177,6 @@ export class Kernel {
           }
           this.currentFolders = folders.concat(directories);
           this.trigger('idle', 'Loaded Folder children');
-          this.trigger('appbar', 'min');
         }
       } catch (e) {
         this.trigger('error', e.message);

@@ -26,8 +26,7 @@ export const ActionInfo: React.FC<InfoPaneProps> = props => {
 
   const { recentAction, setDestination, destination } = state;
 
-  return React.useMemo(
-    () => (
+  return (
       <Box>
         {clipboard.length ? (
           recentAction && recentAction !== 'delete' ? (
@@ -144,7 +143,5 @@ export const ActionInfo: React.FC<InfoPaneProps> = props => {
           </NavAnimation>
         )}
       </Box>
-    ),
-    [folders, selected, clipboard, recentAction]
-  );
+    )
 };

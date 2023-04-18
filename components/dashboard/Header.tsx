@@ -33,7 +33,6 @@ export const Header: React.FC<HeaderProps> = props => {
     >
       <Grid xs={10} display="flex" alignItems="stretch">
         <KernelBar />
-        <AIButton />
       </Grid>
       <Grid
         container
@@ -43,14 +42,14 @@ export const Header: React.FC<HeaderProps> = props => {
         justifyContent="space-between"
       >
         <Grid xs={6} display="flex" justifyContent="center">
-          <AddButton disabled={loading.state} />
+          <AddButton disabled={loading} />
         </Grid>
         <Grid xs={6} display="flex" justifyContent="start">
           <ToggleButtonGroup
             value={view}
             exclusive
             onChange={(e, newVal) => kernel.trigger('view', newVal)}
-            disabled={loading.state}
+            disabled={loading}
           >
             <ToggleButton value="grid" size="small">
               <GridViewSharp color={view === 'grid' ? 'info' : 'disabled'} />

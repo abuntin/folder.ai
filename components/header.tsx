@@ -1,27 +1,28 @@
-"use client";
-import clsx from "clsx";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { DividerGradient, DText, ColorModeContext } from "components";
-import { padding } from "lib/constants";
+'use client';
+import clsx from 'clsx';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { DividerGradient, DText, ColorModeContext } from 'components';
+import { borderRadius, padding } from 'lib/constants';
 import {
   Box,
   IconButton,
   Unstable_Grid2 as Grid,
   useTheme,
-} from "@mui/material";
-import { margin } from "lib/constants";
-import React from "react";
-import { Brightness7, Brightness4 } from "@mui/icons-material";
-import Image from "next/image";
-import logo from "public/logo_transparent.png";
+} from '@mui/material';
+import { margin } from 'lib/constants';
+import React from 'react';
+import { Brightness7, Brightness4 } from '@mui/icons-material';
+import { m } from 'framer-motion';
+import Image from 'next/image';
+import logo from 'public/logo_transparent.png';
 
 const navItems = {
-  "/": {
-    name: "Dashboard",
+  '/': {
+    name: 'Dashboard',
   },
-  "/editor": {
-    name: "Editor",
+  '/editor': {
+    name: 'Editor',
   },
 };
 
@@ -31,11 +32,11 @@ function ToggleThemeMode() {
   return (
     <Box
       sx={{
-        display: "flex",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "text.primary",
+        display: 'flex',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'text.primary',
         borderRadius: 1,
         p: 3,
       }}
@@ -45,7 +46,7 @@ function ToggleThemeMode() {
         onClick={toggleColorMode.toggle}
         color="inherit"
       >
-        {mode === "dark" ? <Brightness7 /> : <Brightness4 />}
+        {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
       </IconButton>
     </Box>
   );
@@ -62,31 +63,57 @@ function Logo() {
 const HeaderItem = ({ active, path, name, ...rest }) => {
   const [showLine, setShowLine] = React.useState(false);
 
+  const theme = useTheme();
+
   return (
     <Box
-      onMouseEnter={(e) => setShowLine(true)}
-      onMouseLeave={(e) => setShowLine(false)}
+      onMouseEnter={e => setShowLine(true)}
+      onMouseLeave={e => setShowLine(false)}
       {...rest}
     >
       <Link
         key={path}
-        href={"/"}
+        href={'/'}
         className={clsx(
-          "transition-all hover:text-neutral-800 dark:hover:text-neutral-200 py-[5px] px-[10px]",
-          "flex flex-col items-center justify-evenly"
+          'transition-all hover:text-neutral-800 dark:hover:text-neutral-200 py-[5px] px-[10px]',
+          'flex flex-col items-center justify-evenly'
         )}
       >
-        <DText
-          text={name}
-          variant="body1"
-          fontWeight={active ? "medium" : "light"}
-          color={active || showLine ? "text.disabled" : "text.primary"}
-        />
-        <DividerGradient
-          sx={{ mt: margin, width: margin * 40 }}
-          active={active}
-          hover={showLine}
-        />
+        {active && (
+          <m.div
+            initial="false"
+            animate="enter"
+            transition={{ ease: 'easeInOut' }}
+            aria-label="Current Directory"
+            whileHover={{ scale: 1.05 }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.palette.background.paper,
+              borderRadius: borderRadius * 3,
+              paddingLeft: padding * 10,
+              paddingRight: padding * 10,
+              paddingTop: padding * 5,
+              paddingBottom: padding * 5,
+            }}
+          >
+            <DText
+              text={name}
+              variant="body1"
+              fontWeight={active ? 'medium' : 'light'}
+              color={active || showLine ? 'text.disabled' : 'text.primary'}
+            />
+          </m.div>
+        )}
+        {!active && (
+          <DText
+            text={name}
+            variant="body1"
+            fontWeight={active ? 'medium' : 'light'}
+            color={active || showLine ? 'text.disabled' : 'text.primary'}
+          />
+        )}
       </Link>
     </Box>
   );
@@ -94,10 +121,10 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
 
 interface HeaderProps {}
 
-export const Header: React.FC<HeaderProps> = (props) => {
-  let pathname = usePathname() || "/";
-  if (pathname.includes("/blog/")) {
-    pathname = "/blog";
+export const Header: React.FC<HeaderProps> = props => {
+  let pathname = usePathname() || '/';
+  if (pathname.includes('/blog/')) {
+    pathname = '/blog';
   }
 
   let entries = Object.entries(navItems);
