@@ -3,6 +3,12 @@ import { Folder, Directory } from 'lib/models';
 import { root } from '../models/firebase';
 import { upload } from './upload';
 
+/**
+ * Copies one Folder to given destination in GCS
+ * @param src Folder to copy
+ * @param dest Directory to copy to
+ * @returns 
+ */
 export const copy = (
   src: Folder,
   dest: Directory

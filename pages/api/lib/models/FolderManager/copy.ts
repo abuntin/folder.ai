@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
-import { copyS3, copy } from '../../functions';
+import {  copy } from '../../functions';
 
 export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
   req,
@@ -34,7 +34,7 @@ export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
     let urls = [];
 
     for (let src of srcList) {
-      let url = await copy(src, dest); //await copyS3(src, dest)
+      let url = await copy(src, dest);
 
       urls.push(url);
     }
@@ -51,32 +51,3 @@ export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
       .json({ data: null, error: e.message ?? 'Unable to copy Folders' });
   }
 };
-
-// export const copyFolder: PropType<FolderManagerInterface, 'copy'> = async (
-//   req,
-//   res
-// ) => {
-//   try {
-//     console.log('Initialised FolderManager.copy()');
-
-//     const { folder, directory, type } = req.body;
-
-//     if (!type || type !== 'copy')
-//       return res
-//         .status(405)
-//         .json({ data: null, error: 'Invalid NextApiRequest type' });
-
-//     let src = folder as Folder;
-
-//     let dest = directory as Directory;
-
-//     let { urls } = await copy(src, dest);
-
-//     console.log(`Copied ${src.name} to ${dest.name}`);
-
-//     return res.status(200).json({ data: { url: urls }, error: null });
-//   } catch (e) {
-//     console.error(e);
-//     return res.status(500).json({ data: null, error: 'Unable to copy Folder' });
-//   }
-// };

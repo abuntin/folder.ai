@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Divider, Unstable_Grid2 as Grid } from '@mui/material';
+import { Divider, Unstable_Grid2 as Grid } from '@mui/material';
 import { borderRadius, padding } from 'lib/constants';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
@@ -37,10 +37,6 @@ export const AppBar: React.FC<AppBarProps> = props => {
         maxWidth: '115%',
       }}
     >
-      <Grid xs={2} display="flex" justifyContent="start">
-        <NavInfo />
-      </Grid>
-      <Divider flexItem orientation="vertical" />
       <Grid xs={3} display="flex" flexDirection="row" alignItems="center">
         <Actions />
       </Grid>

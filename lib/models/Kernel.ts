@@ -2,7 +2,6 @@ import { Directory, Folder } from '.';
 import { cache } from 'react';
 import _ from 'lodash';
 import events, { EventSubscription } from '@mongez/events';
-import axios from 'axios'
 
 export type KernelEvent =
   | 'loading'
@@ -38,11 +37,7 @@ export class Kernel {
 
   public folders: Folder[] = null;
 
-  protected folderManagerUrl = (fn: string) => {
-    //return `${process.env.NEXT_PUBLIC_BASE_URL ? `https://${process.env.NEXT_PUBLIC_BASE_URL}`: 'http://localhost:8888'}/api/${fn}`;
-
-    return `/api/${fn}`
-  };
+  protected folderManagerUrl = (path: string) => `api/folder-manager/${path}`
 
 
   /**
@@ -103,22 +98,16 @@ export class Kernel {
 
     try {
 
-      let { data } = await axios.post(this.folderManagerUrl('init'), { type: 'init' }, {
+      let res = await fetch(this.folderManagerUrl('init'), {
+        body: JSON.stringify({
+          type: 'init',
+        }),
         headers: {
           'Content-Type': 'application/json',
         },
-        signal
-      })
-      // let res = await fetch(this.folderManagerUrl('init'), {
-      //   body: JSON.stringify({
-      //     type: 'init',
-      //   }),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   method: 'POST',
-      //   signal,
-      // });
+        method: 'POST',
+        signal,
+      });
 
       const {
         data: rootDirectory,
@@ -126,7 +115,7 @@ export class Kernel {
       }: {
         data: Directory | null;
         error: string | null;
-      } = data //await res.json();
+      } =  await res.json(); 
 
       console.log('Obtained Kernel.getRootFolder() response');
 
@@ -153,23 +142,17 @@ export class Kernel {
       this.trigger('loading');
 
       try {
-        let { data: _data } = await axios.post(this.folderManagerUrl('list'), { directory, type: 'list' }, {
+        let res = await fetch(this.folderManagerUrl('list'), {
+          body: JSON.stringify({
+            directory,
+            type: 'list',
+          }),
           headers: {
             'Content-Type': 'application/json',
           },
-          signal
-        })
-        // let res = await fetch(this.folderManagerUrl('list'), {
-        //   body: JSON.stringify({
-        //     directory,
-        //     type: 'list',
-        //   }),
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   method: 'POST',
-        //   signal,
-        // });
+          method: 'POST',
+          signal,
+        });
 
         console.log('Obtained Kernel.load() response');
 
@@ -182,7 +165,7 @@ export class Kernel {
             directories: Folder[];
           } | null;
           error: string | null;
-        } = _data //await res.json();
+        } = await res.json() 
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.load() response data');
@@ -214,77 +197,6 @@ export class Kernel {
     return this.load(this.current);
   });
 
-  // public uploadS3 = cache(
-  //   async (
-  //     payload: { files: File[]; directory: Directory },
-  //   ): Promise<void> => {
-  //     try {
-  //       const { files, directory } = payload;
-
-  //       this.trigger('warning', `Uploading...`)
-
-  //       let res = await fetch(this.folderManagerUrl('upload'), {
-  //         body: JSON.stringify({
-  //           files: files.map(file => ({ name: file.name, type: file.type })),
-  //           directory,
-  //           type: 'upload',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           method: 'POST',
-  //         }),
-  //       });
-
-  //       const {
-  //         data,
-  //         error,
-  //       }: {
-  //         data: {
-  //           files: { url: string, fields: {[key: string]: any } }[]
-  //         } | null;
-  //         error: string | null;
-  //       } = await res.json();
-
-  //       if (error || !data)
-  //         throw new Error(error ?? 'Missing Kernel.upload() response');
-
-  //       const { files: fileResponses } = data;
-
-  //       this.trigger('warning', `Uploading ${files.length} Folder${files.length == 1 ? '' : 's'}`);
-
-  //       for (let i = 0; i < fileResponses.length; i++) {
-
-  //         let { url, fields } = fileResponses[i]
-
-  //         let file = files[i]
-
-  //         const formData = new FormData();
-
-  //         Object.entries({ ...fields, file }).forEach(([key, value]) => {
-  //           formData.append(key, value instanceof File ? value : value as string);
-  //         });
-
-  //         this.trigger('warning', `Uploading ${file.name} to ${directory.name}...`)
-
-  //         const upload = await fetch(url, {
-  //           method: 'POST',
-  //           body: formData,
-  //         });
-
-  //         if (upload.ok) {
-  //           console.log(`Uploaded successfully!`);
-  //         } else {
-  //           throw new Error(`Unable to upload ${file.name} too ${directory.name}`)
-  //         }
-  //       }
-  //       this.trigger('refresh')
-  //       this.trigger('idle', `Uploaded ${files.length == 1 ? files[0].name : `${files.length} Folders`} to ${directory.name}`)
-  //     } catch (e) {
-  //       this.trigger('error', e.message);
-  //     }
-  //   }
-  // );
-
   /**
    * Upload files to given Directory
    * @param payload { directory: Directory, files: File[] }
@@ -313,13 +225,10 @@ export class Kernel {
         formData.append('directory', JSON.stringify(directory));
         files.forEach((file, i) => formData.append(`media`, file));
 
-        let { data: _data } = await axios.post(this.folderManagerUrl('upload'), formData, {
-          onUploadProgress
-        })
-        // const res = await fetch(this.folderManagerUrl('upload'), {
-        //   method: 'POST',
-        //   body: formData,
-        // });
+        const res = await fetch(this.folderManagerUrl('upload'), {
+          method: 'POST',
+          body: formData,
+        });
 
         const {
           data,
@@ -329,7 +238,7 @@ export class Kernel {
             urls: string[];
           } | null;
           error: string | null;
-        } = _data //await res.json();
+        } = await res.json() 
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.upload() response data');
@@ -379,27 +288,16 @@ export class Kernel {
             folders.length === 1 ? folders[0].name : `${folders.length} Folders`
           } to ${directory.name}...`
         );
-
-        let { data: _data } = await axios.post(this.folderManagerUrl('copy'), {
-          folders,
-          directory,
-          type: 'copy'
-        }, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          signal
-        })
-        // let res = await fetch(this.folderManagerUrl('copy'), {
-        //   body: JSON.stringify({
-        //     folders,
-        //     directory,
-        //     type: 'copy',
-        //   }),
+        let res = await fetch(this.folderManagerUrl('copy'), {
+          body: JSON.stringify({
+            folders,
+            directory,
+            type: 'copy',
+          }),
           
-        //   method: 'POST',
-        //   signal,
-        // });
+          method: 'POST',
+          signal,
+        });
 
         console.log('Obtained Kernel.copy() response');
 
@@ -411,7 +309,7 @@ export class Kernel {
             urls: string[];
           } | null;
           error: string | null;
-        } = _data //await res.json();
+        } = await res.json() 
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.copy() response data');
@@ -460,29 +358,18 @@ export class Kernel {
             folders.length === 1 ? folders[0].name : `${folders.length} Folders`
           } to ${directory.name}...`
         );
-
-        let { data: _data } = await axios.post(this.folderManagerUrl('move'), {
-          folders,
-          directory,
-          type: 'move'
-        }, {
+        let res = await fetch(this.folderManagerUrl('move'), {
+          body: JSON.stringify({
+            folders,
+            directory,
+            type: 'move',
+          }),
           headers: {
             'Content-Type': 'application/json',
           },
-          signal
-        })
-        // let res = await fetch(this.folderManagerUrl('move'), {
-        //   body: JSON.stringify({
-        //     folders,
-        //     directory,
-        //     type: 'move',
-        //   }),
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   method: 'POST',
-        //   signal,
-        // });
+          method: 'POST',
+          signal,
+        });
 
         console.log('Obtained Kernel.move() response');
 
@@ -494,7 +381,7 @@ export class Kernel {
             urls: string[];
           } | null;
           error: string | null;
-        } = _data //await res.json();
+        } = await res.json() 
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.move() response data');
@@ -532,26 +419,17 @@ export class Kernel {
       try {
         this.trigger('warning', `Deleting ${folders.length} Folders...`);
 
-        let { data: _data } = await axios.post(this.folderManagerUrl('delete'), {
-          folders,
-          type: 'delete'
-        }, {
+        let res = await fetch(this.folderManagerUrl('delete'), {
+          body: JSON.stringify({
+            folders,
+            type: 'delete',
+          }),
           headers: {
             'Content-Type': 'application/json',
           },
-          signal
-        }) 
-        // let res = await fetch(this.folderManagerUrl('delete'), {
-        //   body: JSON.stringify({
-        //     folders,
-        //     type: 'delete',
-        //   }),
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   method: 'POST',
-        //   signal,
-        // });
+          method: 'POST',
+          signal,
+        });
 
         console.log('Obtained Kernel.delete() response');
 
@@ -561,7 +439,7 @@ export class Kernel {
         }: {
           data: true | null;
           error: string | null;
-        } = _data //await res.json();
+        } = await res.json() 
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.delete() response data');
@@ -603,26 +481,18 @@ export class Kernel {
           `Creating new Directory ${name} in ${directory.name}...`
         );
 
-        let { data: _data } = await axios.post(this.folderManagerUrl('create'), {
-          name, directory, type: 'create'
-        }, {
+        let res = await fetch(this.folderManagerUrl('create'), {
+          body: JSON.stringify({
+            name,
+            directory,
+            type: 'create',
+          }),
           headers: {
             'Content-Type': 'application/json',
           },
-          signal
-        })
-        // let res = await fetch(this.folderManagerUrl('create'), {
-        //   body: JSON.stringify({
-        //     name,
-        //     directory,
-        //     type: 'create',
-        //   }),
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   method: 'POST',
-        //   signal,
-        // });
+          method: 'POST',
+          signal,
+        });
 
         console.log('Obtained Kernel.create() response');
 
@@ -632,7 +502,7 @@ export class Kernel {
         }: {
           data: { url: string };
           error: string | null;
-        } = _data //await res.json();
+        } = await res.json(); 
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.create() response data');
@@ -673,27 +543,19 @@ export class Kernel {
           `Renaming Folder ${folder.name} to ${name} in ${directory.name}...`
         );
 
-        let { data: _data } = await axios.post(this.folderManagerUrl('rename'), {
-          name, folder, directory, type: 'rename'
-        }, {
+        let res = await fetch(this.folderManagerUrl('rename'), {
+          body: JSON.stringify({
+            name,
+            folder,
+            directory,
+            type: 'rename',
+          }),
           headers: {
             'Content-Type': 'application/json',
           },
-          signal
-        })
-        // let res = await fetch(this.folderManagerUrl('rename'), {
-        //   body: JSON.stringify({
-        //     name,
-        //     folder,
-        //     directory,
-        //     type: 'rename',
-        //   }),
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   method: 'POST',
-        //   signal,
-        // });
+          method: 'POST',
+          signal,
+        });
 
         console.log('Obtained Kernel.rename() response');
 
@@ -703,7 +565,7 @@ export class Kernel {
         }: {
           data: { url: string };
           error: string | null;
-        } = _data //await res.json();
+        } = await res.json() 
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.rename() response data');
@@ -741,29 +603,3 @@ export class Kernel {
     events.trigger(`kernel.${event}`, ...args);
   }
 }
-
-// /**
-//  * App Kernel instance
-//  */
-// export const kernel = new Kernel()
-
-// /**
-//  * Helper function for @preload
-//  */
-
-// const init = async () => {
-//   let src = await kernel.getRootFolder();
-
-//   kernel
-//     .load(src)
-//     .then(({ folders, directories }) => kernel.currentFolders = folders.concat(directories))
-//     .catch((e) => kernel.trigger('loading', e.message))
-// };
-
-// /**
-//  * Helper function to prepopulate kernel during startup
-//  */
-// export const preload = () => {
-//   console.log('init preload')
-//   void init();
-// };
