@@ -32,4 +32,3 @@ export const createDirectory: PropType<
       .json({ data: null, error: e.message ?? 'Unable to create Directory' });
   }
 };
-

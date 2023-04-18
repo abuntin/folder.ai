@@ -4,7 +4,6 @@ import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
 import { root } from '../firebase';
 
-
 export const listFolder: PropType<FolderManagerInterface, 'list'> = async (
   req,
   res
@@ -19,7 +18,6 @@ export const listFolder: PropType<FolderManagerInterface, 'list'> = async (
         .json({ data: null, error: 'Invalid NextApiRequest type' });
 
     let src = directory as Directory;
-
 
     if (!Object.prototype.hasOwnProperty.call(src, 'path'))
       return res
