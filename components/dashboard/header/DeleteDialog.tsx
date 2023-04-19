@@ -25,6 +25,7 @@ export const DeleteDialog: React.FC<MoveDialogProps> = props => {
           padding: padding * 3,
           backgroundColor: 'action.active',
         },
+        elevation: 2
       }}
     >
       <DText text={`Delete ${selected.name}?`} variant="subtitle1" fontWeight="regular" />

@@ -23,7 +23,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
         success: { main: '#578346' }, // green
         disabled: { main: `rgba(229,229,229,0.5)`},
         error: { main: '#ff0033' }, // red 
-        action: { active: 'rgba(99,157,201,0.7)' }, // darker default bg
+        action: { active: 'rgba(99, 150, 255,0.85)' }, // darker default bg
         mode,
         grey: 600 as Partial<Color>,
         text:  { secondary: '#110010', primary: '#fafafa', disabled: '#E5E5E5' },
@@ -36,7 +36,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
         warning: { main: '#fca311' }, // yellow
         info: { main: 'rgba(32,42,83,1)' }, // blue
         success: { main: '#4BB543' }, // green
-        action: { active: 'rgba(20,27,53,0.7)' }, // darker default bg
+        action: { active: 'rgba(20,27,53,0.85)' }, // darker default bg
         mode,
         grey: 600 as Partial<Color>,
         text:  { primary: '#fafafa', secondary: '#110010', disabled: '#E5E5E5' },

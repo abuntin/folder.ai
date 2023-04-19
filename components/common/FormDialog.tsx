@@ -101,6 +101,7 @@ export const FormDialog: React.FC<FormDialogProps> = props => {
           padding: padding * 3,
           backgroundColor: 'action.active',
         },
+        elevation: 2
       }}
     >
       <DialogTitle sx={{ mb: margin * 4 }}>

@@ -40,7 +40,7 @@ export const Actions: React.FC<ActionsProps> = props => {
 
   const RecentActionDialog = React.useMemo(() => {
     if (selected && recentAction) {
-      const Dialog =
+      const _Dialog =
         recentAction === 'delete'
           ? dynamic(() => import('./DeleteDialog').then(_ => _.DeleteDialog))
           : recentAction === 'copy' || recentAction == 'move'
@@ -55,6 +55,8 @@ export const Actions: React.FC<ActionsProps> = props => {
         open: selected != null,
         onClose: e => setRecentAction(null),
       };
+
+      const Dialog = React.memo(_Dialog)
 
       return Dialog ? (
         <Dialog
