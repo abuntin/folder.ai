@@ -6,15 +6,13 @@ import {
   CallMadeSharp,
   CreateNewFolderSharp,
   DriveFolderUploadSharp,
-  StarRateOutlined,
 } from '@mui/icons-material';
 import { Box, IconButtonProps, Menu, MenuItem, Stack } from '@mui/material';
-import { DText, TippedIconButton } from 'components/common';
+import { DText, TippedIconButton, FormDialog } from 'components/common';
 import { borderRadius, margin } from 'lib/constants';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
 import { useDashboard } from '../context';
-import { FormDialog } from '../FormDialog';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { UploadFolderDialog } from './UploadFolderDialog';
 
@@ -53,7 +51,9 @@ export const AddButton: React.FC<IconButtonProps> = props => {
   const CreateNewDialog = React.useMemo(
     () =>
       folders && current && dialog
-        ? dynamic(() => import('../FormDialog').then(_ => _.FormDialog))
+        ? dynamic(() =>
+            import('components/common/FormDialog').then(_ => _.FormDialog)
+          )
         : React.Fragment,
     [kernel, dialog]
   );
@@ -65,7 +65,6 @@ export const AddButton: React.FC<IconButtonProps> = props => {
             open: dialog != null,
             value: newDirectoryName,
             title: 'New Folder.AI Directory',
-            
             handleClose: e => setDialog(null),
             error: (value: string) => {
               let isError =
@@ -77,20 +76,19 @@ export const AddButton: React.FC<IconButtonProps> = props => {
               kernel.trigger('create', { name: newDirectoryName }),
             inputLabel: 'Directory Name',
             content: <CreateNewDirectoryDialog />,
-            textfield: true
+            textfield: true,
           }
         : dialog == 'upload'
         ? {
             open: dialog != null,
-            value: '',
             title: 'Upload New Folders',
             handleClose: e => setDialog(null),
             onConfirm: e => {},
             inputLabel: 'Directory Name',
             content: <UploadFolderDialog />,
             textfield: false,
-            actions: false
-        }
+            actions: false,
+          }
         : null,
     [dialog]
   );
@@ -143,7 +141,7 @@ export const AddButton: React.FC<IconButtonProps> = props => {
             <DText variant="subtitle1" text="Upload new Folders" />
           </Stack>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleClose} disabled>
           <Stack
             direction="row"
             spacing={3}

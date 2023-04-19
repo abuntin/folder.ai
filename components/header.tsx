@@ -19,10 +19,16 @@ import logo from 'public/logo_transparent.png';
 
 const navItems = {
   '/': {
+    name: 'My Directory',
+  },
+  '/dashboard': {
     name: 'Dashboard',
   },
-  '/editor': {
-    name: 'Editor',
+  '/subscription': {
+    name: 'My Subscription',
+  },
+  '/settings': {
+    name: 'Settings',
   },
 };
 
@@ -79,41 +85,31 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
           'flex flex-col items-center justify-evenly'
         )}
       >
-        {active && (
-          <m.div
-            initial="false"
-            animate="enter"
-            transition={{ ease: 'easeInOut' }}
-            aria-label="Current Directory"
-            whileHover={{ scale: 1.05 }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.palette.background.paper,
-              borderRadius: borderRadius * 3,
-              paddingLeft: padding * 10,
-              paddingRight: padding * 10,
-              paddingTop: padding * 5,
-              paddingBottom: padding * 5,
-            }}
-          >
-            <DText
-              text={name}
-              variant="body1"
-              fontWeight={active ? 'medium' : 'light'}
-              color={active || showLine ? 'text.disabled' : 'text.primary'}
-            />
-          </m.div>
-        )}
-        {!active && (
+        <m.div
+          initial="false"
+          animate="enter"
+          transition={{ ease: 'easeInOut' }}
+          aria-label="Current Directory"
+          whileHover={{ scale: 1.05, backgroundColor: theme.palette.background.paper }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: active ? theme.palette.background.paper : 'transparent',
+            borderRadius: borderRadius * 3,
+            paddingLeft: padding * 10,
+            paddingRight: padding * 10,
+            paddingTop: padding * 5,
+            paddingBottom: padding * 5,
+          }}
+        >
           <DText
             text={name}
             variant="body1"
             fontWeight={active ? 'medium' : 'light'}
             color={active || showLine ? 'text.disabled' : 'text.primary'}
           />
-        )}
+        </m.div>
       </Link>
     </Box>
   );

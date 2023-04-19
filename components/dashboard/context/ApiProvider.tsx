@@ -23,12 +23,6 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
 
   const [expanded, setExpandedState] = React.useState(false);
 
-  const [recentAction, setRecentAction] = React.useState<
-    'rename' | 'move' | 'copy' | 'delete' | null
-  >(null);
-
-  const [destination, setDestination] = React.useState<Directory>(null);
-
   const setClipboard = (folders: Folder[]) =>
     startTransition(() => setClipboardState(folders));
 
@@ -121,24 +115,18 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
     return () => createEvent.unsubscribe();
   }, [kernel]);
 
-  const handleActionExpand = (e: React.SyntheticEvent) => {
-    if (expanded) setRecentAction(null);
-    setExpanded(expanded ? false : true);
-  };
-
   const handleCut = (e: React.SyntheticEvent) => {
-    setRecentAction('move');
     kernel.trigger('cut', [selected]);
   };
 
-  const handlePaste = (e: React.SyntheticEvent) => {
+  const handlePaste = (e: React.SyntheticEvent, destination: Directory) => {
     kernel.trigger('paste', {
       folders: clipboard,
       directory: destination,
     });
   };
 
-  const handleMove = (e: React.SyntheticEvent) => {
+  const handleMove = (e: React.SyntheticEvent, destination: Directory) => {
     kernel.trigger('move', {
       folders: clipboard,
       directory: destination,
@@ -169,11 +157,9 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
 
   const handleClear = (e: React.SyntheticEvent) => {
     kernel.trigger('cut', []);
-    setRecentAction(null);
   };
 
   const handleCopy = (e: React.SyntheticEvent) => {
-    setRecentAction('copy');
     kernel.trigger('copy', [selected]);
   };
 
@@ -185,16 +171,6 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
     handleMove,
     handlePaste,
     handleRename,
-    
-  };
-
-  const state = {
-    expanded,
-    recentAction,
-    setRecentAction,
-    setDestination,
-    handleActionExpand,
-    destination,
   };
 
   return (
@@ -202,7 +178,6 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
       value={{
         clipboard,
         folderActions,
-        state
       }} // Provide filesystem API functions as context
       {...rest}
     >

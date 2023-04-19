@@ -3,11 +3,9 @@
 import { Box, Unstable_Grid2 as Grid } from '@mui/material';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
-import { useDashboard } from '.';
+import { useDashboard } from '..';
 import { borderRadius, padding } from 'lib/constants';
 import { AppearAnimationParent } from 'components/animation';
-import { m } from 'framer-motion'
-
 
 interface ContainerProps {}
 
@@ -21,15 +19,14 @@ export const Container: React.FC<ContainerProps> = props => {
     if (folders && current && !loading)
       return dynamic(() => import('./Content').then(_ => _.Content));
     else
-      return dynamic(() => import('./Loading').then(_ => _.LoadingComponent));
+      return dynamic(() => import('../Loading').then(_ => _.LoadingComponent));
   }, [loading, folders]);
 
   const HeaderComponent = React.useMemo(() => {
     console.log('Component changed, loading...');
     if (folders && current && !loading)
-      return dynamic(() => import('./Header').then(_ => _.Header));
-    else
-      return React.Fragment
+      return dynamic(() => import('../header').then(_ => _.Header));
+    else return React.Fragment;
   }, [loading, folders]);
 
   return (

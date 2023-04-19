@@ -1,20 +1,23 @@
 'use client';
 
-import { FolderSharp, KeyboardArrowLeft, SnippetFolderSharp } from '@mui/icons-material';
 import {
-  IconButton,
+  FolderSharp,
+  KeyboardArrowLeft,
+  SnippetFolderSharp
+} from '@mui/icons-material';
+import {
+  Box, IconButton,
   Unstable_Grid2 as Grid,
-  useTheme,
-  Box,
+  useTheme
 } from '@mui/material';
 import { useDashboard } from 'components';
 import { HoverAnimation } from 'components/animation';
 import { DText } from 'components/common';
+import { m } from 'framer-motion';
 import { borderRadius, margin, padding } from 'lib/constants';
 import { Folder } from 'lib/models';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
-import { m } from 'framer-motion';
 
 interface ContentProps {}
 
@@ -37,8 +40,12 @@ export const Content: React.FC<ContentProps> = props => {
   const FolderComponent = React.useMemo(
     () =>
       view === 'tile'
-        ? dynamic(() => import('./ItemTile').then(_ => _.DashboardItemTile))
-        : dynamic(() => import('./ItemIcon').then(_ => _.DashboardItemIcon)),
+        ? dynamic(() =>
+            import('../folders').then(_ => _.DashboardItemTile)
+          )
+        : dynamic(() =>
+            import('../folders').then(_ => _.DashboardItemIcon)
+          ),
     [view, kernel.folders]
   );
 
@@ -84,10 +91,9 @@ export const Content: React.FC<ContentProps> = props => {
         mt: margin * 2,
         mb: margin * 2,
         borderRadius,
-        backgroundColor:
-          parentDragOver
-            ? 'background.paper'
-            : 'background.default',
+        backgroundColor: parentDragOver
+          ? 'background.paper'
+          : 'background.default',
         padding,
       }}
       onDrop={isDialog ? undefined : e => handleDrop(e, kernel, current)}
@@ -147,19 +153,27 @@ export const Content: React.FC<ContentProps> = props => {
                 alignItems="center"
                 ml={margin * 4}
               >
-                <DText text={kernel.foldersExcl.length} variant="h6" fontWeight="medium" />
+                <DText
+                  text={kernel.foldersExcl.length}
+                  variant="h6"
+                  fontWeight="medium"
+                />
                 <SnippetFolderSharp color="primary" sx={{ fontSize: 18 }} />
               </Box>
             </Box>
             <Box
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                ml={margin}
-              >
-                <DText text={kernel.directoriesExcl.length} variant="h6" fontWeight="medium" />
-                <FolderSharp color="primary" sx={{ fontSize: 18 }} />
-              </Box>
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              ml={margin}
+            >
+              <DText
+                text={kernel.directoriesExcl.length}
+                variant="h6"
+                fontWeight="medium"
+              />
+              <FolderSharp color="primary" sx={{ fontSize: 18 }} />
+            </Box>
           </m.div>
         </Grid>
         <Grid xs={4} />

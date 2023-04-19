@@ -1,8 +1,8 @@
 import { Folder } from 'lib/models';
 
 import React from 'react';
-import { DashboardProvider,} from '.';
-import { Container } from './Container';
+import { DashboardProvider } from '.';
+import { Container } from './container';
 
 interface FileManagerProps {
   /**
