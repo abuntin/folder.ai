@@ -43,6 +43,7 @@ export const LocationChangeDialog: React.FC<CopyDialogProps> = props => {
           padding: padding * 3,
           backgroundColor: 'action.active',
         },
+        elevation: 2
       }}
     >
       <Stack spacing={4}>

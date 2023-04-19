@@ -15,7 +15,7 @@ interface HeaderProps {}
 export const Header: React.FC<HeaderProps> = props => {
   const { kernel, view, loading } = useDashboard();
 
-  const KernelBar = dynamic(() => import('./Appbar').then(_ => _.AppBar));
+  const KernelBar = React.memo(dynamic(() => import('./Appbar').then(_ => _.AppBar)))
 
   const AddButton = dynamic(() =>
     import('../addbutton').then(_ => _.AddButton)
