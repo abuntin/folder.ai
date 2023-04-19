@@ -22,7 +22,7 @@ export const Actions: React.FC<ActionsProps> = props => {
 
   const [isPending, startTransition] = React.useTransition();
 
-  const [expanded, setExpandedState] = React.useState(false);
+  const [expanded, setExpandedState] = React.useState(selected != null);
 
   const [recentAction, setRecentActionState] = React.useState<
     'copy' | 'rename' | 'move' | 'delete' | null

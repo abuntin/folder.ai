@@ -117,7 +117,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
   React.useEffect(() => {
     const loadEvent = kernel.on('load', directory => {
       kernel.load(directory);
-      setSelectedFolder(null);
+      selected && setSelectedFolder(null);
     });
 
     return () => {
@@ -136,16 +136,16 @@ export const DashboardProvider = ({ children, ...rest }) => {
     return () => {
       warningEvent.unsubscribe();
     };
-  }, [error]);
+  }, [kernel]);
 
   // Listen for idle event
 
   React.useEffect(() => {
     const idleEvent = kernel.on('idle', success => {
       setLoading(false);
-      setUploadProgress(null);
-      setErrorMessage('');
-      setWarningMessage('');
+      uploadProgress && setUploadProgress(null);
+      error != '' && setErrorMessage('');
+      warning != '' && setWarningMessage('');
       setSuccessMessage(success ?? '');
     });
 
@@ -184,12 +184,12 @@ export const DashboardProvider = ({ children, ...rest }) => {
     const refreshEvent = kernel.on('refresh', kernel.refresh);
 
     return () => refreshEvent.unsubscribe();
-  });
+  }, [kernel]);
 
   // Clear warning
 
   React.useEffect(() => {
-    if (warning && !uploadProgress && warning !== '')
+    if (warning && warning !== '')
       setTimeout(() => setErrorMessage(''), 6000);
   }, [warning]);
 
