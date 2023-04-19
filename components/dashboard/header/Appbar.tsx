@@ -11,11 +11,6 @@ export const AppBar: React.FC<AppBarProps> = props => {
   const Actions = React.memo(
     dynamic(() => import('./Actions').then(_ => _.Actions))
   );
-
-  const ActionInfo = React.memo(
-    dynamic(() => import('./Info').then(_ => _.ActionInfo))
-  );
-
   return (
     <Grid
       container
@@ -37,9 +32,6 @@ export const AppBar: React.FC<AppBarProps> = props => {
         <Actions />
       </Grid>
       <Divider flexItem orientation="vertical" />
-      <Grid xs={4} display="flex" justifyContent="start" alignItems="center">
-        <ActionInfo />
-      </Grid>
     </Grid>
   );
 };

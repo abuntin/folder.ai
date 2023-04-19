@@ -21,20 +21,10 @@ type FolderActionType =
   | 'handlePaste'
   | 'handleRename';
 
-type FolderActionState =
-  | 'expanded'
-  | 'handleActionExpand'
-  | 'destination'
-  | 'setDestination'
-  | 'recentAction'
-  | 'setRecentAction';
 
 export interface DashboardApiContextInterface {
   clipboard: Folder[];
-  state: { [key in FolderActionState]: any };
-  folderActions: {
-    [key in FolderActionType]: (e: React.SyntheticEvent) => void;
-  };
+  folderActions: { [key in FolderActionType]: (e: React.SyntheticEvent, ...args: any[]) => void } 
 }
 
 export const DashboardApiContext =

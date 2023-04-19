@@ -19,3 +19,4 @@ export * from "./OptionLabel";
 export * from './ExpandMoreButton'
 export * from './FolderSelect'
 export * from './TippedIconButton'
+export * from './FormDialog'

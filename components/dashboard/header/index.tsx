@@ -7,7 +7,7 @@ import {
   ToggleButton,
 } from '@mui/material';
 import * as React from 'react';
-import { useDashboard } from './context';
+import { useDashboard } from '../context';
 import dynamic from 'next/dynamic';
 
 interface HeaderProps {}
@@ -15,10 +15,10 @@ interface HeaderProps {}
 export const Header: React.FC<HeaderProps> = props => {
   const { kernel, view, loading } = useDashboard();
 
-  const KernelBar = dynamic(() => import('./appbar').then(_ => _.AppBar));
+  const KernelBar = dynamic(() => import('./Appbar').then(_ => _.AppBar));
 
   const AddButton = dynamic(() =>
-    import('./addbutton').then(_ => _.AddButton)
+    import('../addbutton').then(_ => _.AddButton)
   );
 
   const AIButton = dynamic(() =>
@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = props => {
         justifyContent="space-between"
       >
         <Grid xs={6} display="flex" justifyContent="center">
-          <AddButton disabled={loading} />
+          <AddButton />
         </Grid>
         <Grid xs={6} display="flex" justifyContent="start">
           <ToggleButtonGroup

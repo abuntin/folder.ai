@@ -72,10 +72,10 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
           padding: padding * 4,
           borderWidth
         }}
-        onDrop={e => handleDrop(e, kernel, kernel.current)}
-        onDragEnter={e => handleDrag(e, 'dialog')}
-        onDragOver={e => handleDrag(e, 'dialog')}
-        onDragLeave={e => handleDrag(e, 'dialog')}
+        // onDrop={e => handleDrop(e, kernel, kernel.current)}
+        // onDragEnter={e => handleDrag(e, 'dialog')}
+        // onDragOver={e => handleDrag(e, 'dialog')}
+        // onDragLeave={e => handleDrag(e, 'dialog')}
         onClick={handleUpload}
       >
         <input
