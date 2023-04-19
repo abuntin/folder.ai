@@ -13,7 +13,7 @@ import { DText } from "./DText";
 
 interface DGridProps {
   options: FormOptionType[];
-  onChange?: (e: any, selected: FormOptionType) => void;
+  onChange?: (e: React.SyntheticEvent, selected: FormOptionType) => void;
   defaultIndex?: number;
 }
 
@@ -24,7 +24,7 @@ export const DGrid: React.FC<DGridProps> = (props) => {
     options[defaultIndex ?? 0]
   );
 
-  const handleClick = (e: any, option: FormOptionType) => {
+  const handleClick = (e: React.SyntheticEvent, option: FormOptionType) => {
     setSelected(option);
     if (onChange) onChange(e, option);
   };

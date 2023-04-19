@@ -1,8 +1,8 @@
-import { Folder, Kernel, rootFolder } from "lib/models";
+import { Folder } from 'lib/models';
 
-import React from "react";
-import { DashboardProvider, useDashboard } from ".";
-import { DashboardList } from "./DashboardList";
+import React from 'react';
+import { DashboardProvider } from '.';
+import { Container } from './container';
 
 interface FileManagerProps {
   /**
@@ -59,21 +59,10 @@ interface FileManagerProps {
   onDownload?: (folder: Folder) => void;
 }
 
-export const Dashboard: React.FC<FileManagerProps> = (props) => {
-  // React.useEffect(() => {
-  //   kernel.on("directoryChange", (newCurrentDirectory: Folder) => {
-  //     if (newCurrentDirectory.path !== folder.path && isActiveFolder) {
-  //       // setIsActiveFolder(false);
-  //     } else if (newCurrentDirectory.path === folder.path && !isActiveFolder) {
-  //       // setIsActiveFolder(true);
-  //     }
-  //   });
-  // return () => event.unsubscribe();
-  // }, [kernel, isActiveFolder, folder.path]);
-
+export const Dashboard: React.FC<FileManagerProps> = props => {
   return (
-    <DashboardProvider rootPath={rootFolder.path}>
-      <DashboardList />
+    <DashboardProvider>
+      <Container />
     </DashboardProvider>
   );
 };

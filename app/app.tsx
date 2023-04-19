@@ -4,6 +4,7 @@ import * as React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { m, spring } from 'framer-motion'
 import "dayjs/locale/en-gb";
 
 import {
@@ -23,6 +24,7 @@ interface AppProps {
 }
 
 const App: React.FC<AppProps> = (props) => {
+
   const [mode, setMode] = React.useState<"light" | "dark">("light");
 
   const toggleColorMode = React.useMemo(
@@ -43,7 +45,7 @@ const App: React.FC<AppProps> = (props) => {
           <ThemeProvider theme={theme}>
             <AnimationWrapper>
               <html lang="en">
-                <body
+                <m.body
                   style={{
                     flex: "auto",
                     minHeight: "100%",
@@ -55,13 +57,15 @@ const App: React.FC<AppProps> = (props) => {
                     backgroundAttachment: "fixed",
                     backgroundSize: "cover\200%",
                   }}
+                  layout
+                  transition={spring}
                 >
                   <Header />
                   <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
                     {props.children}
                     <AnalyticsWrapper />
                   </main>
-                </body>
+                </m.body>
               </html>
             </AnimationWrapper>
           </ThemeProvider>

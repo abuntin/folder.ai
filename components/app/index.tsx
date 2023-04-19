@@ -6,12 +6,8 @@ export const ColorModeContext = React.createContext<{ mode: PaletteMode, toggleC
     toggleColorMode: { toggle: () => {}}
 });
 
-
 export const bgLight = `linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(43,54,200,1) 100%),
 linear-gradient(45deg, rgba(124,199,185,1) 0%, rgba(254,177,121,1) 65%, rgba(255,255,0,1) 100%)`
-
-// export const bgLight = `linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(43,51,104,1) 100%),
-// linear-gradient(45deg, rgba(124,199,185,1) 0%, rgba(254,177,121,1) 65%, rgba(255,255,0,1) 100%)`
 
 export const bgDark = `linear-gradient(53deg, rgba(17,0,16,1) 0%, rgba(17,0,16,0.46) 59%, rgba(254,177,121,0.17) 95%, rgba(254,177,121,0.12) 100%), 
 linear-gradient(154deg, rgba(17,0,16,1) 0%, rgba(20,33,61,1) 39%, rgba(43,51,104,1) 100%)`
@@ -21,27 +17,30 @@ export const createCustomTheme = (mode: PaletteMode) => {
     let palette = mode === 'light' ? ({
         common: { black: '#111010', white: '#fafafa' },
         primary: { main: '#fafafa', light: '#1b1a22' }, // white
-        secondary: { main: '#110010' }, // black 
+        secondary: { main: '#110010', light: 'a7afb8', dark: '858a94' }, // black and silver
         warning: { main: '#eabb13' }, // yellow
-        info: { main: '#14213d' }, // blue
+        info: { main: 'rgba(84, 126, 193,1)' }, // blue
         success: { main: '#578346' }, // green
         disabled: { main: `rgba(229,229,229,0.5)`},
+        error: { main: '#ff0033' }, // red 
+        action: { active: 'rgba(99, 150, 255,0.85)' }, // darker default bg
         mode,
         grey: 600 as Partial<Color>,
         text:  { secondary: '#110010', primary: '#fafafa', disabled: '#E5E5E5' },
-        background: { paper: 'rgba(229,229,229,0.3)', default: 'rgba(235, 235, 235, 0.3)'},
-    }) : ({
+        background: { default: 'rgba(99,157,201,0.1)', paper: 'rgba(250, 250, 250, 0.3)'}, // gradient light blue, white
+    }) as PaletteOptions : ({
         common: { black: '#111010', white: '#fafafa'},
         primary: { main: '#fafafa', light: '#1b1a22' },
-        secondary: { main: '#fca311' }, // yellow 
+        secondary: { main: '#110010', light: 'a7afb8', dark: '858a94' }, // black and silver
         error: { main: '#ff0033' }, // red 
         warning: { main: '#fca311' }, // yellow
-        info: { main: '#14213d' }, // blue
+        info: { main: 'rgba(32,42,83,1)' }, // blue
         success: { main: '#4BB543' }, // green
+        action: { active: 'rgba(20,27,53,0.85)' }, // darker default bg
         mode,
         grey: 600 as Partial<Color>,
         text:  { primary: '#fafafa', secondary: '#110010', disabled: '#E5E5E5' },
-        background: { paper: 'rgba(229,229,229,0.3)', default: 'rgba(235, 235, 235, 0.5)'},
+        background: { default: 'rgba(20,27,53,0.15)', paper: 'rgba(250, 250, 250, 0.3)'}, // gradient dark blue, white
     }) as PaletteOptions
 
 

@@ -12,7 +12,7 @@ export const CurrencySelect: React.FC<CurrencySelectProps<string>> = (props) => 
 
   const [leading, setLeading] = React.useState('');
 
-  const handleChange = (e: any, value: string, reason: "createOption" | "selectOption" | "removeOption" | "blur" | "clear") => {
+  const handleChange = (e: React.SyntheticEvent, value: string, reason: "createOption" | "selectOption" | "removeOption" | "blur" | "clear") => {
     if (props.onChange != null) props.onChange(e, value, reason)
     setLeading(value)
   }
