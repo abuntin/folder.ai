@@ -17,7 +17,6 @@ import { useDashboard } from '../context';
 interface ActionsProps {}
 
 export const Actions: React.FC<ActionsProps> = props => {
-  React.useEffect(() => console.log('rerendered actions'), []);
 
   const { kernel, selected, useDashboardApi } = useDashboard();
 

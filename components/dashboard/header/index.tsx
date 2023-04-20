@@ -8,7 +8,6 @@ import {
 } from '@mui/material';
 import * as React from 'react';
 import { useDashboard } from '../context';
-import dynamic from 'next/dynamic';
 import { Actions } from './Actions'
 import { AddButton } from '../addbutton';
 
@@ -16,14 +15,6 @@ interface HeaderProps {}
 
 export const Header: React.FC<HeaderProps> = props => {
   const { kernel, view, loading } = useDashboard();
-
-  //const KernelBar = React.memo(dynamic(() => import('./Actions').then(_ => _.Actions)))
-
-  // const AddButton = dynamic(() =>
-  //   import('../addbutton').then(_ => _.AddButton)
-  // );
-
-  React.useEffect(() => console.log('rerendered header'), [])
 
   return (
     <Grid
