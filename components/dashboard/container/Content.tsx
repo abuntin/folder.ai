@@ -28,7 +28,7 @@ export const Content: React.FC<ContentProps> = props => {
 
   let { current, folders } = kernel;
 
-  const { parentDragOver, handleDrag, handleDrop, isDialog } = useUpload();
+  const { dragOver, handleDrag, handleDrop } = useUpload();
 
   const handleSelect = (e: React.SyntheticEvent, folder: Folder) => {
     kernel.trigger('select', folder);
@@ -88,15 +88,15 @@ export const Content: React.FC<ContentProps> = props => {
         mt: margin * 2,
         mb: margin * 2,
         borderRadius,
-        backgroundColor: parentDragOver
+        backgroundColor: dragOver
           ? 'background.paper'
           : 'background.default',
         padding,
       }}
-      onDrop={isDialog ? undefined : e => handleDrop(e, kernel, current)}
-      onDragEnter={isDialog ? undefined : e => handleDrag(e, 'container')}
-      onDragOver={isDialog ? undefined : e => handleDrag(e, 'container')}
-      onDragLeave={isDialog ? undefined : e => handleDrag(e, 'container')}
+      onDrop={e => handleDrop(e, kernel, kernel.current)}
+      onDragEnter={handleDrag}
+      onDragOver={handleDrag}
+      onDragLeave={handleDrag}
       onClick={e => {
         kernel.trigger('select', null);
       }}

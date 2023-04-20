@@ -23,7 +23,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
         success: { main: '#578346' }, // green
         disabled: { main: `rgba(229,229,229,0.5)`},
         error: { main: '#ff0033' }, // red 
-        action: { active: 'rgba(99, 150, 255,0.85)' }, // darker default bg
+        action: { active: 'rgba(56, 110, 217,0.85)' }, // darker default bg
         mode,
         grey: 600 as Partial<Color>,
         text:  { secondary: '#110010', primary: '#fafafa', disabled: '#E5E5E5' },
