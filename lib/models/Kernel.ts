@@ -2,6 +2,7 @@ import { Directory, Folder } from '.';
 import { cache } from 'react';
 import _ from 'lodash';
 import events, { EventSubscription } from '@mongez/events';
+import axios from 'axios';
 
 export type KernelEvent =
   | 'loading'
@@ -14,6 +15,7 @@ export type KernelEvent =
   | 'error'
   | 'refresh'
   | 'warning'
+  | 'info'
   | 'copy'
   | 'paste'
   | 'cut'
@@ -98,6 +100,8 @@ export class Kernel {
 
     this.trigger('loading', 'Initialising...');
 
+    this.trigger('info', 'Initialising...');
+
     try {
       let res = await fetch(this.folderManagerUrl('init'), {
         body: JSON.stringify({
@@ -142,6 +146,8 @@ export class Kernel {
 
       this.trigger('loading');
 
+      this.trigger('info', `Opening ${directory.name}...`)
+
       try {
         let res = await fetch(this.folderManagerUrl('list'), {
           body: JSON.stringify({
@@ -180,7 +186,7 @@ export class Kernel {
           this.foldersExcl = folders;
           this.directoriesExcl = directories;
           this.currentFolders = folders.concat(directories);
-          this.trigger('idle', 'Loaded Folder children');
+          this.trigger('idle', `Opened Directory ${directory.name}`);
         }
       } catch (e) {
         this.trigger('error', e.message);
@@ -215,7 +221,7 @@ export class Kernel {
       console.log('Initialised Kernel.upload()');
       try {
         this.trigger(
-          'warning',
+          'info',
           `Uploading ${
             files.length === 1 ? files[0].name : `${files.length} files`
           } to ${directory.name}...`
@@ -227,10 +233,18 @@ export class Kernel {
         formData.append('directory', JSON.stringify(directory));
         files.forEach((file, i) => formData.append(`media`, file));
 
-        const res = await fetch(this.folderManagerUrl('upload'), {
-          method: 'POST',
-          body: formData,
-        });
+        // const res = await fetch(this.folderManagerUrl('upload'), {
+        //   method: 'POST',
+        //   body: formData,
+        // });
+
+        let { data: _data } = await axios.post(
+          this.folderManagerUrl('upload'),
+          formData,
+          {
+            onUploadProgress,
+          }
+        );
 
         const {
           data,
@@ -240,7 +254,7 @@ export class Kernel {
             urls: string[];
           } | null;
           error: string | null;
-        } = await res.json();
+        } = _data; //await res.json();
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.upload() response data');
@@ -251,15 +265,8 @@ export class Kernel {
             files.length === 1 ? files[0].name : `${files.length} files`
           }.`
         );
-        
-        this.trigger('refresh');
 
-        this.trigger(
-          'idle',
-          `Uploaded ${
-            files.length === 1 ? files[0].name : `${files.length} files`
-          }.`
-        );
+        if (this.current == directory) this.trigger('refresh');
 
         return data.urls;
       } catch (error) {
@@ -292,7 +299,7 @@ export class Kernel {
         const { folders, directory } = payload;
 
         this.trigger(
-          'warning',
+          'info',
           `Copying ${
             folders.length === 1 ? folders[0].name : `${folders.length} Folders`
           } to ${directory.name}...`
@@ -362,7 +369,7 @@ export class Kernel {
         const { folders, directory } = payload;
 
         this.trigger(
-          'warning',
+          'info',
           `Moving ${
             folders.length === 1 ? folders[0].name : `${folders.length} Folders`
           } to ${directory.name}...`
@@ -426,7 +433,7 @@ export class Kernel {
       console.log('Initialised Kernel.delete()');
 
       try {
-        this.trigger('warning', `Deleting ${folders.length} Folders...`);
+        this.trigger('info', `Deleting ${folders.length} Folders...`);
 
         let res = await fetch(this.folderManagerUrl('delete'), {
           body: JSON.stringify({
@@ -455,7 +462,11 @@ export class Kernel {
         else {
           this.trigger('cut', []);
           this.trigger('refresh');
-          this.trigger('idle', `Deleted ${folders.length} Folders`);
+          this.trigger('error', `Deleted ${
+            folders.length === 1
+              ? folders[0].name
+              : `${folders.length} Folders`
+          }`);
         }
       } catch (e) {
         if (signal && signal.aborted) {
@@ -486,7 +497,7 @@ export class Kernel {
         const { name, directory = this.current } = payload;
 
         this.trigger(
-          'warning',
+          'info',
           `Creating new Directory ${name} in ${directory.name}...`
         );
 
@@ -548,7 +559,7 @@ export class Kernel {
         const { name, folder, directory = this.current } = payload;
 
         this.trigger(
-          'warning',
+          'info',
           `Renaming Folder ${folder.name} to ${name} in ${directory.name}...`
         );
 

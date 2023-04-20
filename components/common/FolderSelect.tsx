@@ -1,4 +1,4 @@
-import { FolderSharp } from '@mui/icons-material';
+import { FolderSharp, SnippetFolderSharp } from '@mui/icons-material';
 import {
   Autocomplete,
   Box,
@@ -26,9 +26,9 @@ export const FolderSelect: React.FC<FolderSelectProps<Folder>> = props => {
       getOptionLabel={(option: Folder) => option.name}
       renderOption={(props, option: Folder) => {
         return (
-          <Box {...props} component="li">
+          <Box {...props} component="li" sx={{ backgroundColor: 'action.active' }}>
             <FolderSharp
-              color='info'
+              color="info"
               sx={{
                 fontSize:
                   variant == 'small' ? 10 : variant == 'medium' ? 12 : 14,
@@ -50,10 +50,28 @@ export const FolderSelect: React.FC<FolderSelectProps<Folder>> = props => {
           }}
           InputProps={{
             ...params.InputProps,
-            startAdornment: (
-              value ? (<InputAdornment position="start">
-                <FolderSharp color='info' sx={{ fontSize: variant == 'small' ? 10 : variant == 'medium' ? 12 : 14}} />
-              </InputAdornment>) : <> </>
+            startAdornment: value ? (
+              <InputAdornment position="start">
+                {value.isDirectory ? (
+                  <FolderSharp
+                    color="info"
+                    sx={{
+                      fontSize:
+                        variant == 'small' ? 10 : variant == 'medium' ? 12 : 14,
+                    }}
+                  />
+                ) : (
+                  <SnippetFolderSharp
+                    color="primary"
+                    sx={{
+                      fontSize:
+                        variant == 'small' ? 10 : variant == 'medium' ? 12 : 14,
+                    }}
+                  />
+                )}
+              </InputAdornment>
+            ) : (
+              <> </>
             ),
           }}
         />

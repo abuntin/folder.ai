@@ -2,11 +2,12 @@ import { Folder, Kernel } from 'lib/models';
 import { DashboardContext } from './Context';
 import { useDashboardApi, useUpload } from './hooks';
 import React from 'react';
-import { Snackbar, Alert, Stack } from '@mui/material';
+import { Snackbar, Alert, Stack, AlertProps } from '@mui/material';
 import { borderRadius } from 'lib/constants';
 import { DashboardApiProvider } from './ApiProvider';
 import { ProgressBar } from '../ProgressBar';
 import { AxiosProgressEvent } from 'axios';
+import { LoadingComponent } from 'components/common';
 
 /**
  * Wrapper component defining DashboardContext and managing UI state updates
@@ -28,6 +29,8 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
   const [loading, setLoadingState] = React.useState(true);
 
+  const [snackbarLoading, setSnackbarLoadingState] = React.useState(false);
+
   const [selected, setSelected] = React.useState<Folder>(null);
 
   const [view, setView] = React.useState<'grid' | 'tile'>('grid');
@@ -37,6 +40,8 @@ export const DashboardProvider = ({ children, ...rest }) => {
   const [success, setSuccess] = React.useState('');
 
   const [warning, setWarning] = React.useState('');
+
+  const [info, setInfo] = React.useState('');
 
   const [uploadProgress, setUploadProgress] = React.useState<number | null>(
     null
@@ -48,8 +53,47 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
   const setSuccessMessage = (m: string) => startTransition(() => setSuccess(m));
 
+  const setInfoMessage = (m: string) => startTransition(() => setInfo(m));
+
+  const manageSnackbar = (m: string, severity: AlertProps['severity']) => {
+    switch (severity) {
+      case 'error':
+        snackbarLoading && setSnackbarLoading(false);
+        loading && setLoading(false);
+        setWarningMessage('');
+        setInfoMessage('');
+        setSuccessMessage('');
+        setErrorMessage(m);
+        break;
+      case 'info':
+        setErrorMessage('');
+        setWarningMessage('');
+        setErrorMessage('');
+        setInfoMessage(m);
+        break;
+      case 'success':
+        uploadProgress && setUploadProgress(null);
+        snackbarLoading && setSnackbarLoading(false);
+        loading && setLoading(false);
+        setWarningMessage('');
+        setInfoMessage('');
+        setErrorMessage('');
+        setSuccessMessage(m);
+        break;
+      case 'warning':
+        setErrorMessage('');
+        setInfoMessage('');
+        setSuccessMessage('');
+        setWarningMessage(m);
+        break;
+    }
+  };
+
   const setLoading = (state: boolean) =>
     startTransition(() => setLoadingState(state));
+
+  const setSnackbarLoading = (state: boolean) =>
+    startTransition(() => setSnackbarLoadingState(state));
 
   const setSelectedFolder = (folder: Folder) =>
     startTransition(() => setSelected(folder));
@@ -60,7 +104,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
     try {
       kernel.init().then(() => kernel.load(kernel.rootDirectory));
     } catch (e) {
-      setErrorMessage(e.message);
+      manageSnackbar(e.message, 'error');
     }
   }, []);
 
@@ -81,22 +125,6 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
     return () => {
       selectEvent.unsubscribe();
-    };
-  }, [kernel]);
-
-  // Listen for error event
-
-  React.useEffect(() => {
-    const errorEvent = kernel.on('error', message => {
-      setLoading(false);
-      setErrorMessage(message ?? '');
-      setWarningMessage('');
-      setUploadProgress(null);
-      setSuccessMessage('');
-    });
-
-    return () => {
-      errorEvent.unsubscribe();
     };
   }, [kernel]);
 
@@ -125,29 +153,48 @@ export const DashboardProvider = ({ children, ...rest }) => {
     };
   }, [kernel]);
 
+  // Listen for error event
+
+  React.useEffect(() => {
+    const errorEvent = kernel.on('error', message => {
+      manageSnackbar(message ?? null, 'error');
+    });
+
+    return () => {
+      errorEvent.unsubscribe();
+    };
+  }, [kernel]);
+
+  // Listen for info event
+
+  React.useEffect(() => {
+    const infoEvent = kernel.on('info', info =>
+      manageSnackbar(info ?? '', 'info')
+    );
+
+    return () => {
+      infoEvent.unsubscribe();
+    };
+  }, [kernel]);
+
   // Listen for warning event
 
   React.useEffect(() => {
-    const warningEvent = kernel.on('warning', warning => {
-      setWarningMessage(warning ?? '');
-      setSuccessMessage('');
-    });
+    const warningEvent = kernel.on('warning', warning =>
+      manageSnackbar(warning ?? '', 'warning')
+    );
 
     return () => {
       warningEvent.unsubscribe();
     };
   }, [kernel]);
 
-  // Listen for idle event
+  // Listen for idle (success) event
 
   React.useEffect(() => {
-    const idleEvent = kernel.on('idle', success => {
-      setLoading(false);
-      uploadProgress && setUploadProgress(null);
-      error != '' && setErrorMessage('');
-      warning != '' && setWarningMessage('');
-      setSuccessMessage(success ?? '');
-    });
+    const idleEvent = kernel.on('idle', success =>
+      manageSnackbar(success ?? '', 'success')
+    );
 
     return () => {
       idleEvent.unsubscribe();
@@ -169,8 +216,15 @@ export const DashboardProvider = ({ children, ...rest }) => {
       if (payload.directory && payload.files) {
         kernel.upload(payload, (event: AxiosProgressEvent) => {
           if (event.total) {
-            setUploadProgress(Math.round((event.loaded * 100) / event.total));
-          } else setUploadProgress(null);
+            event.total < 100
+              ? setUploadProgress(
+                  Math.round((event.loaded * 100) / event.total)
+                )
+              : setSnackbarLoading(true);
+          } else {
+            setUploadProgress(null);
+            setSnackbarLoading(false);
+          }
         });
       }
     });
@@ -189,8 +243,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
   // Clear warning
 
   React.useEffect(() => {
-    if (warning && warning !== '')
-      setTimeout(() => setErrorMessage(''), 6000);
+    if (warning && warning !== '') setTimeout(() => setErrorMessage(''), 6000);
   }, [warning]);
 
   // Clear error
@@ -206,16 +259,8 @@ export const DashboardProvider = ({ children, ...rest }) => {
       setTimeout(() => setSuccessMessage(''), 6000);
   }, [success]);
 
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === 'clickaway') {
-      setErrorMessage('');
-      return;
-    }
-    setErrorMessage('');
-  };
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) =>
+    manageSnackbar('', 'error');
 
   return (
     <DashboardContext.Provider
@@ -230,22 +275,31 @@ export const DashboardProvider = ({ children, ...rest }) => {
       {...rest}
     >
       <Snackbar
-        open={error !== '' || warning !== '' || success !== ''}
+        open={error !== '' || warning !== '' || success !== '' || info !== ''}
         //autoHideDuration={6000}
         onClose={handleClose}
       >
         <Alert
           onClose={handleClose}
           severity={
-            error !== '' ? 'error' : warning !== '' ? 'warning' : 'success'
+            error !== ''
+              ? 'error'
+              : warning !== ''
+              ? 'warning'
+              : info !== ''
+              ? 'info'
+              : 'success'
           }
           sx={{ width: '100%', borderRadius }}
         >
-          <Stack>
-            {error !== '' ? error : warning !== '' ? warning : success}
-            {uploadProgress && (
-              <ProgressBar progress={uploadProgress} barWidth={300} />
-            )}
+          <Stack spacing={1}>
+            {error !== '' ? error : warning !== '' ? warning : info !== '' ? info : success}
+            <Stack direction="row" sx={{ display: 'flex', alignItems: 'center' }}>
+              {uploadProgress && (
+                <ProgressBar progress={uploadProgress} barWidth={350} />
+              )}
+              {snackbarLoading && <LoadingComponent width={20} height={20} />}
+            </Stack>
           </Stack>
         </Alert>
       </Snackbar>
