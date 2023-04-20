@@ -13,6 +13,7 @@ export const RenameDialog: React.FC<RenameDialogProps> = props => {
 
   const { handleRename } = folderActions;
 
+
   const defaultProps = {
     value: '',
     title: 'Rename Folder',

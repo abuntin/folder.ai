@@ -47,7 +47,7 @@ export interface FormDialogProps extends DialogProps {
     | 'body1'
     | 'body2';
 }
-export const FormDialog: React.FC<FormDialogProps> = props => {
+const _FormDialog: React.FC<FormDialogProps> = props => {
   const {
     error,
     value = '',
@@ -146,3 +146,5 @@ export const FormDialog: React.FC<FormDialogProps> = props => {
     </Dialog>
   );
 };
+
+export const FormDialog = React.memo(_FormDialog)

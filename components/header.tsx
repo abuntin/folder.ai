@@ -15,7 +15,7 @@ import React from 'react';
 import { Brightness7, Brightness4 } from '@mui/icons-material';
 import { m } from 'framer-motion';
 import Image from 'next/image';
-import logo from 'public/logo_transparent.png';
+import logo from 'public/logo_transparent.svg';
 
 const navItems = {
   '/': {
@@ -90,12 +90,17 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
           animate="enter"
           transition={{ ease: 'easeInOut' }}
           aria-label="Current Directory"
-          whileHover={{ scale: 1.05, backgroundColor: theme.palette.background.paper }}
+          whileHover={{
+            scale: 1.05,
+            backgroundColor: theme.palette.background.paper,
+          }}
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: active ? theme.palette.background.paper : 'transparent',
+            backgroundColor: active
+              ? theme.palette.background.paper
+              : 'transparent',
             borderRadius: borderRadius * 3,
             paddingLeft: padding * 10,
             paddingRight: padding * 10,

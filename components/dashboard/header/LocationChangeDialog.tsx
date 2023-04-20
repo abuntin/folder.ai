@@ -13,11 +13,11 @@ import { Folder } from 'lib/models';
 import * as React from 'react';
 import { useDashboard } from '../context';
 
-interface CopyDialogProps extends DialogProps {
+interface LocationChangeDialogProps extends DialogProps {
   type: 'copy' | 'move';
 }
 
-export const LocationChangeDialog: React.FC<CopyDialogProps> = props => {
+export const LocationChangeDialog: React.FC<LocationChangeDialogProps> = props => {
   const { kernel, selected, useDashboardApi } = useDashboard();
 
   const { folderActions } = useDashboardApi();

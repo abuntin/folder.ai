@@ -11,6 +11,7 @@ export const AppBar: React.FC<AppBarProps> = props => {
   const Actions = React.memo(
     dynamic(() => import('./Actions').then(_ => _.Actions))
   );
+  React.useEffect(() => console.log('rerendered appbar'), [])
   return (
     <Grid
       container

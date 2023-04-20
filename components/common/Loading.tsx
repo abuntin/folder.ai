@@ -1,26 +1,25 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { BlinkAnimation, useDashboard } from "components";
-import Image from "next/image";
-import logo from "public/logo_transparent.png";
-import { DText } from "../common/DText";
+import * as React from 'react';
+import { BlinkAnimation, useDashboard } from 'components';
+import Image from 'next/image';
+import logo from 'public/logo_transparent.svg';
+import { DText } from '../common/DText';
 
 interface LoadingComponentProps {
-  text?: string
+  text?: string;
 }
 
 export const LoadingComponent: React.FC<LoadingComponentProps> = ({ text }) => {
-
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        height: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '100%',
       }}
     >
       <BlinkAnimation>
