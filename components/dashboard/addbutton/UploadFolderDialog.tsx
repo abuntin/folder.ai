@@ -1,25 +1,33 @@
 'use client';
 
 import { Box, Stack } from '@mui/material';
-import { DText } from 'components/common';
+import { DText, FolderSelect } from 'components/common';
 import { borderRadius, margin, padding, borderWidth } from 'lib/constants';
 import * as React from 'react';
 import { useDashboard } from '../context';
 import AddFolder from 'public/info/AddFolder.svg';
 import { NavAnimation } from 'components/animation';
 import Image from 'next/image';
+import { Folder } from 'lib/models';
 
-interface UploadFolderDialogProps {}
+interface UploadFolderDialogProps { handleClose: any }
 
 export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
   const { useUpload, kernel } = useDashboard();
 
+  const { directoriesExcl, current } = kernel;
+
   const { dragOver, handleDrag, handleDrop, handleAdd } = useUpload();
+
+  const [destination, setDestination] = React.useState<Folder>(
+    directoriesExcl.length ? directoriesExcl[0] : kernel.current
+  );
 
   const hiddenFileInput = React.useRef(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleAdd(e, kernel);
+    props.handleClose(e)
+    handleAdd(e, kernel, destination);  
   };
 
   const handleUpload = (e: React.SyntheticEvent) =>
@@ -50,6 +58,20 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
           variant="h6"
         />
       </Stack>
+      <Stack spacing={2} sx={{ mt: margin, mb: margin * 2 }}>
+        <DText text="Select Upload Directory" variant="subtitle1" />
+        <FolderSelect
+          variant='large'
+          value={destination}
+          options={[current].concat(directoriesExcl)}
+          onChange={(e, value, reason) => {
+            if (reason == 'selectOption') setDestination(value);
+            else if (reason == 'clear') setDestination(null);
+            else return;
+          }}
+        />
+      </Stack>
+
       <Box
         display="flex"
         alignItems="center"
@@ -61,7 +83,7 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
           padding: padding * 4,
           borderWidth,
         }}
-        onDrop={e => handleDrop(e, kernel, kernel.current)}
+        onDrop={e => handleDrop(e, kernel, destination)}
         onDragEnter={handleDrag}
         onDragOver={handleDrag}
         onDragLeave={handleDrag}

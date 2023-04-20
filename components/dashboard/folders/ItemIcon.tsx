@@ -22,6 +22,8 @@ interface DashboardItemProps extends BoxProps {
 export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
   const { folder, selected, ...rest } = props;
 
+  const { name, isDirectory, children } = folder
+
   const { useUpload, kernel } = useDashboard();
 
   const { dragOver, handleDrag, handleDrop } = useUpload();
@@ -38,14 +40,14 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
             paddingBottom: padding,
             paddingTop: padding,
             backgroundColor:
-              selected || dragOver ? 'background.paper' : 'transparent',
+              selected || (dragOver && isDirectory) ? 'background.paper' : 'transparent',
             borderRadius,
             '&:hover': { backgroundColor: 'background.paper' },
           }}
-          onDrop={e => handleDrop(e, kernel, kernel.current)}
-          onDragEnter={handleDrag}
-          onDragOver={handleDrag}
-          onDragLeave={handleDrag}
+          onDrop={isDirectory ? e => handleDrop(e, kernel, folder) : undefined}
+          onDragEnter={isDirectory ? handleDrag : undefined}
+          onDragOver={isDirectory ? handleDrag : undefined}
+          onDragLeave={isDirectory ? handleDrag : undefined}
           {...rest}
         >
           <form action="" onSubmit={e => e.preventDefault()}>
@@ -57,8 +59,8 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
             />
           </form>
 
-          {folder.isDirectory ? (
-            folder.children ? (
+          {isDirectory ? (
+            children ? (
               <FolderSharp color="info" sx={{ fontSize: 120 }} />
             ) : (
               <FolderOpenSharp
@@ -74,7 +76,7 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
             />
           )}
           <DText
-            text={folder.name}
+            text={name}
             variant="subtitle2"
             color={theme => theme.palette.common.white}
             fontWeight="regular"

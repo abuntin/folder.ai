@@ -85,7 +85,7 @@ export const AddButton: React.FC<IconButtonProps> = props => {
             handleClose: e => setDialog(null),
             onConfirm: e => {},
             inputLabel: 'Directory Name',
-            content: <UploadFolderDialog />,
+            content: (<UploadFolderDialog handleClose={handleClose} />),
             textfield: false,
             actions: false,
           }

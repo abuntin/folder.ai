@@ -31,7 +31,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = props => {
   };
 
   return (
-    <Box sx={{ borderRadius, width: '100%', overflow: 'hidden', padding: padding * 2 }}>
+    <Box sx={{ width: '100%', overflow: 'hidden' }}>
       <m.div
         variants={variants}
         initial="enter"
@@ -40,7 +40,8 @@ export const ProgressBar: React.FC<ProgressBarProps> = props => {
         style={{
           backgroundColor: color ?? 'green',
           width: '100%',
-          height: 1,
+          height: padding,
+          borderRadius
         }}
       ></m.div>
     </Box>

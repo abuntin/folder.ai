@@ -38,7 +38,7 @@ const EditButton = styled((props: EditButtonProps) => {
 export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
   const { folder, selected, ...rest } = props;
 
-  const { name } = folder;
+  const { name, isDirectory, children } = folder;
 
   const { useUpload, kernel } = useDashboard();
 
@@ -49,13 +49,13 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
       <Box
         sx={{
           backgroundColor:
-            selected || dragOver ? 'background.paper' : 'transparent',
+            selected || (dragOver && isDirectory) ? 'background.paper' : 'transparent',
           '&:hover': { backgroundColor: 'background.paper' },
         }}
-        onDrop={e => handleDrop(e, kernel, kernel.current)}
-        onDragEnter={handleDrag}
-        onDragOver={handleDrag}
-        onDragLeave={handleDrag}
+        onDrop={isDirectory ? e => handleDrop(e, kernel, folder) : undefined}
+        onDragEnter={isDirectory ? handleDrag : undefined}
+        onDragOver={isDirectory ? handleDrag : undefined}
+        onDragLeave={isDirectory ? handleDrag : undefined}
         {...rest}
       >
         <form action="" onSubmit={e => e.preventDefault()}>
@@ -70,8 +70,8 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
         >
           <Grid xs={12} container>
             <Grid xs={1}>
-              {folder.isDirectory ? (
-                folder.children ? (
+              {isDirectory ? (
+                children ? (
                   <FolderSharp fontSize="large" color="info" />
                 ) : (
                   <FolderOpenSharp fontSize="large" color="info" />
@@ -88,7 +88,7 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
               />
             </Grid>
             <Grid xs={3} container display="flex" justifyContent="end">
-              {folder.isDirectory && (
+              {isDirectory && (
                 <Grid
                   xs={6}
                   display="flex"

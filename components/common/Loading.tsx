@@ -8,9 +8,11 @@ import { DText } from '../common/DText';
 
 interface LoadingComponentProps {
   text?: string;
+  height?: number;
+  width?: number
 }
 
-export const LoadingComponent: React.FC<LoadingComponentProps> = ({ text }) => {
+export const LoadingComponent: React.FC<LoadingComponentProps> = ({ text, height, width }) => {
   return (
     <div
       style={{
@@ -23,7 +25,7 @@ export const LoadingComponent: React.FC<LoadingComponentProps> = ({ text }) => {
       }}
     >
       <BlinkAnimation>
-        <Image alt="Folder.AI Loading" src={logo} width={250} height={250} />
+        <Image alt="Folder.AI Loading" src={logo} width={width ?? 250} height={height ?? 250} />
       </BlinkAnimation>
       {/* <DText
           text={text ?? 'Loading...'}
