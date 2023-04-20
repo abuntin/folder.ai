@@ -10,6 +10,7 @@ import * as React from 'react';
 import { useDashboard } from '../context';
 import dynamic from 'next/dynamic';
 import { Actions } from './Actions'
+import { AddButton } from '../addbutton';
 
 interface HeaderProps {}
 
@@ -42,9 +43,9 @@ export const Header: React.FC<HeaderProps> = props => {
         alignItems="flex-start"
         justifyContent="space-between"
       >
-        {/* <Grid xs={6} display="flex" justifyContent="center">
+        <Grid xs={6} display="flex" justifyContent="center">
           <AddButton />
-        </Grid> */}
+        </Grid>
         <Grid xs={6} display="flex" justifyContent="start">
           <ToggleButtonGroup
             value={view}
