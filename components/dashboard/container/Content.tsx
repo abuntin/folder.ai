@@ -3,12 +3,13 @@
 import {
   FolderSharp,
   KeyboardArrowLeft,
-  SnippetFolderSharp
+  SnippetFolderSharp,
 } from '@mui/icons-material';
 import {
-  Box, IconButton,
+  Box,
+  IconButton,
   Unstable_Grid2 as Grid,
-  useTheme
+  useTheme,
 } from '@mui/material';
 import { useDashboard } from 'components';
 import { HoverAnimation } from 'components/animation';
@@ -40,12 +41,8 @@ export const Content: React.FC<ContentProps> = props => {
   const FolderComponent = React.useMemo(
     () =>
       view === 'tile'
-        ? dynamic(() =>
-            import('../folders').then(_ => _.DashboardItemTile)
-          )
-        : dynamic(() =>
-            import('../folders').then(_ => _.DashboardItemIcon)
-          ),
+        ? dynamic(() => import('../folders').then(_ => _.DashboardItemTile))
+        : dynamic(() => import('../folders').then(_ => _.DashboardItemIcon)),
     [view, kernel.folders]
   );
 
@@ -100,7 +97,9 @@ export const Content: React.FC<ContentProps> = props => {
       onDragEnter={isDialog ? undefined : e => handleDrag(e, 'container')}
       onDragOver={isDialog ? undefined : e => handleDrag(e, 'container')}
       onDragLeave={isDialog ? undefined : e => handleDrag(e, 'container')}
-      //onClick={e => kernel.trigger('select', null)}
+      onClick={e => {
+        kernel.trigger('select', null);
+      }}
     >
       <Grid
         xs={12}
@@ -200,7 +199,10 @@ export const Content: React.FC<ContentProps> = props => {
               key={i}
               xs={view === 'grid' ? 4 : 12}
               onDoubleClick={e => handleNavigate(e, folder)}
-              onClick={e => handleSelect(e, folder)}
+              onClick={e => {
+                e.stopPropagation();
+                handleSelect(e, folder);
+              }}
               onKeyDown={handleKeyPress}
             >
               <HoverAnimation>
