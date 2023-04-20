@@ -6,16 +6,16 @@ import { DText, FormDialogProps } from 'components/common';
 import { Dialog, DialogActions, Button } from '@mui/material';
 import { borderRadius, padding } from 'lib/constants';
 
-interface MoveDialogProps extends FormDialogProps {}
+interface DeleteDialogProps extends FormDialogProps {}
 
-export const DeleteDialog: React.FC<MoveDialogProps> = props => {
+export const DeleteDialog: React.FC<DeleteDialogProps> = props => {
   const { selected, useDashboardApi } = useDashboard();
 
   const { folderActions } = useDashboardApi();
 
   const { handleDelete } = folderActions;
 
-  return (
+  return React.useMemo(() => (
     <Dialog
       open={props.open}
       onClose={props.onClose}
@@ -38,5 +38,5 @@ export const DeleteDialog: React.FC<MoveDialogProps> = props => {
         </Button>
       </DialogActions>
     </Dialog>
-  );
+  ), []);
 };

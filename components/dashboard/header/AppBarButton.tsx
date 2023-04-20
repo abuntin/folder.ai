@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import logo from 'public/logo_button.png';
+import logo from 'public/logo_button.svg';
 import { m } from 'framer-motion';
 
 interface AppBarButtonProps {}

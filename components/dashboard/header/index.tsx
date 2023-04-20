@@ -9,21 +9,20 @@ import {
 import * as React from 'react';
 import { useDashboard } from '../context';
 import dynamic from 'next/dynamic';
+import { Actions } from './Actions'
 
 interface HeaderProps {}
 
 export const Header: React.FC<HeaderProps> = props => {
   const { kernel, view, loading } = useDashboard();
 
-  const KernelBar = React.memo(dynamic(() => import('./Appbar').then(_ => _.AppBar)))
+  //const KernelBar = React.memo(dynamic(() => import('./Actions').then(_ => _.Actions)))
 
-  const AddButton = dynamic(() =>
-    import('../addbutton').then(_ => _.AddButton)
-  );
+  // const AddButton = dynamic(() =>
+  //   import('../addbutton').then(_ => _.AddButton)
+  // );
 
-  const AIButton = dynamic(() =>
-    import('./AppBarButton').then(_ => _.AppBarButton)
-  );
+  React.useEffect(() => console.log('rerendered header'), [])
 
   return (
     <Grid
@@ -34,7 +33,7 @@ export const Header: React.FC<HeaderProps> = props => {
       justifyContent="space-between"
     >
       <Grid xs={10} display="flex" alignItems="stretch">
-        <KernelBar />
+        <Actions />
       </Grid>
       <Grid
         container
@@ -43,9 +42,9 @@ export const Header: React.FC<HeaderProps> = props => {
         alignItems="flex-start"
         justifyContent="space-between"
       >
-        <Grid xs={6} display="flex" justifyContent="center">
+        {/* <Grid xs={6} display="flex" justifyContent="center">
           <AddButton />
-        </Grid>
+        </Grid> */}
         <Grid xs={6} display="flex" justifyContent="start">
           <ToggleButtonGroup
             value={view}

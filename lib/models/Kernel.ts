@@ -40,8 +40,7 @@ export class Kernel {
 
   public directoriesExcl: Directory[] = null;
 
-  protected folderManagerUrl = (path: string) => `api/folder-manager/${path}`
-
+  protected folderManagerUrl = (path: string) => `api/folder-manager/${path}`;
 
   /**
    * Set current directory
@@ -100,7 +99,6 @@ export class Kernel {
     this.trigger('loading', 'Initialising...');
 
     try {
-
       let res = await fetch(this.folderManagerUrl('init'), {
         body: JSON.stringify({
           type: 'init',
@@ -118,7 +116,7 @@ export class Kernel {
       }: {
         data: Directory | null;
         error: string | null;
-      } =  await res.json(); 
+      } = await res.json();
 
       console.log('Obtained Kernel.getRootFolder() response');
 
@@ -168,7 +166,7 @@ export class Kernel {
             directories: Folder[];
           } | null;
           error: string | null;
-        } = await res.json() 
+        } = await res.json();
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.load() response data');
@@ -242,11 +240,18 @@ export class Kernel {
             urls: string[];
           } | null;
           error: string | null;
-        } = await res.json() 
+        } = await res.json();
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.upload() response data');
 
+        this.trigger(
+          'idle',
+          `Uploaded ${
+            files.length === 1 ? files[0].name : `${files.length} files`
+          }.`
+        );
+        
         this.trigger('refresh');
 
         this.trigger(
@@ -298,7 +303,7 @@ export class Kernel {
             directory,
             type: 'copy',
           }),
-          
+
           method: 'POST',
           signal,
         });
@@ -313,7 +318,7 @@ export class Kernel {
             urls: string[];
           } | null;
           error: string | null;
-        } = await res.json() 
+        } = await res.json();
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.copy() response data');
@@ -385,7 +390,7 @@ export class Kernel {
             urls: string[];
           } | null;
           error: string | null;
-        } = await res.json() 
+        } = await res.json();
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.move() response data');
@@ -443,7 +448,7 @@ export class Kernel {
         }: {
           data: true | null;
           error: string | null;
-        } = await res.json() 
+        } = await res.json();
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.delete() response data');
@@ -506,7 +511,7 @@ export class Kernel {
         }: {
           data: { url: string };
           error: string | null;
-        } = await res.json(); 
+        } = await res.json();
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.create() response data');
@@ -569,7 +574,7 @@ export class Kernel {
         }: {
           data: { url: string };
           error: string | null;
-        } = await res.json() 
+        } = await res.json();
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.rename() response data');

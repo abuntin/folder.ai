@@ -7,7 +7,6 @@ import {
   DeleteForeverSharp,
 } from '@mui/icons-material';
 import { Unstable_Grid2 as Grid, Stack } from '@mui/material';
-import Tippy from '@tippyjs/react';
 import { ExpandMoreButton, TippedIconButton } from 'components/common';
 import { AnimatePresence, m } from 'framer-motion';
 import { margin } from 'lib/constants';
@@ -18,11 +17,13 @@ import { useDashboard } from '../context';
 interface ActionsProps {}
 
 export const Actions: React.FC<ActionsProps> = props => {
+  React.useEffect(() => console.log('rerendered actions'), []);
+
   const { kernel, selected, useDashboardApi } = useDashboard();
 
   const [isPending, startTransition] = React.useTransition();
 
-  const [expanded, setExpandedState] = React.useState(selected != null);
+  const [expanded, setExpandedState] = React.useState(false);
 
   const [recentAction, setRecentActionState] = React.useState<
     'copy' | 'rename' | 'move' | 'delete' | null
@@ -31,15 +32,18 @@ export const Actions: React.FC<ActionsProps> = props => {
   const setExpanded = (e: React.SyntheticEvent) =>
     startTransition(() => setExpandedState(expanded ? false : true));
 
-  const setRecentAction = (action: typeof recentAction) =>
-    startTransition(() => setRecentActionState(action));
+  const setRecentAction = (action: typeof recentAction) => {
+    if (action != null) {
+      selected ? startTransition(() => setRecentActionState(action)) : null;
+    } else startTransition(() => setRecentActionState(action));
+  };
 
   const { folderActions } = useDashboardApi();
 
   const { handleCut, handleCopy, handleRename } = folderActions;
 
   const RecentActionDialog = React.useMemo(() => {
-    if (selected && recentAction) {
+    if (recentAction) {
       const _Dialog =
         recentAction === 'delete'
           ? dynamic(() => import('./DeleteDialog').then(_ => _.DeleteDialog))
@@ -52,11 +56,11 @@ export const Actions: React.FC<ActionsProps> = props => {
           : null;
 
       const defaultProps = {
-        open: selected != null,
+        open: recentAction != null,
         onClose: e => setRecentAction(null),
       };
 
-      const Dialog = React.memo(_Dialog)
+      const Dialog = React.memo(_Dialog);
 
       return Dialog ? (
         <Dialog
@@ -75,19 +79,15 @@ export const Actions: React.FC<ActionsProps> = props => {
     } else return <></>;
   }, [recentAction]);
 
-  return React.useMemo(
-    () => (
-      <Grid container display="flex" alignItems="center">
-        <Grid xs display="flex" flexDirection="row" alignItems="center">
-          <Tippy content="Folder Actions">
-            <ExpandMoreButton
-              expand={expanded}
-              color="primary"
-              onClick={setExpanded}
-            />
-          </Tippy>
-        </Grid>
-        <Grid xs={10} display="flex" flexDirection="row" alignItems="center">
+  return (
+    <Grid container display="flex" alignItems="center">
+      <Grid xs={10} display="flex" flexDirection="row" alignItems="center">
+        <Stack spacing={[3, 2]} direction='row'>
+          <ExpandMoreButton
+            expand={expanded}
+            color="primary"
+            onClick={setExpanded}
+          />
           {expanded && (
             <AnimatePresence>
               <m.div
@@ -105,7 +105,13 @@ export const Actions: React.FC<ActionsProps> = props => {
                     restDelta: 0.001,
                   },
                 }}
-                style={{ minWidth: '20%', marginLeft: margin * 8 }}
+                style={{
+                  minWidth: '20%',
+                  marginLeft: margin * 8,
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                }}
               >
                 <Stack direction="row" spacing={1}>
                   <TippedIconButton
@@ -113,7 +119,7 @@ export const Actions: React.FC<ActionsProps> = props => {
                     color="primary"
                     disabled={true}
                     onClick={e => {
-                      setRecentAction('rename');
+                     setRecentAction('rename');
                       handleRename(e);
                     }}
                     sx={{
@@ -176,11 +182,10 @@ export const Actions: React.FC<ActionsProps> = props => {
                 </Stack>
               </m.div>
             </AnimatePresence>
-          )}
-        </Grid>
-        {selected && recentAction && RecentActionDialog}
+                  )}
+        </Stack>
       </Grid>
-    ),
-    [expanded, recentAction]
+      {recentAction && RecentActionDialog}
+    </Grid>
   );
 };

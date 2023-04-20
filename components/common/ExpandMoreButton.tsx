@@ -1,5 +1,6 @@
 import { KeyboardArrowRightSharp } from '@mui/icons-material';
 import { IconButtonProps, IconButton, styled } from '@mui/material';
+import * as React from 'react';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -16,8 +17,8 @@ const StyledExpandMoreButton = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-export const ExpandMoreButton: React.FC<ExpandMoreProps> = (props) => (
-    <StyledExpandMoreButton {...props}>
-        <KeyboardArrowRightSharp />
-    </StyledExpandMoreButton>
-)
+export const ExpandMoreButton = React.forwardRef((props: ExpandMoreProps, ref: React.ForwardedRef<HTMLButtonElement>) => (
+  <StyledExpandMoreButton {...props} ref={ref}>
+    <KeyboardArrowRightSharp />
+  </StyledExpandMoreButton>
+));

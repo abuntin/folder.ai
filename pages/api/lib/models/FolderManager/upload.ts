@@ -52,12 +52,15 @@ export const uploadFolders: PropType<FolderManagerInterface, 'upload'> = async (
     }
 
     if (urls.length === files.length) {
-      console.log(`Uploaded ${files.length} Folders to ${directory.name}`)
+      console.log(`Uploaded ${files.length} Folders to ${directory.name}`);
       return res.status(200).json({ data: { urls }, error: null });
-    } else throw new Error('Unable to upload some files ');
+    } else
+      return res
+        .status(500)
+        .json({ data: null, error: 'Error uploading files' });
   } catch (e) {
     console.error(e);
-    res
+    return res
       .status(500)
       .json({ data: null, error: e.message ?? 'Error uploading files' });
   }
