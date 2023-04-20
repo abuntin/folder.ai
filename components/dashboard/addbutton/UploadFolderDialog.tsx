@@ -7,14 +7,14 @@ import * as React from 'react';
 import { useDashboard } from '../context';
 import AddFolder from 'public/info/AddFolder.svg';
 import { NavAnimation } from 'components/animation';
-import Image from 'next/image'
+import Image from 'next/image';
 
 interface UploadFolderDialogProps {}
 
 export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
   const { useUpload, kernel } = useDashboard();
 
-  const { dialogDragOver, handleDrag, handleDrop, handleAdd, setIsDialog } = useUpload();
+  const { dragOver, handleDrag, handleDrop, handleAdd } = useUpload();
 
   const hiddenFileInput = React.useRef(null);
 
@@ -24,17 +24,6 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
 
   const handleUpload = (e: React.SyntheticEvent) =>
     hiddenFileInput.current.click();
-
-
-    React.useEffect(() => {
-
-        setIsDialog(true)
-
-        return () => {
-            setIsDialog(false)
-        }
-
-    }, [])
 
   return (
     <Stack>
@@ -68,14 +57,14 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
         sx={{
           borderStyle: 'dashed',
           borderRadius: borderRadius * 2,
-          backgroundColor: dialogDragOver ? 'background.paper' : 'background.default',
+          backgroundColor: dragOver ? 'background.paper' : 'background.default',
           padding: padding * 4,
-          borderWidth
+          borderWidth,
         }}
-        // onDrop={e => handleDrop(e, kernel, kernel.current)}
-        // onDragEnter={e => handleDrag(e, 'dialog')}
-        // onDragOver={e => handleDrag(e, 'dialog')}
-        // onDragLeave={e => handleDrag(e, 'dialog')}
+        onDrop={e => handleDrop(e, kernel, kernel.current)}
+        onDragEnter={handleDrag}
+        onDragOver={handleDrag}
+        onDragLeave={handleDrag}
         onClick={handleUpload}
       >
         <input
@@ -87,9 +76,13 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
         />
 
         <DText
-          text={dialogDragOver ? 'Drop it here!' : "This should be a Drag and Drop. Click for now"}
+          text={
+            dragOver
+              ? 'Drop it here!'
+              : 'This is a Drag and Drop. Click to be boring'
+          }
           variant="h5"
-          color={dialogDragOver ? 'success' : "disabled"}
+          color={dragOver ? 'success' : 'disabled'}
         />
       </Box>
     </Stack>

@@ -42,20 +42,20 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
 
   const { useUpload, kernel } = useDashboard();
 
-  const { childDragOver, handleDrag, handleDrop, isDialog } = useUpload();
+  const { dragOver, handleDrag, handleDrop } = useUpload();
 
   return (
     <AppearAnimationChild>
       <Box
         sx={{
           backgroundColor:
-            selected || childDragOver ? 'background.paper' : 'transparent',
+            selected || dragOver ? 'background.paper' : 'transparent',
           '&:hover': { backgroundColor: 'background.paper' },
         }}
-        onDrop={isDialog ? undefined : e => handleDrop(e, kernel, folder)}
-        onDragEnter={isDialog ? undefined : e => handleDrag(e, 'child')}
-        onDragOver={isDialog ? undefined : e => handleDrag(e, 'child')}
-        onDragLeave={isDialog ? undefined : e => handleDrag(e, 'child')}
+        onDrop={e => handleDrop(e, kernel, kernel.current)}
+        onDragEnter={handleDrag}
+        onDragOver={handleDrag}
+        onDragLeave={handleDrag}
         {...rest}
       >
         <form action="" onSubmit={e => e.preventDefault()}>

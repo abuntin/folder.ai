@@ -32,52 +32,24 @@ export const useDashboardApi = () => {
  * @returns Event handlers handleAdd, handleDrag, handleDrop, State dragOver
  */
 export const useUpload = () => {
-  const [parentDragOver, setParentDragOver] = React.useState(false);
-  const [childDragOver, setChildDragOver] = React.useState(false);
-  const [dialogDragOver, setDialogDragOver] = React.useState(false);
-  const [isDialog, setIsDialog] = React.useState(false)
+  const [dragOver, setDragOver] = React.useState(false);
 
   const { kernel } = useDashboard();
 
   // handle drag events
   const handleDrag = function (
-    e: React.SyntheticEvent,
-    component: 'dialog' | 'container' | 'child'
+    e: React.SyntheticEvent
   ) {
     e.preventDefault();
     e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation()
+    
 
     if (e.type === 'dragenter' || e.type === 'dragover') {
       kernel.trigger('select', null);
-      switch (component) {
-        case 'child':
-          setParentDragOver(false);
-          setDialogDragOver(false);
-          setChildDragOver(true);
-          break;
-        case 'container':
-          setDialogDragOver(false);
-          setChildDragOver(false);
-          setParentDragOver(true);
-          break;
-        case 'dialog':
-          setChildDragOver(false);
-          setParentDragOver(false);
-          setDialogDragOver(true);
-          break;
-      }
+      setDragOver(true)
     } else if (e.type === 'dragleave') {
-      switch (component) {
-        case 'container':
-          setParentDragOver(false);
-          break;
-        case 'dialog':
-          setDialogDragOver(false);
-          break;
-        case 'child':
-          setChildDragOver(false);
-          break;
-      }
+      setDragOver(false)
     }
   };
 
@@ -89,10 +61,9 @@ export const useUpload = () => {
   ) {
     e.preventDefault();
     e.stopPropagation();
-
-    setParentDragOver(false);
-    setDialogDragOver(false);
-    setChildDragOver(false);
+    e.nativeEvent.stopImmediatePropagation()
+    
+    setDragOver(false)
 
     if (!e.dataTransfer.files) {
       kernel.trigger('error', 'Error adding files to folder');
@@ -144,13 +115,9 @@ export const useUpload = () => {
   };
 
   return {
-    parentDragOver,
-    childDragOver,
-    dialogDragOver,
+    dragOver,
     handleDrag,
     handleDrop,
     handleAdd,
-    isDialog,
-    setIsDialog
   };
 };

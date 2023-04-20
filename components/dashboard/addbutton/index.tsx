@@ -118,7 +118,7 @@ export const AddButton: React.FC<IconButtonProps> = props => {
           vertical: 'top',
           horizontal: 'left',
         }}
-        sx={{ minWidth: '60%', borderRadius: borderRadius * 2, mt: margin * 4 }}
+        sx={{ minWidth: '60%', borderRadius: borderRadius * 4, mt: margin * 4 }}
         MenuListProps={{ sx: { backgroundColor: 'action.active' } }}
       >
         <MenuItem onClick={e => setDialog('create')} divider>
