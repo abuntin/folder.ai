@@ -8,18 +8,18 @@ import {
   DriveFolderUploadSharp,
 } from '@mui/icons-material';
 import { Box, IconButtonProps, Menu, MenuItem, Stack } from '@mui/material';
-import { DText, TippedIconButton, FormDialog } from 'components/common';
+import { DText, TippedIconButton } from 'components/common';
 import { borderRadius, margin } from 'lib/constants';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
-import { useDashboard } from '../context';
+import { useKernel } from 'components/app';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { UploadFolderDialog } from './UploadFolderDialog';
 
 export const AddButton: React.FC<IconButtonProps> = props => {
-  const { useUpload, kernel } = useDashboard();
+  const { kernel } = useKernel();
 
-  const { folders, current } = kernel;
+  const { currentDirectory, folders } = kernel;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -50,7 +50,7 @@ export const AddButton: React.FC<IconButtonProps> = props => {
 
   const CreateNewDialog = React.useMemo(
     () =>
-      folders && current && dialog
+      currentDirectory && folders && dialog
         ? dynamic(() =>
             import('components/common/FormDialog').then(_ => _.FormDialog)
           )
@@ -68,7 +68,8 @@ export const AddButton: React.FC<IconButtonProps> = props => {
             handleClose: e => setDialog(null),
             error: (value: string) => {
               let isError =
-                folders.filter(folder => folder.name == value).length !== 0;
+                kernel.folders.filter(({ folder }) => folder.name == value)
+                  .length !== 0;
               return isError ? 'Directory already exists' : '';
             },
             inputChange: createNewDirectoryInputChange,
@@ -85,7 +86,7 @@ export const AddButton: React.FC<IconButtonProps> = props => {
             handleClose: e => setDialog(null),
             onConfirm: e => {},
             inputLabel: 'Directory Name',
-            content: (<UploadFolderDialog handleClose={handleClose} />),
+            content: <UploadFolderDialog handleClose={handleClose} />,
             textfield: false,
             actions: false,
           }

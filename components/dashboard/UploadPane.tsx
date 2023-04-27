@@ -10,9 +10,8 @@ import {
   Button,
 } from '@mui/material';
 import { padding } from 'lib/constants';
-import { DText } from 'components';
+import { DText } from 'components/common';
 import * as React from 'react';
-import { useAppDispatch } from 'lib/redux';
 import {
   CloseSharp,
   FileUploadSharp,

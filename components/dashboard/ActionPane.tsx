@@ -9,7 +9,7 @@ import {
   Divider,
 } from '@mui/material';
 import { padding } from 'lib/constants';
-import { DButton, DText } from 'components';
+import { DButton, DText } from 'components/common';
 import { capitalise, formatDate, repaymentRange } from 'lib/functions';
 import * as React from 'react';
 import { useAppDispatch, useAppSelector } from 'lib/redux';

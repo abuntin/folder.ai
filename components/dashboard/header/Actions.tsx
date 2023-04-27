@@ -12,13 +12,12 @@ import { AnimatePresence, m } from 'framer-motion';
 import { margin } from 'lib/constants';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
-import { useDashboard } from '../context';
+import { useKernel } from 'components/app';
 
 interface ActionsProps {}
 
 export const Actions: React.FC<ActionsProps> = props => {
-
-  const { kernel, selected, useDashboardApi } = useDashboard();
+  const { kernel, selected, useKernelApi } = useKernel();
 
   const [isPending, startTransition] = React.useTransition();
 
@@ -37,7 +36,7 @@ export const Actions: React.FC<ActionsProps> = props => {
     } else startTransition(() => setRecentActionState(action));
   };
 
-  const { folderActions } = useDashboardApi();
+  const { folderActions } = useKernelApi();
 
   const { handleCut, handleCopy, handleRename } = folderActions;
 
@@ -81,7 +80,7 @@ export const Actions: React.FC<ActionsProps> = props => {
   return (
     <Grid container display="flex" alignItems="center">
       <Grid xs={10} display="flex" flexDirection="row" alignItems="center">
-        <Stack spacing={[3, 2]} direction='row'>
+        <Stack spacing={[3, 2]} direction="row">
           <ExpandMoreButton
             expand={expanded}
             color="primary"
@@ -118,7 +117,7 @@ export const Actions: React.FC<ActionsProps> = props => {
                     color="primary"
                     disabled={true}
                     onClick={e => {
-                     setRecentAction('rename');
+                      setRecentAction('rename');
                       handleRename(e);
                     }}
                     sx={{
@@ -181,7 +180,7 @@ export const Actions: React.FC<ActionsProps> = props => {
                 </Stack>
               </m.div>
             </AnimatePresence>
-                  )}
+          )}
         </Stack>
       </Grid>
       {recentAction && RecentActionDialog}

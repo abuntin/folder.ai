@@ -4,34 +4,36 @@ import { Box, Stack } from '@mui/material';
 import { DText, FolderSelect } from 'components/common';
 import { borderRadius, margin, padding, borderWidth } from 'lib/constants';
 import * as React from 'react';
-import { useDashboard } from '../context';
+import { useKernel } from 'components/app';
 import AddFolder from 'public/info/AddFolder.svg';
 import { NavAnimation } from 'components/animation';
 import Image from 'next/image';
 import { Folder } from 'lib/models';
 
-interface UploadFolderDialogProps { handleClose: any }
+interface UploadFolderDialogProps {
+  handleClose: any;
+}
 
 export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
-  const { useUpload, kernel } = useDashboard();
+  const { useUpload, kernel } = useKernel();
 
-  const { directoriesExcl, current } = kernel;
+  const { directoriesExcl } = kernel;
 
   const { dragOver, handleDrag, handleDrop, handleAdd } = useUpload();
 
   const [destination, setDestination] = React.useState<Folder>(
-    directoriesExcl.length ? directoriesExcl[0] : kernel.current
+    directoriesExcl.values.length ? directoriesExcl[0] : kernel.currentDirectory
   );
 
   const hiddenFileInput = React.useRef(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    props.handleClose(e)
-    handleAdd(e, kernel, destination);  
+    props.handleClose(e);
+    handleAdd(e, kernel, destination);
   };
 
   const handleUpload = (e: React.SyntheticEvent) =>
-    hiddenFileInput.current.click();
+    hiddenFileInput.currentDirectory.click();
 
   return (
     <Stack>
@@ -60,16 +62,7 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
       </Stack>
       <Stack spacing={2} sx={{ mt: margin, mb: margin * 2 }}>
         <DText text="Select Upload Directory" variant="subtitle1" />
-        <FolderSelect
-          variant='large'
-          value={destination}
-          options={[current].concat(directoriesExcl)}
-          onChange={(e, value, reason) => {
-            if (reason == 'selectOption') setDestination(value);
-            else if (reason == 'clear') setDestination(null);
-            else return;
-          }}
-        />
+        <FolderSelect />
       </Stack>
 
       <Box

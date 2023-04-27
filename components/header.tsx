@@ -2,7 +2,8 @@
 import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { DividerGradient, DText, ColorModeContext } from 'components';
+import { ColorModeContext } from './app'
+import { DText,  } from './common';
 import { borderRadius, padding } from 'lib/constants';
 import {
   Box,
@@ -19,13 +20,16 @@ import logo from 'public/logo_transparent.svg';
 
 const navItems = {
   '/': {
-    name: 'My Directory',
+    name: 'Home'
   },
-  '/dashboard': {
-    name: 'Dashboard',
+  '/query': {
+    name: 'Query by FolderAI',
+  },
+  '/directory': {
+    name: 'Directory',
   },
   '/subscription': {
-    name: 'My Subscription',
+    name: 'Account',
   },
   '/settings': {
     name: 'Settings',
@@ -79,7 +83,7 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
     >
       <Link
         key={path}
-        href={'/'}
+        href={path}
         className={clsx(
           'transition-all hover:text-neutral-800 dark:hover:text-neutral-200 py-[5px] px-[10px]',
           'flex flex-col items-center justify-evenly'

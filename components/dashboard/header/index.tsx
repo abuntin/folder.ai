@@ -7,14 +7,14 @@ import {
   ToggleButton,
 } from '@mui/material';
 import * as React from 'react';
-import { useDashboard } from '../context';
-import { Actions } from './Actions'
+import { useKernel } from 'components/app';
+import { Actions } from './Actions';
 import { AddButton } from '../addbutton';
 
 interface HeaderProps {}
 
 export const Header: React.FC<HeaderProps> = props => {
-  const { kernel, view, loading } = useDashboard();
+  const { kernel, view, loading } = useKernel();
 
   return (
     <Grid

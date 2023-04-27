@@ -34,7 +34,7 @@ export default function Error({
       }}
     >
       <Image src={ErrorImg} alt="Folder.AI" width={400} height={400} />
-      <ConstructionSharp fontSize="large" sx={{ mt: margin * 10 }} />
+      {/* <ConstructionSharp fontSize="large" sx={{ mt: margin * 10 }} /> */}
     </div>
   );
 }

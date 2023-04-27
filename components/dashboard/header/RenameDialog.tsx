@@ -2,17 +2,16 @@
 
 import * as React from 'react';
 import { FormDialog, FormDialogProps } from 'components/common';
-import { useDashboard } from '../context';
+import { useKernel } from 'components/app';
 
 interface RenameDialogProps extends FormDialogProps {}
 
 export const RenameDialog: React.FC<RenameDialogProps> = props => {
-  const { kernel, useDashboardApi } = useDashboard();
+  const { kernel, useKernelApi } = useKernel();
 
-  const { folderActions } = useDashboardApi();
+  const { folderActions } = useKernelApi();
 
   const { handleRename } = folderActions;
-
 
   const defaultProps = {
     value: '',
@@ -21,7 +20,7 @@ export const RenameDialog: React.FC<RenameDialogProps> = props => {
     onConfirm: handleRename,
     error: (value: string) => {
       let isError =
-        kernel.folders.filter(folder => folder.name == value).length !== 0;
+        kernel.folders.filter(({folder}) => folder.name == value).length !== 0;
       return isError ? 'Directory already exists' : '';
     },
     inputLabel: 'New Directory Name',

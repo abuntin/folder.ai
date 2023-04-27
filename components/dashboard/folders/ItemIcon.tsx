@@ -9,22 +9,23 @@ import {
 import { AppearAnimationChild, FolderAnimation } from 'components/animation';
 import { DText } from 'components/common';
 import { padding, borderRadius, margin } from 'lib/constants';
-import { Folder } from 'lib/models';
+import { TreeNode, Folder } from 'lib/models';
 import * as React from 'react';
-import { useDashboard } from '../context';
-import { ProgressBar } from '../ProgressBar';
+import { useKernel } from 'components/app';
 
 interface DashboardItemProps extends BoxProps {
-  folder: Folder;
+  node: TreeNode;
   selected: boolean;
 }
 
 export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
-  const { folder, selected, ...rest } = props;
+  const { node, selected, ...rest } = props;
 
-  const { name, isDirectory, children } = folder
+  const { folder } = node;
 
-  const { useUpload, kernel } = useDashboard();
+  const { name, isDirectory, children } = folder;
+
+  const { useUpload, kernel } = useKernel();
 
   const { dragOver, handleDrag, handleDrop } = useUpload();
 
@@ -40,7 +41,9 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
             paddingBottom: padding,
             paddingTop: padding,
             backgroundColor:
-              selected || (dragOver && isDirectory) ? 'background.paper' : 'transparent',
+              selected || (dragOver && isDirectory)
+                ? 'background.paper'
+                : 'transparent',
             borderRadius,
             '&:hover': { backgroundColor: 'background.paper' },
           }}

@@ -1,26 +1,26 @@
 import { Folder, Kernel } from 'lib/models';
-import { DashboardContext } from './Context';
-import { useDashboardApi, useUpload } from './hooks';
+import { KernelContext } from './Context';
+import { useKernelApi, useUpload } from './hooks';
 import React from 'react';
 import { Snackbar, Alert, Stack, AlertProps } from '@mui/material';
 import { borderRadius } from 'lib/constants';
-import { DashboardApiProvider } from './ApiProvider';
-import { ProgressBar } from '../ProgressBar';
+import { KernelApiProvider } from './ApiProvider';
+import { ProgressBar } from 'components/dashboard/ProgressBar';
 import { AxiosProgressEvent } from 'axios';
 import { LoadingComponent } from 'components/common';
 
 /**
- * Wrapper component defining DashboardContext and managing UI state updates
+ * Wrapper component defining KernelContext and managing UI state updates
  * @param React Component default props
  * @listens KernelEvent
- * @property loading: PropType<DashboardContext, 'loading'>
- * @property selected: PropType<DashboardContext, 'selected'>
- * @property view: PropType<DashboardContext, 'view'>
+ * @property loading: PropType<KernelContext, 'loading'>
+ * @property selected: PropType<KernelContext, 'selected'>
+ * @property view: PropType<KernelContext, 'view'>
  * @property error: Controls the Snackbar error for user feedback
- * @returns DashboardProvider: React.Component
+ * @returns KernelProvider: React.Component
  */
 
-export const DashboardProvider = ({ children, ...rest }) => {
+export const KernelProvider = ({ children, ...rest }) => {
   const { current: kernel } = React.useRef(new Kernel());
 
   const controller = new AbortController();
@@ -102,7 +102,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
 
   React.useEffect(() => {
     try {
-      kernel.init().then(() => kernel.load(kernel.rootDirectory));
+      kernel.init().then(() => kernel.load(kernel.rootDirectory.key));
     } catch (e) {
       manageSnackbar(e.message, 'error');
     }
@@ -143,8 +143,8 @@ export const DashboardProvider = ({ children, ...rest }) => {
   // Listen for load event
 
   React.useEffect(() => {
-    const loadEvent = kernel.on('load', directory => {
-      kernel.load(directory);
+    const loadEvent = kernel.on('load', (path: string, navigate: boolean) => {
+      kernel.load(path, navigate ?? false);
       selected && setSelectedFolder(null);
     });
 
@@ -263,13 +263,13 @@ export const DashboardProvider = ({ children, ...rest }) => {
     manageSnackbar('', 'error');
 
   return (
-    <DashboardContext.Provider
+    <KernelContext.Provider
       value={{
         kernel,
         loading,
         selected,
         view,
-        useDashboardApi,
+        useKernelApi,
         useUpload,
       }} // Provide filesystem service (kernel) & UI properties as context
       {...rest}
@@ -293,8 +293,17 @@ export const DashboardProvider = ({ children, ...rest }) => {
           sx={{ width: '100%', borderRadius }}
         >
           <Stack spacing={1}>
-            {error !== '' ? error : warning !== '' ? warning : info !== '' ? info : success}
-            <Stack direction="row" sx={{ display: 'flex', alignItems: 'center' }}>
+            {error !== ''
+              ? error
+              : warning !== ''
+              ? warning
+              : info !== ''
+              ? info
+              : success}
+            <Stack
+              direction="row"
+              sx={{ display: 'flex', alignItems: 'center' }}
+            >
               {uploadProgress && (
                 <ProgressBar progress={uploadProgress} barWidth={350} />
               )}
@@ -303,7 +312,7 @@ export const DashboardProvider = ({ children, ...rest }) => {
           </Stack>
         </Alert>
       </Snackbar>
-      <DashboardApiProvider>{children}</DashboardApiProvider>
-    </DashboardContext.Provider>
+      <KernelApiProvider>{children}</KernelApiProvider>
+    </KernelContext.Provider>
   );
 };

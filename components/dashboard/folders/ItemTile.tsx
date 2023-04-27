@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  KeyboardArrowRightSharp,
   FolderSharp,
   FolderOpenSharp,
   SnippetFolderSharp,
@@ -14,33 +13,25 @@ import {
   styled,
   Unstable_Grid2 as Grid,
 } from '@mui/material';
-import { Folder } from 'lib/models';
+import { TreeNode } from 'lib/models';
 import * as React from 'react';
-import {
-  DText,
-  useDashboard,
-  ExpandMoreButton,
-  AppearAnimationChild,
-} from 'components';
+import { DText, ExpandMoreButton } from 'components/common';
+import { AppearAnimationChild } from 'components/animation';
+import { useKernel } from 'components/app';
 
 interface DashboardItemTileProps extends BoxProps {
-  folder: Folder;
+  node: TreeNode;
   selected: boolean;
 }
 
-interface EditButtonProps extends IconButtonProps {}
-
-const EditButton = styled((props: EditButtonProps) => {
-  const { disabled, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, disabled }) => ({}));
-
 export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
-  const { folder, selected, ...rest } = props;
+  const { node, selected, ...rest } = props;
+
+  const { folder } = node;
 
   const { name, isDirectory, children } = folder;
 
-  const { useUpload, kernel } = useDashboard();
+  const { useUpload, kernel } = useKernel();
 
   const { dragOver, handleDrag, handleDrop } = useUpload();
 
@@ -49,7 +40,9 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
       <Box
         sx={{
           backgroundColor:
-            selected || (dragOver && isDirectory) ? 'background.paper' : 'transparent',
+            selected || (dragOver && isDirectory)
+              ? 'background.paper'
+              : 'transparent',
           '&:hover': { backgroundColor: 'background.paper' },
         }}
         onDrop={isDirectory ? e => handleDrop(e, kernel, folder) : undefined}

@@ -11,16 +11,18 @@ import { DText, FolderSelect } from 'components/common';
 import { borderRadius, padding, margin } from 'lib/constants';
 import { Folder } from 'lib/models';
 import * as React from 'react';
-import { useDashboard } from '../context';
+import { useKernel } from 'components/app';
 
 interface LocationChangeDialogProps extends DialogProps {
   type: 'copy' | 'move';
 }
 
-export const LocationChangeDialog: React.FC<LocationChangeDialogProps> = props => {
-  const { kernel, selected, useDashboardApi } = useDashboard();
+export const LocationChangeDialog: React.FC<
+  LocationChangeDialogProps
+> = props => {
+  const { kernel, selected, useKernelApi } = useKernel();
 
-  const { folderActions } = useDashboardApi();
+  const { folderActions } = useKernelApi();
 
   const [destination, setDestination] = React.useState<Folder>(null);
 
@@ -43,7 +45,7 @@ export const LocationChangeDialog: React.FC<LocationChangeDialogProps> = props =
           padding: padding * 3,
           backgroundColor: 'action.active',
         },
-        elevation: 2
+        elevation: 2,
       }}
     >
       <Stack spacing={4}>
@@ -52,16 +54,7 @@ export const LocationChangeDialog: React.FC<LocationChangeDialogProps> = props =
           variant="h6"
           fontWeight="regular"
         />
-        <FolderSelect
-          options={kernel.folders.filter(
-            (folder: Folder) => folder.isDirectory
-          )}
-          onChange={(e, value, reason) => {
-            if (reason == 'selectOption') setDestination(value);
-            else if (reason == 'clear') setDestination(null);
-            else return;
-          }}
-        />
+        <FolderSelect />
         <DialogActions>
           <Button onClick={e => props.onClose(e, 'backdropClick')}>
             <DText text="Cancel" />{' '}

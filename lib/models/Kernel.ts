@@ -3,6 +3,8 @@ import { cache } from 'react';
 import _ from 'lodash';
 import events, { EventSubscription } from '@mongez/events';
 import axios from 'axios';
+import { Tree, TreeNode } from './KernelTree';
+import { PropType } from 'lib/types';
 
 export type KernelEvent =
   | 'loading'
@@ -30,65 +32,44 @@ export type KernelEvent =
  */
 
 export class Kernel {
-  public current: Directory = null;
+  public currentDirectory: TreeNode = null;
 
-  protected prev: Folder = null;
+  public rootDirectory: TreeNode = null;
 
-  public rootDirectory: Directory = null;
+  public folderTree: Tree = null;
 
-  public folders: Folder[] = null;
-
-  public foldersExcl: Folder[] = null;
-
-  public directoriesExcl: Directory[] = null;
+  protected prevDirectory: TreeNode = null;
 
   protected folderManagerUrl = (path: string) => `api/folder-manager/${path}`;
 
-  /**
-   * Set current directory
-   * @param folder Folder
-   */
-  set currentDirectory(directory: Directory) {
-    this.current = directory;
+  public get isRoot() {
+    return this.currentDirectory
+      ? this.currentDirectory.key === this.rootDirectory.key
+      : false;
   }
 
-  /**
-   * Set prev Directory
-   * @param folder Folder
-   */
-  set prevDirectory(directory: Directory) {
-    this.prev = directory;
+  public get foldersExcl() {
+    return Object.values(
+      this.currentDirectory ? this.currentDirectory.folders : {}
+    );
   }
 
-  /**
-   * Set root Directory
-   * @param path string
-   */
-  set rootF(directory: Directory) {
-    this.rootDirectory = directory;
+  public get directoriesExcl() {
+    return Object.values(
+      this.currentDirectory ? this.currentDirectory.directories : {}
+    );
   }
 
-  /**
-   * Set current Folders
-   * @param folders Folder[]
-   */
-  set currentFolders(folders: Folder[]) {
-    this.folders = folders;
+  public get folders() {
+    return Object.values(
+      this.currentDirectory
+        ? {
+            ...this.currentDirectory.folders,
+            ...this.currentDirectory.directories,
+          }
+        : {}
+    );
   }
-
-  get isRoot() {
-    return this.current.id === this.rootDirectory.id;
-  }
-
-  /**
-   * Navigates to previous Directory
-   */
-
-  public goBack = cache(async () => {
-    if (this.isRoot || !this.prev) return;
-
-    this.trigger('load', this.prev);
-  });
 
   /**
    * Gets root Folder from Firebase Storage TODO: Expand with user ID
@@ -127,8 +108,9 @@ export class Kernel {
       if (error || !rootDirectory)
         throw new Error(error ?? 'Missing Kernel.init() response data');
       else {
-        this.rootF = rootDirectory;
-        this.currentDirectory = rootDirectory;
+        this.folderTree = new Tree(rootDirectory.path, rootDirectory);
+        this.rootDirectory = this.folderTree.root;
+        this.currentDirectory = this.folderTree.root;
         this.trigger('idle', 'Obtained root folder');
       }
     } catch (e) {
@@ -138,54 +120,90 @@ export class Kernel {
   });
 
   /**
+   * List the given Directory children
+   */
+  public list = cache(
+    async (
+      directory: Directory,
+      signal: AbortSignal = null
+    ): Promise<{ folders: Folder[]; directories: Directory[] }> =>
+      new Promise(async (resolve, reject) => {
+        try {
+          let res = await fetch(this.folderManagerUrl('list'), {
+            body: JSON.stringify({
+              directory,
+              type: 'list',
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            signal,
+          });
+
+          console.log('Obtained Kernel.list() response');
+
+          const {
+            data,
+            error,
+          }: {
+            data: {
+              folders: Folder[];
+              directories: Directory[];
+            } | null;
+            error: string | null;
+          } = await res.json();
+
+          if (error || !data)
+            throw new Error(error ?? 'Missing Kernel.load() response data');
+          else {
+            const { folders, directories } = data;
+            resolve({ folders, directories });
+          }
+        } catch (e) {
+          reject(e.message);
+        }
+      })
+  );
+  /**
    * Load the given Directory onto kernel
    */
   public load = cache(
-    async (directory: Directory, signal: AbortSignal = null): Promise<void> => {
+    async (
+      key: PropType<Folder, 'path'>,
+      navigate = false,
+      signal: AbortSignal = null
+    ): Promise<void> => {
       console.log('Initialised Kernel.load()');
-
-      this.trigger('loading');
-
-      this.trigger('info', `Opening ${directory.name}...`)
-
       try {
-        let res = await fetch(this.folderManagerUrl('list'), {
-          body: JSON.stringify({
-            directory,
-            type: 'list',
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          signal,
-        });
+        this.trigger('loading');
+
+        let directoryNode = this.folderTree.find(key);
+
+        if (!directoryNode)
+          throw new Error('Cannot find Directory to load in Tree');
+
+        let directory = directoryNode.folder;
+
+        this.trigger('info', `Opening ${directory.name}...`);
+
+        let data = await this.list(directory, signal);
 
         console.log('Obtained Kernel.load() response');
 
-        const {
-          data,
-          error,
-        }: {
-          data: {
-            folders: Folder[];
-            directories: Folder[];
-          } | null;
-          error: string | null;
-        } = await res.json();
-
-        if (error || !data)
-          throw new Error(error ?? 'Missing Kernel.load() response data');
+        if (!data) throw new Error('Missing Kernel.load() response data');
         else {
           const { folders, directories } = data;
-          if (this.current.path !== directory.path) {
-            let temp = this.current;
-            this.currentDirectory = directory;
+
+          // Append children to Kernel
+
+          this.folderTree.insert(directory.path, folders.concat(directories));
+
+          if (navigate && this.currentDirectory.key !== directory.path) {
+            let temp = this.currentDirectory;
+            this.currentDirectory = this.folderTree.find(directory.path);
             !this.isRoot && (this.prevDirectory = temp);
           }
-          this.foldersExcl = folders;
-          this.directoriesExcl = directories;
-          this.currentFolders = folders.concat(directories);
           this.trigger('idle', `Opened Directory ${directory.name}`);
         }
       } catch (e) {
@@ -196,13 +214,23 @@ export class Kernel {
   );
 
   /**
-   * Refreshes the current Directory
+   * Goes back to prev Directory
+   */
+
+  public goBack = cache(async () => {
+    this.currentDirectory &&
+      this.prevDirectory &&
+      this.load(this.prevDirectory.key, true);
+  });
+
+  /**
+   * Refreshes the current  Directory
    */
 
   public refresh = cache(async () => {
-    if (!this.current) return;
+    if (!this.currentDirectory) return;
 
-    return this.load(this.current);
+    return this.load(this.currentDirectory.key);
   });
 
   /**
@@ -266,7 +294,8 @@ export class Kernel {
           }.`
         );
 
-        if (this.current == directory) this.trigger('refresh');
+        if (this.currentDirectory.key == directory.path)
+          this.trigger('refresh');
 
         return data.urls;
       } catch (error) {
@@ -462,11 +491,14 @@ export class Kernel {
         else {
           this.trigger('cut', []);
           this.trigger('refresh');
-          this.trigger('error', `Deleted ${
-            folders.length === 1
-              ? folders[0].name
-              : `${folders.length} Folders`
-          }`);
+          this.trigger(
+            'error',
+            `Deleted ${
+              folders.length === 1
+                ? folders[0].name
+                : `${folders.length} Folders`
+            }`
+          );
         }
       } catch (e) {
         if (signal && signal.aborted) {
@@ -479,7 +511,7 @@ export class Kernel {
   );
 
   /**
-   * Create new Directory in specified Directory (default this.current)
+   * Create new Directory in specified Directory (default this.currentDirectory)
    * @param payload { name: string, directory: Directory }
    */
 
@@ -494,7 +526,7 @@ export class Kernel {
       console.log('Initialised Kernel.create()');
 
       try {
-        const { name, directory = this.current } = payload;
+        const { name, directory = this.currentDirectory.folder } = payload;
 
         this.trigger(
           'info',
@@ -527,7 +559,8 @@ export class Kernel {
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.create() response data');
         else {
-          if (directory.path === this.current.path) this.trigger('refresh');
+          if (directory.path === this.currentDirectory.key)
+            this.trigger('refresh');
           this.trigger(
             'idle',
             `Created new Directory ${name} in ${directory.name}`
@@ -544,7 +577,7 @@ export class Kernel {
   );
 
   /**
-   * Rename Foldre in specified Directory (default this.current)
+   * Rename Foldre in specified Directory (default this.currentDirectory)
    * @param payload { folder: Folder, name: string, directory: Directory }
    */
 
@@ -556,7 +589,11 @@ export class Kernel {
       console.log('Initialised Kernel.create()');
 
       try {
-        const { name, folder, directory = this.current } = payload;
+        const {
+          name,
+          folder,
+          directory = this.currentDirectory.folder,
+        } = payload;
 
         this.trigger(
           'info',
@@ -590,7 +627,8 @@ export class Kernel {
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.rename() response data');
         else {
-          if (directory.path === this.current.path) this.trigger('refresh');
+          if (directory.path === this.currentDirectory.key)
+            this.trigger('refresh');
           this.trigger(
             'idle',
             `Renamed Folder ${folder.name} to ${name} in ${directory.name}`

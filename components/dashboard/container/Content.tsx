@@ -11,7 +11,7 @@ import {
   Unstable_Grid2 as Grid,
   useTheme,
 } from '@mui/material';
-import { useDashboard } from 'components';
+import { useKernel } from 'components/app';
 import { HoverAnimation } from 'components/animation';
 import { DText } from 'components/common';
 import { m } from 'framer-motion';
@@ -24,9 +24,9 @@ interface ContentProps {}
 
 export const Content: React.FC<ContentProps> = props => {
   const theme = useTheme();
-  const { view, kernel, selected, useUpload } = useDashboard();
+  const { view, kernel, selected, useUpload } = useKernel();
 
-  let { current, folders } = kernel;
+  let { currentDirectory, folderTree } = kernel;
 
   const { dragOver, handleDrag, handleDrop } = useUpload();
 
@@ -35,7 +35,7 @@ export const Content: React.FC<ContentProps> = props => {
   };
 
   const handleNavigate = (e: React.SyntheticEvent, folder: Folder) => {
-    if (folder.isDirectory) kernel.trigger('load', folder);
+    if (folder.isDirectory) kernel.trigger('load', folder.path, true);
   };
 
   const FolderComponent = React.useMemo(
@@ -43,41 +43,8 @@ export const Content: React.FC<ContentProps> = props => {
       view === 'tile'
         ? dynamic(() => import('../folders').then(_ => _.DashboardItemTile))
         : dynamic(() => import('../folders').then(_ => _.DashboardItemIcon)),
-    [view, kernel.folders]
+    [view, kernel.folderTree]
   );
-
-  const handleKeyPress = React.useMemo(() => {
-    let index = selected ? folders.indexOf(selected) : -1;
-    if (view == 'tile') {
-      return (e: React.KeyboardEvent<HTMLDivElement>) => {
-        console.log(e.key);
-        if (e.key == 'ArrowDown') {
-          if (index == -1 || index == folders.length - 1)
-            kernel.trigger('select', folders[0]);
-          else kernel.trigger('select', folders[index + 1]);
-        } else if (e.key == 'ArrowUp') {
-          if (index == -1 || index == 0)
-            kernel.trigger('select', folders[folders.length - 1]);
-          else kernel.trigger('select', folders[index - 1]);
-        } else if (e.key == 'Enter' && selected && selected.isDirectory) {
-          handleNavigate(e, selected);
-        }
-      };
-    } else
-      return (e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (e.key == 'ArrowRight') {
-          if (index == -1 || index == folders.length - 1)
-            kernel.trigger('select', folders[0]);
-          else kernel.trigger('select', folders[index + 1]);
-        } else if (e.key == 'ArrowLeft') {
-          if (index == -1 || index == 0)
-            kernel.trigger('select', folders[folders.length - 1]);
-          else kernel.trigger('select', folders[index - 1]);
-        } else if (e.key == 'Enter' && selected && selected.isDirectory) {
-          handleNavigate(e, selected);
-        }
-      };
-  }, [view, folders, selected]);
 
   return (
     <Grid
@@ -88,12 +55,10 @@ export const Content: React.FC<ContentProps> = props => {
         mt: margin * 2,
         mb: margin * 2,
         borderRadius,
-        backgroundColor: dragOver
-          ? 'background.paper'
-          : 'background.default',
+        backgroundColor: dragOver ? 'background.paper' : 'background.default',
         padding,
       }}
-      onDrop={e => handleDrop(e, kernel, kernel.current)}
+      onDrop={e => handleDrop(e, kernel, kernel.currentDirectory)}
       onDragEnter={handleDrag}
       onDragOver={handleDrag}
       onDragLeave={handleDrag}
@@ -142,7 +107,7 @@ export const Content: React.FC<ContentProps> = props => {
               justifyContent="space-between"
             >
               <DText
-                text={kernel.current.name}
+                text={kernel.currentDirectory.folder.name}
                 variant="h6"
                 fontWeight="medium"
               />
@@ -178,7 +143,7 @@ export const Content: React.FC<ContentProps> = props => {
         <Grid xs={4} />
       </Grid>
 
-      {!folders.length && (
+      {!currentDirectory.hasChildren && (
         <Grid
           xs={12}
           display="flex"
@@ -192,23 +157,22 @@ export const Content: React.FC<ContentProps> = props => {
           />
         </Grid>
       )}
-      {folders.length !== 0 &&
-        folders.map((folder: Folder, i) => {
+      {currentDirectory.hasChildren &&
+        Object.values(currentDirectory.children).map((node, i) => {
           return (
             <Grid
               key={i}
               xs={view === 'grid' ? 4 : 12}
-              onDoubleClick={e => handleNavigate(e, folder)}
+              onDoubleClick={e => handleNavigate(e, node.folder)}
               onClick={e => {
                 e.stopPropagation();
-                handleSelect(e, folder);
+                handleSelect(e, node.folder);
               }}
-              onKeyDown={handleKeyPress}
             >
               <HoverAnimation>
                 <FolderComponent
-                  selected={selected && selected.id === folder.id}
-                  folder={folder}
+                  selected={selected && selected.id === node.folder.id}
+                  node={node}
                 />
               </HoverAnimation>
             </Grid>

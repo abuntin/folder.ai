@@ -1,4 +1,7 @@
-import { Dashboard as DashboardComponent } from 'components'
+import { TreeRoot } from 'components/common';
+import { Container } from 'components/dashboard/container'
+import dynamic from 'next/dynamic';
+
 
 export const revalidate = 60;
 
@@ -15,7 +18,7 @@ export default async function Dashboard() {
 
   return (
     <section className="mx-6 my-6">
-      <DashboardComponent />
+      <Container />
     </section>
   );
 }

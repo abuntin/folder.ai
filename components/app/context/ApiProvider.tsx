@@ -1,21 +1,21 @@
 import { Directory, Folder } from 'lib/models';
-import { DashboardApiContext } from './Context';
+import { KernelApiContext } from './Context';
 import React from 'react';
-import { useDashboard } from './hooks';
+import { useKernel } from './hooks';
 
 /**
- * Wrapper component defining DashboardContext and managing UI state updates
+ * Wrapper component defining KernelContext and managing UI state updates
  * @param React Component default props
  * @listens KernelEvent
- * @property loading: PropType<DashboardContext, 'loading'>
- * @property selected: PropType<DashboardContext, 'selected'>
- * @property view: PropType<DashboardContext, 'view'>
+ * @property loading: PropType<KernelContext, 'loading'>
+ * @property selected: PropType<KernelContext, 'selected'>
+ * @property view: PropType<KernelContext, 'view'>
  * @property error: Controls the Snackbar error for user feedback
  * @returns DashboardProvider: React.Component
  */
 
-export const DashboardApiProvider = ({ children, ...rest }) => {
-  const { kernel, selected } = useDashboard();
+export const KernelApiProvider = ({ children, ...rest }) => {
+  const { kernel, selected } = useKernel();
 
   const [isPending, startTransition] = React.useTransition();
 
@@ -142,7 +142,7 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
     kernel.trigger('rename', {
       name: '',
       folder: selected,
-      directory: kernel.current,
+      directory: kernel.currentDirectory,
     });
   };
 
@@ -174,7 +174,7 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
   };
 
   return (
-    <DashboardApiContext.Provider
+    <KernelApiContext.Provider
       value={{
         clipboard,
         folderActions,
@@ -182,6 +182,6 @@ export const DashboardApiProvider = ({ children, ...rest }) => {
       {...rest}
     >
       {children}
-    </DashboardApiContext.Provider>
+    </KernelApiContext.Provider>
   );
 };

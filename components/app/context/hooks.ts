@@ -1,14 +1,14 @@
 import { validateFiles } from 'lib/functions';
 import { Kernel } from 'lib/models';
 import * as React from 'react';
-import { DashboardContext, DashboardApiContext } from './Context';
+import { KernelContext, KernelApiContext } from './Context';
 
 /**
  * Hook to access filesystem service and state from DashboardProvider children
- * @returns DashboardContext
+ * @returns KernelContext
  */
-export const useDashboard = () => {
-  const context = React.useContext(DashboardContext);
+export const useKernel = () => {
+  const context = React.useContext(KernelContext);
 
   if (!context) throw new Error('Dashboard components only');
 
@@ -17,10 +17,10 @@ export const useDashboard = () => {
 
 /**
  * Hook to access filesystem service and state from DashboardProvider children
- * @returns DashboardContext
+ * @returns KernelContext
  */
-export const useDashboardApi = () => {
-  const context = React.useContext(DashboardApiContext);
+export const useKernelApi = () => {
+  const context = React.useContext(KernelApiContext);
 
   if (!context) throw new Error('Dashboard components only');
 
@@ -34,22 +34,19 @@ export const useDashboardApi = () => {
 export const useUpload = () => {
   const [dragOver, setDragOver] = React.useState(false);
 
-  const { kernel } = useDashboard();
+  const { kernel } = useKernel();
 
   // handle drag events
-  const handleDrag = function (
-    e: React.SyntheticEvent
-  ) {
+  const handleDrag = function (e: React.SyntheticEvent) {
     e.preventDefault();
     e.stopPropagation();
-    e.nativeEvent.stopImmediatePropagation()
-    
+    e.nativeEvent.stopImmediatePropagation();
 
     if (e.type === 'dragenter' || e.type === 'dragover') {
       kernel.trigger('select', null);
-      setDragOver(true)
+      setDragOver(true);
     } else if (e.type === 'dragleave') {
-      setDragOver(false)
+      setDragOver(false);
     }
   };
 
@@ -61,9 +58,9 @@ export const useUpload = () => {
   ) {
     e.preventDefault();
     e.stopPropagation();
-    e.nativeEvent.stopImmediatePropagation()
-    
-    setDragOver(false)
+    e.nativeEvent.stopImmediatePropagation();
+
+    setDragOver(false);
 
     if (!e.dataTransfer.files) {
       kernel.trigger('error', 'Error adding files to folder');
@@ -81,7 +78,7 @@ export const useUpload = () => {
 
     if (validFiles.length > 0) {
       kernel.trigger('upload', {
-        directory: folder ?? kernel.current,
+        directory: folder ?? kernel.currentDirectory,
         files: validFiles,
       });
     } else {
@@ -108,7 +105,7 @@ export const useUpload = () => {
       for (let i = 0; i < fileList.length; i++) files.push(fileList[i]);
 
       kernel.trigger('upload', {
-        directory: directory ?? kernel.current,
+        directory: directory ?? kernel.currentDirectory,
         files,
       });
     } else kernel.trigger('error', 'Missing files to upload');

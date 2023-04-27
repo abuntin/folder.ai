@@ -1,4 +1,5 @@
 import { FullMetadata } from 'firebase/storage';
+import { PropType } from 'lib/types';
 
 export class Folder {
   /**
@@ -68,7 +69,7 @@ export class Folder {
       : parts[parts.length - 1];
   };
 
-  static fromStorageReference = async (
+  static fromStorageReference = (
     fullMetadata: FullMetadata,
     isDirectory = false
   ) =>
@@ -109,7 +110,7 @@ export class Directory extends Folder {
     }
   }
 
-  static fromStorageReference = async (
+  static fromStorageReference = (
     fullMetadata: FullMetadata,
     isDirectory = true
   ) =>

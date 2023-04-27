@@ -1,6 +1,8 @@
 import './global.css';
-import { App } from '../components/app/app';
+import { App } from 'components/app';
 import { Metadata } from 'next';
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: {
