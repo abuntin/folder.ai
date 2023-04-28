@@ -6,25 +6,31 @@ import {
   TextField,
   UseAutocompleteProps,
 } from '@mui/material';
-import { Folder } from 'lib/models';
+import { useKernel } from 'components/app';
+import { Folder, TreeNode } from 'lib/models';
 import * as React from 'react';
 import { DText } from './DText';
 
 interface FolderSelectProps<T>
-  extends UseAutocompleteProps<T, false, false, false> {
+  extends Omit<UseAutocompleteProps<T, false, false, false>, 'options'> {
   variant?: 'small' | 'medium' | 'large';
 }
 
-export const FolderSelect: React.FC<FolderSelectProps<Folder>> = props => {
+export const FolderSelect: React.FC<FolderSelectProps<TreeNode>> = props => {
   const { value, variant = 'small', ...rest } = props;
+
+  const { kernel } = useKernel()
+
+  const { directoriesExcl } = kernel;
 
   return (
     <Autocomplete
       sx={{ minWidth: 200 }}
       autoHighlight
       autoSelect
-      getOptionLabel={(option: Folder) => option.name}
-      renderOption={(props, option: Folder) => {
+      options={directoriesExcl}
+      getOptionLabel={(option: TreeNode) => option.folder.name}
+      renderOption={(props, option: TreeNode) => {
         return (
           <Box {...props} component="li" sx={{ backgroundColor: 'action.active' }}>
             <FolderSharp
@@ -34,7 +40,7 @@ export const FolderSelect: React.FC<FolderSelectProps<Folder>> = props => {
                   variant == 'small' ? 10 : variant == 'medium' ? 12 : 14,
               }}
             />
-            <DText text={option.name} />
+            <DText text={option.folder.name} />
           </Box>
         );
       }}
@@ -52,7 +58,7 @@ export const FolderSelect: React.FC<FolderSelectProps<Folder>> = props => {
             ...params.InputProps,
             startAdornment: value ? (
               <InputAdornment position="start">
-                {value.isDirectory ? (
+                {value.folder.isDirectory ? (
                   <FolderSharp
                     color="info"
                     sx={{

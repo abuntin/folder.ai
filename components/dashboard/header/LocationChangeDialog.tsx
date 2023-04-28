@@ -20,7 +20,7 @@ interface LocationChangeDialogProps extends DialogProps {
 export const LocationChangeDialog: React.FC<
   LocationChangeDialogProps
 > = props => {
-  const { kernel, selected, useKernelApi } = useKernel();
+  const { selected, useKernelApi } = useKernel();
 
   const { folderActions } = useKernelApi();
 
@@ -54,7 +54,12 @@ export const LocationChangeDialog: React.FC<
           variant="h6"
           fontWeight="regular"
         />
-        <FolderSelect />
+        <FolderSelect
+          onChange={(e, value, reason) => {
+            if (reason == 'clear') setDestination(null);
+            else if (reason == 'selectOption') setDestination(value.folder);
+          }}
+        />
         <DialogActions>
           <Button onClick={e => props.onClose(e, 'backdropClick')}>
             <DText text="Cancel" />{' '}

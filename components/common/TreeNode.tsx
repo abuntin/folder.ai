@@ -57,12 +57,12 @@ export const TreeNode: React.FC<TreeNodeProps> = props => {
   return (
     <m.li variants={itemVariant}>
       <div onClick={handleClick} style={{ marginBottom: '10px' }}>
-        <Stack spacing={1} direction="row" sx={{ ml: level * margin }}>
+        <Stack spacing={1} direction="row" sx={{ ml: level * margin, display: 'flex', alignItems: 'center' }}>
           {getItemIcon}
           <DText text={name} variant="body2" />
         </Stack>
       </div>
-      <ul style={{ paddingLeft: '10px', borderLeft: '1px solid black' }}>
+      <ul style={{ paddingLeft: '10px' }}>
         {
           open ? (
             children.length ? <Tree nodes={children} level={level + 1} />

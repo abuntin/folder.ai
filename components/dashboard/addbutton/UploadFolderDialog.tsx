@@ -17,23 +17,22 @@ interface UploadFolderDialogProps {
 export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
   const { useUpload, kernel } = useKernel();
 
-  const { directoriesExcl } = kernel;
-
   const { dragOver, handleDrag, handleDrop, handleAdd } = useUpload();
 
   const [destination, setDestination] = React.useState<Folder>(
-    directoriesExcl.values.length ? directoriesExcl[0] : kernel.currentDirectory
+   null
   );
 
   const hiddenFileInput = React.useRef(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!destination) kernel.trigger('error', 'Select Destination Directory')
     props.handleClose(e);
     handleAdd(e, kernel, destination);
   };
 
   const handleUpload = (e: React.SyntheticEvent) =>
-    hiddenFileInput.currentDirectory.click();
+    hiddenFileInput.current.click();
 
   return (
     <Stack>
@@ -62,7 +61,12 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
       </Stack>
       <Stack spacing={2} sx={{ mt: margin, mb: margin * 2 }}>
         <DText text="Select Upload Directory" variant="subtitle1" />
-        <FolderSelect />
+        <FolderSelect
+          onChange={(e, value, reason) => {
+            if (reason == 'clear') setDestination(null)
+            else if (reason == 'selectOption') setDestination(value.folder)
+          }}
+        />
       </Stack>
 
       <Box
