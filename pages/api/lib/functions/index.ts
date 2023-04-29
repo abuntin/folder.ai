@@ -5,3 +5,5 @@ export { copy } from './copy'
 export { upload } from './upload'
 
 export { deleteFn } from './delete'
+
+export { list } from './list'

@@ -1,6 +1,7 @@
 import { ref, listAll, getMetadata } from 'firebase/storage';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
+import { list } from '../../functions';
 import { FolderManagerInterface } from '../../types';
 import { root } from '../firebase';
 
@@ -27,35 +28,7 @@ export const listFolder: PropType<FolderManagerInterface, 'list'> = async (
     if (!src.isDirectory)
       res.status(400).json({ data: null, error: 'Called list on Folder' });
 
-    const srcRef = ref(root, `${src.path}/`);
-
-    let listRes = await listAll(srcRef);
-
-    let folders = await Promise.all(
-      listRes.items.map(async (ref, i) => {
-        let metadata = await getMetadata(ref);
-
-        return Folder.fromStorageReference(metadata);
-      })
-    );
-
-    let directories = await Promise.all(
-      listRes.prefixes.map(async (ref, i) => {
-        // let metadata = await getMetadata(ref)
-
-        // return Folder.fromStorageReference(metadata, true);
-
-        return {
-          name: ref.name,
-          path: ref.fullPath,
-          isDirectory: true,
-          id: `rootID${100000 + i}`,
-          url: ref.toString(),
-          linkedFolders: [],
-          children: [],
-        } as Directory;
-      })
-    );
+    let { folders, directories } = await list({ src })
 
     console.log('Obtained Folder children');
 
