@@ -20,7 +20,8 @@ export const RenameDialog: React.FC<RenameDialogProps> = props => {
     onConfirm: handleRename,
     error: (value: string) => {
       let isError =
-        kernel.folders.filter(({folder}) => folder.name == value).length !== 0;
+        kernel.currentDirectoriesExcl.filter(({ folder }) => folder.name == value)
+          .length !== 0;
       return isError ? 'Directory already exists' : '';
     },
     inputLabel: 'New Directory Name',

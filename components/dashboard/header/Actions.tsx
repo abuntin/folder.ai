@@ -82,7 +82,7 @@ export const Actions: React.FC<ActionsProps> = props => {
       <Grid xs={10} display="flex" flexDirection="row" alignItems="center">
         <Stack spacing={[3, 2]} direction="row">
           <ExpandMoreButton
-            expand={expanded}
+            expanded={expanded}
             color="primary"
             onClick={setExpanded}
           />

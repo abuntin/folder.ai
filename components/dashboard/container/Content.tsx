@@ -35,7 +35,8 @@ export const Content: React.FC<ContentProps> = props => {
   };
 
   const handleNavigate = (e: React.SyntheticEvent, folder: Folder) => {
-    if (folder.isDirectory) kernel.trigger('load', folder.path, true);
+    if (folder.isDirectory)
+      kernel.trigger('load', folder.path, 'folders', true);
   };
 
   const FolderComponent = React.useMemo(
@@ -118,7 +119,7 @@ export const Content: React.FC<ContentProps> = props => {
                 ml={margin * 4}
               >
                 <DText
-                  text={kernel.foldersExcl.length}
+                  text={kernel.currentFoldersExcl.length}
                   variant="h6"
                   fontWeight="medium"
                 />
@@ -132,7 +133,7 @@ export const Content: React.FC<ContentProps> = props => {
               ml={margin}
             >
               <DText
-                text={kernel.directoriesExcl.length}
+                text={kernel.currentDirectoriesExcl.length}
                 variant="h6"
                 fontWeight="medium"
               />

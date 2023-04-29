@@ -2,9 +2,11 @@ import { Kernel, Folder } from 'lib/models';
 import React from 'react';
 import { useKernelApi, useUpload } from './hooks';
 
+export type LoadingType = 'folders' | 'tree'
+
 export interface AppContextInterface {
   kernel: Kernel;
-  loading: boolean;
+  loading: { [k in LoadingType]: boolean};
   selected: Folder;
   view: 'grid' | 'tile';
   useKernelApi: typeof useKernelApi;

@@ -12,8 +12,8 @@ export class TreeNode {
     this.key = folder.path;
     this.folder = folder;
     this.parent = parent;
-    this.folders = {}
-    this.directories = {}
+    this.folders = {};
+    this.directories = {};
   }
 
   get isLeaf() {
@@ -35,6 +35,35 @@ export class Tree {
 
   constructor(key: string, folder: Folder) {
     this.root = new TreeNode(folder);
+  }
+
+  *levelOrderTraversal(
+    node = this.root,
+    folderType = null as null | 'folders' | 'directories'
+  ) {
+    yield node;
+    var q = [] as TreeNode[];
+
+    q.push(node);
+
+    while (q.length != 0) {
+      var n = q.length;
+      while (n > 0) {
+        var p = q[0];
+
+        q.shift();
+
+        if (folderType == null || (folderType == 'folders' && !p.folder.isDirectory) ||
+          (folderType == 'directories' && p.folder.isDirectory)
+        )
+          yield p;
+
+        let children = Object.values(p.children);
+
+        for (var i = 0; i < children.length; i++) q.push(children[i]);
+        n--;
+      }
+    }
   }
 
   *preOrderTraversal(node = this.root) {
@@ -63,19 +92,16 @@ export class Tree {
     for (let node of this.preOrderTraversal()) {
       if (node.key === parentNodeKey) {
         for (let folder of folders) {
-
           if (folder.isDirectory) {
             node.directories = {
               ...node.directories,
               [folder.path]: new TreeNode(folder, node),
-            }
-          }
-
-          else {
+            };
+          } else {
             node.folders = {
               ...node.folders,
               [folder.path]: new TreeNode(folder, node),
-            }
+            };
           }
         }
         return true;
@@ -89,13 +115,11 @@ export class Tree {
       let node = _node as TreeNode;
 
       if (Object.keys(node.folders).includes(key)) {
-        delete node.folders[key]
-        return true
-      }
-
-      else  if (Object.keys(node.directories).includes(key)) {
-        delete node.directories[key]
-        return true
+        delete node.folders[key];
+        return true;
+      } else if (Object.keys(node.directories).includes(key)) {
+        delete node.directories[key];
+        return true;
       }
     }
     return false;
@@ -106,5 +130,13 @@ export class Tree {
       if (node.key === key) return node;
     }
     return undefined;
+  }
+
+  flatten(node = this.root, folderType = null as null | 'folders' | 'directories') {
+    let result = [] as TreeNode[];
+
+    for (let n of this.levelOrderTraversal(node, folderType)) result.push(n);
+
+    return result;
   }
 }

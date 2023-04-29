@@ -12,7 +12,7 @@ export const LoadingComponent: React.FC<LoadingComponentProps> = props => {
   const { loading } = useKernel();
 
   React.useEffect(() => {
-    if (loading) setText('Loading...');
+    if (loading.folders) setText('Loading...');
   }, [loading]);
 
   return <Loading text={text} />;

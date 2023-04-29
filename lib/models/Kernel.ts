@@ -5,6 +5,7 @@ import events, { EventSubscription } from '@mongez/events';
 import axios from 'axios';
 import { Tree, TreeNode } from './KernelTree';
 import { PropType } from 'lib/types';
+import { LoadingType } from 'components/app';
 
 export type KernelEvent =
   | 'loading'
@@ -48,24 +49,37 @@ export class Kernel {
       : false;
   }
 
+  public get folders() {
+    return this.folderTree ? this.folderTree.flatten(this.currentDirectory) : []
+  }
+
   public get foldersExcl() {
+    return this.folderTree ? this.folderTree.flatten(this.currentDirectory, 'folders') : []
+  }
+
+  public get directoriesExcl() {
+    return this.folderTree ? this.folderTree.flatten(this.currentDirectory, 'directories') : []
+  }
+
+  public get currentFoldersExcl() {
     return Object.values(
       this.currentDirectory ? this.currentDirectory.folders : {}
     );
   }
 
-  public get directoriesExcl() {
+  public get currentDirectoriesExcl() {
     return Object.values(
       this.currentDirectory ? this.currentDirectory.directories : {}
     );
   }
 
-  public get folders() {
+  public get currentFolders() {
     return Object.values(
       this.currentDirectory
         ? {
             ...this.currentDirectory.folders,
             ...this.currentDirectory.directories,
+            [this.currentDirectory.key]: this.currentDirectory,
           }
         : {}
     );
@@ -79,7 +93,7 @@ export class Kernel {
   public init = cache(async (signal: AbortSignal = null): Promise<void> => {
     console.log('Initialised Kernel.getRootFolder()');
 
-    this.trigger('loading', 'Initialising...');
+    this.trigger('loading', 'folders');
 
     this.trigger('info', 'Initialising...');
 
@@ -171,12 +185,13 @@ export class Kernel {
   public load = cache(
     async (
       key: PropType<Folder, 'path'>,
+      type: LoadingType = 'folders',
       navigate = false,
       signal: AbortSignal = null
     ): Promise<void> => {
       console.log('Initialised Kernel.load()');
       try {
-        this.trigger('loading');
+        this.trigger('loading', type);
 
         let directoryNode = this.folderTree.find(key);
 
@@ -220,7 +235,7 @@ export class Kernel {
   public goBack = cache(async () => {
     this.currentDirectory &&
       this.prevDirectory &&
-      this.load(this.prevDirectory.key, true);
+      this.load(this.prevDirectory.key, 'folders', true);
   });
 
   /**

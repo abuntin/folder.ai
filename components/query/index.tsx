@@ -2,39 +2,41 @@
 
 import * as React from 'react';
 import { m } from 'framer-motion';
-import { Box, Stack, Unstable_Grid2 as Grid } from '@mui/material';
+import { Box, useTheme, Unstable_Grid2 as Grid } from '@mui/material';
 import { padding, borderRadius } from 'lib/constants';
 import { DInput, TreeRoot } from 'components/common';
+import { TreeView } from './TreeView';
 
 interface ContainerProps {}
 
 export const Container: React.FC<ContainerProps> = props => {
+
+  const theme = useTheme()
+
   return (
     <Box sx={{ height: '90%' }} onContextMenu={e => e.preventDefault()}>
       <Grid
         container
+        columnSpacing={1}
         display="flex"
         justifyContent="space-between"
         sx={{
           paddingTop: padding * 5,
           paddingBottom: padding * 5,
+          paddingLeft: padding * 2,
+          paddingRight: padding * 2,
           borderRadius,
           backgroundColor: 'background.default',
         }}
       >
-        <Grid xs={2}>
+        <Grid xs={3}>
           <m.div
             layout
-            style={{
-              backgroundColor: 'info',
-              overflowX: 'hidden',
-              overflowY: 'auto',
-            }}
           >
-            <TreeRoot />
+          <TreeView />
           </m.div>
         </Grid>
-        <Grid xs={6} sx={{ height: '100%' }}>
+        <Grid xs={5} sx={{ height: '100%' }}>
           <m.div layout>
             <Grid container spacing={2} direction="column">
               <Grid xs={10}>
@@ -49,7 +51,7 @@ export const Container: React.FC<ContainerProps> = props => {
                   CHATBOX
                 </Box>
               </Grid>
-              <Grid xs={2}>
+              <Grid xs>
                 <DInput
                   fullWidth
                   placeholder="Something like, 'Hey FolderAI'"
@@ -59,7 +61,7 @@ export const Container: React.FC<ContainerProps> = props => {
           </m.div>
         </Grid>
         <Grid xs={4}>
-          <m.div layout style={{ backgroundColor: 'info' }}></m.div>
+          <m.div layout style={{ backgroundColor: theme.palette.info.main }}></m.div>
         </Grid>
       </Grid>
     </Box>

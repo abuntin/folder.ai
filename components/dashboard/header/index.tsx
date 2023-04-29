@@ -42,7 +42,7 @@ export const Header: React.FC<HeaderProps> = props => {
             value={view}
             exclusive
             onChange={(e, newVal) => kernel.trigger('view', newVal)}
-            disabled={loading}
+            disabled={loading.folders}
           >
             <ToggleButton value="grid" size="small">
               <GridViewSharp color={view === 'grid' ? 'info' : 'disabled'} />

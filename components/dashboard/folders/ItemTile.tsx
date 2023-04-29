@@ -88,7 +88,7 @@ export const DashboardItemTile: React.FC<DashboardItemTileProps> = props => {
                   justifyContent="space-around"
                   alignItems="center"
                 >
-                  <ExpandMoreButton expand={false} />
+                  <ExpandMoreButton expanded={false} />
                 </Grid>
               )}
             </Grid>

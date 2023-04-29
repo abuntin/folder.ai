@@ -1,5 +1,5 @@
 import { Folder, Kernel } from 'lib/models';
-import { KernelContext } from './Context';
+import { AppContextInterface, KernelContext, LoadingType } from './Context';
 import { useKernelApi, useUpload } from './hooks';
 import React from 'react';
 import { Snackbar, Alert, Stack, AlertProps } from '@mui/material';
@@ -8,6 +8,7 @@ import { KernelApiProvider } from './ApiProvider';
 import { ProgressBar } from 'components/dashboard/ProgressBar';
 import { AxiosProgressEvent } from 'axios';
 import { LoadingComponent } from 'components/common';
+import { PropType } from 'lib/types';
 
 /**
  * Wrapper component defining KernelContext and managing UI state updates
@@ -27,7 +28,10 @@ export const KernelProvider = ({ children, ...rest }) => {
 
   const [isPending, startTransition] = React.useTransition();
 
-  const [loading, setLoadingState] = React.useState(true);
+  const [loading, setLoadingState] = React.useState<AppContextInterface['loading']>({
+    folders: true,
+    tree: true
+  });
 
   const [snackbarLoading, setSnackbarLoadingState] = React.useState(false);
 
@@ -59,7 +63,7 @@ export const KernelProvider = ({ children, ...rest }) => {
     switch (severity) {
       case 'error':
         snackbarLoading && setSnackbarLoading(false);
-        loading && setLoading(false);
+        setLoading(false, 'all');
         setWarningMessage('');
         setInfoMessage('');
         setSuccessMessage('');
@@ -74,7 +78,7 @@ export const KernelProvider = ({ children, ...rest }) => {
       case 'success':
         uploadProgress && setUploadProgress(null);
         snackbarLoading && setSnackbarLoading(false);
-        loading && setLoading(false);
+        setLoading(false, 'all');
         setWarningMessage('');
         setInfoMessage('');
         setErrorMessage('');
@@ -89,8 +93,11 @@ export const KernelProvider = ({ children, ...rest }) => {
     }
   };
 
-  const setLoading = (state: boolean) =>
-    startTransition(() => setLoadingState(state));
+  const setLoading = (state: boolean, type: LoadingType | 'all') =>
+    startTransition(() => {
+      if (type == 'all') setLoadingState({ folders: false, tree: false })
+      else setLoadingState({ ...loading, [type]: state })
+    });
 
   const setSnackbarLoading = (state: boolean) =>
     startTransition(() => setSnackbarLoadingState(state));
@@ -131,8 +138,8 @@ export const KernelProvider = ({ children, ...rest }) => {
   // Listen for loading event
 
   React.useEffect(() => {
-    const loadingEvent = kernel.on('loading', (text: string) =>
-      setLoading(true)
+    const loadingEvent = kernel.on('loading', (type: LoadingType) =>
+      setLoading(true, type)
     );
 
     return () => {
@@ -143,8 +150,8 @@ export const KernelProvider = ({ children, ...rest }) => {
   // Listen for load event
 
   React.useEffect(() => {
-    const loadEvent = kernel.on('load', (path: string, navigate: boolean) => {
-      kernel.load(path, navigate ?? false);
+    const loadEvent = kernel.on('load', (path: string, type: LoadingType, navigate: boolean) => {
+      kernel.load(path, type, navigate ?? false);
       selected && setSelectedFolder(null);
     });
 

@@ -21,6 +21,8 @@ export const LoadingComponent: React.FC<LoadingComponentProps> = ({
       style={{
         display: 'flex',
         flexDirection: 'column',
+        alignSelf: 'center',
+        justifySelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',

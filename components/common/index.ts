@@ -20,4 +20,4 @@ export * from './FormDialog';
 export * from './Loading';
 export * from './OptionLabel';
 export * from './TippedIconButton';
-export * from './TreeRoot';
+export * from './Tree';

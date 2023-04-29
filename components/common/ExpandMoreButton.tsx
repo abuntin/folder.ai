@@ -3,22 +3,25 @@ import { IconButtonProps, IconButton, styled } from '@mui/material';
 import * as React from 'react';
 
 interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean;
+  expanded: boolean;
+  deg?: number;
 }
 
 const StyledExpandMoreButton = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
+  const { expanded: expand, deg, ...other } = props;
   return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+})(({ theme, expanded: expand, deg }) => ({
+  transform: !expand ? 'rotate(0deg)' : `rotate(${deg ?? 180}deg)`,
   marginLeft: 'auto',
   transition: theme.transitions.create('transform', {
     duration: theme.transitions.duration.shortest,
   }),
 }));
 
-export const ExpandMoreButton = React.forwardRef((props: ExpandMoreProps, ref: React.ForwardedRef<HTMLButtonElement>) => (
-  <StyledExpandMoreButton {...props} ref={ref}>
-    <KeyboardArrowRightSharp />
-  </StyledExpandMoreButton>
-));
+export const ExpandMoreButton = React.forwardRef(
+  (props: ExpandMoreProps, ref: React.ForwardedRef<HTMLButtonElement>) => (
+    <StyledExpandMoreButton {...props} ref={ref}>
+      <KeyboardArrowRightSharp />
+    </StyledExpandMoreButton>
+  )
+);

@@ -1,4 +1,3 @@
-import { useTheme } from '@mui/material';
 import { m, LazyMotion, domAnimation, MotionProps } from 'framer-motion';
 import { borderRadius } from 'lib/constants';
 
@@ -158,8 +157,6 @@ export const FolderAnimation: React.FC<AnimationProps> = ({
   children,
   ...rest
 }) => {
-  const theme = useTheme();
-
   return (
     <m.div
       style={{ borderRadius }}
@@ -181,7 +178,7 @@ export const listVariant = {
     opacity: 1,
     transition: {
       when: 'beforeChildren',
-      staggerChildren: 0.3,
+      staggerChildren: 0.08,
     },
   },
   hidden: {
@@ -193,6 +190,6 @@ export const listVariant = {
 };
 
 export const itemVariant = {
-  visible: { opacity: 1, x: 0 },
-  hidden: { opacity: 0, x: -100 },
+  visible: { opacity: 1, y: '0%' },
+  hidden: { opacity: 0, y: '-100%'},
 };

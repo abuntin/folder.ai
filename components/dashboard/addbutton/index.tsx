@@ -19,7 +19,7 @@ import { UploadFolderDialog } from './UploadFolderDialog';
 export const AddButton: React.FC<IconButtonProps> = props => {
   const { kernel } = useKernel();
 
-  const { currentDirectory, folders } = kernel;
+  const { currentDirectory, folderTree, currentDirectoriesExcl } = kernel;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -28,8 +28,6 @@ export const AddButton: React.FC<IconButtonProps> = props => {
   const [dialog, setDialogState] = React.useState<'create' | 'upload' | null>(
     null
   );
-
-  const [uploadDialog, setUploadDialogState] = React.useState(false);
 
   const [newDirectoryName, setDirName] = React.useState('');
 
@@ -50,7 +48,7 @@ export const AddButton: React.FC<IconButtonProps> = props => {
 
   const CreateNewDialog = React.useMemo(
     () =>
-      currentDirectory && folders && dialog
+      currentDirectory && folderTree && dialog
         ? dynamic(() =>
             import('components/common/FormDialog').then(_ => _.FormDialog)
           )
@@ -68,8 +66,9 @@ export const AddButton: React.FC<IconButtonProps> = props => {
             handleClose: e => setDialog(null),
             error: (value: string) => {
               let isError =
-                kernel.folders.filter(({ folder }) => folder.name == value)
-                  .length !== 0;
+                currentDirectoriesExcl.filter(
+                  ({ folder }) => folder.name == value
+                ).length !== 0;
               return isError ? 'Directory already exists' : '';
             },
             inputChange: createNewDirectoryInputChange,

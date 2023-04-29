@@ -19,9 +19,9 @@ interface FolderSelectProps<T>
 export const FolderSelect: React.FC<FolderSelectProps<TreeNode>> = props => {
   const { value, variant = 'small', ...rest } = props;
 
-  const { kernel } = useKernel()
+  const { kernel } = useKernel();
 
-  const { directoriesExcl } = kernel;
+  const { currentDirectoriesExcl: directoriesExcl } = kernel;
 
   return (
     <Autocomplete
@@ -32,7 +32,11 @@ export const FolderSelect: React.FC<FolderSelectProps<TreeNode>> = props => {
       getOptionLabel={(option: TreeNode) => option.folder.name}
       renderOption={(props, option: TreeNode) => {
         return (
-          <Box {...props} component="li" sx={{ backgroundColor: 'action.active' }}>
+          <Box
+            {...props}
+            component="li"
+            sx={{ backgroundColor: 'action.active' }}
+          >
             <FolderSharp
               color="info"
               sx={{
