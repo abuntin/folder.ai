@@ -122,9 +122,10 @@ export class Kernel {
       if (error || !rootDirectory)
         throw new Error(error ?? 'Missing Kernel.init() response data');
       else {
-        this.folderTree = new Tree(rootDirectory.path, rootDirectory);
-        this.rootDirectory = this.folderTree.root;
-        this.currentDirectory = this.folderTree.root;
+        let tree = new Tree(rootDirectory);
+        this.folderTree = tree
+        this.rootDirectory = tree.root;
+        this.currentDirectory = tree.root;
         this.trigger('idle', 'Obtained root folder');
       }
     } catch (e) {
@@ -233,9 +234,7 @@ export class Kernel {
    */
 
   public goBack = cache(async () => {
-    this.currentDirectory &&
-      this.prevDirectory &&
-      this.load(this.prevDirectory.key, 'folders', true);
+      !this.currentDirectory.isRoot ? this.load(this.currentDirectory.parent.key, 'folders', true) : null
   });
 
   /**

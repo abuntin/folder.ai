@@ -2,7 +2,6 @@ import { ref, listAll, getMetadata } from "firebase/storage";
 import { Directory, Folder } from "lib/models";
 import { root } from "../models/firebase";
 
-
 export const list = async (payload: { src: Directory, }): Promise<{ folders: Folder[], directories: Directory[] }> => new Promise(async (resolve, reject) => {
    try {
 
@@ -30,6 +29,7 @@ export const list = async (payload: { src: Directory, }): Promise<{ folders: Fol
           name: ref.name,
           path: ref.fullPath,
           isDirectory: true,
+          metadata: { type: '', size: 0 },
           id: `rootID${100000 + i}`,
           url: ref.toString(),
           linkedFolders: [],

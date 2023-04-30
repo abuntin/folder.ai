@@ -78,7 +78,7 @@ export const useUpload = () => {
 
     if (validFiles.length > 0) {
       kernel.trigger('upload', {
-        directory: folder ?? kernel.currentDirectory,
+        directory: folder ?? kernel.folderTree.root.folder,
         files: validFiles,
       });
     } else {
@@ -105,7 +105,7 @@ export const useUpload = () => {
       for (let i = 0; i < fileList.length; i++) files.push(fileList[i]);
 
       kernel.trigger('upload', {
-        directory: directory ?? kernel.currentDirectory,
+        directory: directory ?? kernel.folderTree.root.folder,
         files,
       });
     } else kernel.trigger('error', 'Missing files to upload');

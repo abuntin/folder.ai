@@ -1,6 +1,10 @@
 import { FullMetadata } from 'firebase/storage';
 import { PropType } from 'lib/types';
 
+interface FolderAIMetadata {
+  type: FullMetadata['contentType'];
+  size: FullMetadata['size']
+}
 export class Folder {
   /**
    * File id
@@ -38,10 +42,10 @@ export class Folder {
   url?: string;
 
   /**
-   * GStorage Metadata
+   * FolderAI + GCS Metadata
    */
 
-  fullMetadata?: FullMetadata = null;
+  metadata?: FolderAIMetadata = null;
 
   constructor(data: any) {
     const keys = Object.keys(this);
@@ -80,7 +84,7 @@ export class Folder {
       isDirectory,
       children: [],
       linkedFolders: [],
-      fullMetadata,
+      metadata: { type: fullMetadata.contentType, size: fullMetadata.size },
       id: fullMetadata.generation,
     } as Folder);
 }
@@ -121,7 +125,7 @@ export class Directory extends Folder {
       isDirectory,
       children: [],
       linkedFolders: [],
-      fullMetadata,
+      metadata: { type: fullMetadata.contentType, size: fullMetadata.size },
       id: fullMetadata.generation,
     } as Folder);
 }

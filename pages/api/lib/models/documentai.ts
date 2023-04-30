@@ -1,26 +1,14 @@
-/**
- * TODO(developer): Uncomment these variables before running the sample.
- */
-import { DocumentProcessorServiceClient, protos } from '@google-cloud/documentai';
+import {
+  DocumentProcessorServiceClient
+} from '@google-cloud/documentai';
+import { DEFAULT_PROCESSOR_ID, PROJECT_ID, PROJECT_LOCATION } from '../types';
+import serviceAccountKey from 'lib/serviceAccountKey.json';
 
-const projectId = process.env.GOOGLE_APP_ID;
-const location =  process.env.DOCAI_PROJECT_LOCATION; // Format is 'us' or 'eu'
-const processorId = process.env.DOCAI_DEFAULT_PROCESSOR_ID; // Create processor in Cloud Console
-const filePath = '/path/to/local/pdf';
+export const DocAIClient = new DocumentProcessorServiceClient({
+  projectId: PROJECT_ID,
+  credentials: serviceAccountKey
+});
 
-  // Instantiates a client
-  const documentaiClient = new DocumentProcessorServiceClient();
-
-  async function callBatchProcessDocuments() {
-    // Construct request
-    const request: protos.google.cloud.documentai.v1.IBatchProcessRequest = {
-      name,
-    };
-
-    // Run request
-    const [operation] = await documentaiClient.batchProcessDocuments(request);
-    const [response] = await operation.promise();
-    console.log(response);
-  }
-
-  callBatchProcessDocuments();
+export const DefaultProcessor =
+  `projects/${PROJECT_ID}` +
+  `/locations/${PROJECT_LOCATION}/processors/${DEFAULT_PROCESSOR_ID}`;

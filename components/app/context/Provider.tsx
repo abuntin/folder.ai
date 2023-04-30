@@ -221,6 +221,7 @@ export const KernelProvider = ({ children, ...rest }) => {
   React.useEffect(() => {
     const uploadEvent = kernel.on('upload', payload => {
       if (payload.directory && payload.files) {
+        console.log(payload.directory)
         kernel.upload(payload, (event: AxiosProgressEvent) => {
           if (event.total) {
             event.total < 100

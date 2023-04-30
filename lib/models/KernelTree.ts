@@ -1,10 +1,10 @@
 import { PropType } from 'lib/types';
-import { Folder } from './Folder';
+import { Directory, Folder } from './Folder';
 
 export class TreeNode {
   key: PropType<Folder, 'path'> = null;
   folder: Folder = null;
-  parent: Folder = null;
+  parent: TreeNode = null;
   folders: { [k: PropType<TreeNode, 'key'>]: TreeNode } = null;
   directories: { [k: PropType<TreeNode, 'key'>]: TreeNode } = null;
 
@@ -14,6 +14,10 @@ export class TreeNode {
     this.parent = parent;
     this.folders = {};
     this.directories = {};
+  }
+
+  get isRoot() {
+    return this.parent == null
   }
 
   get isLeaf() {
@@ -33,8 +37,8 @@ export class TreeNode {
 export class Tree {
   root: TreeNode = null;
 
-  constructor(key: string, folder: Folder) {
-    this.root = new TreeNode(folder);
+  constructor(rootDirectory: Directory) {
+    this.root = new TreeNode(rootDirectory);
   }
 
   *levelOrderTraversal(
