@@ -59,7 +59,7 @@ export const Content: React.FC<ContentProps> = props => {
         backgroundColor: dragOver ? 'background.paper' : 'background.default',
         padding,
       }}
-      onDrop={e => handleDrop(e, kernel, kernel.currentDirectory)}
+      onDrop={e => handleDrop(e, kernel, kernel.currentDirectory.folder)}
       onDragEnter={handleDrag}
       onDragOver={handleDrag}
       onDragLeave={handleDrag}

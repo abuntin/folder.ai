@@ -11,6 +11,7 @@ import { deleteFolders } from './FolderManager/delete';
 import { moveFolders } from './FolderManager/move';
 import { copyFolders } from './FolderManager/copy';
 import { API_KEY, AUTH_DOMAIN, STORAGE_BUCKET, MESSAGING_SENDER_ID, MEASUREMENT_ID, APP_ID, PROJECT_ID } from '../types';
+import inngest from 'pages/api/inngest';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -40,4 +41,4 @@ export const folderManagerService = new FolderManager({
   delete: deleteFolders,
   move: moveFolders,
   copy: copyFolders,
-});
+}, inngest);

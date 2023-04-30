@@ -288,18 +288,18 @@ export class Kernel {
         //   // }
         // );
 
-        const {
-          data,
-          error,
-        }: {
-          data: {
-            urls: string[];
-          } | null;
-          error: string | null;
-        } = await res.json();
+        // const {
+        //   data,
+        //   error,
+        // }: {
+        //   data: {
+        //     urls: string[];
+        //   } | null;
+        //   error: string | null;
+        // } = JSON.parse(await res.text());
 
-        if (error || !data)
-          throw new Error(error ?? 'Missing Kernel.upload() response data');
+        // if (error || !data)
+        //   throw new Error(error ?? 'Missing Kernel.upload() response data');
 
         this.trigger(
           'idle',
@@ -311,7 +311,7 @@ export class Kernel {
         if (this.currentDirectory.key == directory.path)
           this.trigger('refresh');
 
-        return data.urls;
+        //return data.urls;
       } catch (error) {
         if (signal && signal.aborted) {
           this.trigger('idle');

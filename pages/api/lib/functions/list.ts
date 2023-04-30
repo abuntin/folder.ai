@@ -7,7 +7,7 @@ export const list = async (payload: { src: Directory, }): Promise<{ folders: Fol
 
     let  { src } = payload;
 
-    const srcRef = ref(root, `${src.path}/`);
+    const srcRef = ref(root, `${src.path}/.documentai`);
 
     let listRes = await listAll(srcRef);
 

@@ -9,12 +9,16 @@ import { copyFolders } from './copy';
 import { moveFolders } from './move';
 import { createDirectory } from './create';
 import { renameFolder } from './rename'
+import { Inngest } from 'inngest';
 
 export class FolderManager implements FolderManagerInterface {
   root: StorageReference;
+  inngest: Inngest;
 
-  constructor(data: Partial<FolderManager>, rootPath = '') {
+  constructor(data: Partial<FolderManager>, inngest: Inngest, rootPath = '') {
     this.root = ref(root, rootPath);
+
+    this.inngest = inngest;
 
     let keys = Object.keys(this);
 
