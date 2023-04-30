@@ -275,18 +275,18 @@ export class Kernel {
         formData.append('directory', JSON.stringify(directory));
         files.forEach((file, i) => formData.append(`media`, file));
 
-        // const res = await fetch(this.folderManagerUrl('upload'), {
-        //   method: 'POST',
-        //   body: formData,
-        // });
+        const res = await fetch(this.folderManagerUrl('upload'), {
+          method: 'POST',
+          body: formData,
+        });
 
-        let { data: _data } = await axios.post(
-          this.folderManagerUrl('upload'),
-          formData,
-          {
-            onUploadProgress,
-          }
-        );
+        // let { data: _data } = await axios.post(
+        //   this.folderManagerUrl('upload'),
+        //   formData,
+        //   // {
+        //   //   onUploadProgress,
+        //   // }
+        // );
 
         const {
           data,
@@ -296,7 +296,7 @@ export class Kernel {
             urls: string[];
           } | null;
           error: string | null;
-        } = _data; //await res.json();
+        } = await res.json();
 
         if (error || !data)
           throw new Error(error ?? 'Missing Kernel.upload() response data');
