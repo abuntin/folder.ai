@@ -13,3 +13,5 @@ export const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export const PROJECT_LOCATION = process.env.PROJECT_LOCATION;
 export const DEFAULT_PROCESSOR_ID = process.env.DEFAULT_PROCESSOR_ID;
+
+export const SERVICE_ACCOUNT_DOCAI = JSON.parse(process.env.SERVICE_ACCOUNT_DOCAI ?? '')

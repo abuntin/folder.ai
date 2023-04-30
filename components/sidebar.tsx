@@ -3,7 +3,7 @@
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { DText } from "components";
+import { DText } from "components/common";
 
 const navItems = {
   "/": {
