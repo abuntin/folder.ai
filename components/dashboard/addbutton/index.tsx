@@ -62,7 +62,7 @@ export const AddButton: React.FC<IconButtonProps> = props => {
         ? {
             open: dialog != null,
             value: newDirectoryName,
-            title: 'New Folder.AI Directory',
+            title: 'New FolderAI Directory',
             handleClose: e => setDialog(null),
             error: (value: string) => {
               let isError =

@@ -31,7 +31,7 @@ export const LoadingComponent: React.FC<LoadingComponentProps> = ({
     >
       <BlinkAnimation>
         <Image
-          alt="Folder.AI Loading"
+          alt="FolderAI Loading"
           src={logo}
           width={width ?? 250}
           height={height ?? 250}

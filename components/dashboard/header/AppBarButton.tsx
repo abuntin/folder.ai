@@ -28,12 +28,7 @@ export const AppBarButton: React.FC<AppBarButtonProps> = props => {
         },
       }}
     >
-      <Image
-        alt="Folder.AI Appbar Button"
-        src={logo}
-        width={100}
-        height={100}
-      />
+      <Image alt="FolderAI Appbar Button" src={logo} width={100} height={100} />
     </m.div>
   );
 };

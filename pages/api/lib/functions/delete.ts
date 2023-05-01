@@ -13,7 +13,8 @@ export const deleteFn = (src: Folder): Promise<true> =>
     try {
       if (!Object.prototype.hasOwnProperty.call(src, 'path'))
         reject("Invalid Folder: Missing 'path'");
-      const srcRef = ref(root, `${src.path}/`);
+
+      const srcRef = ref(root, `${src.fullPath}`);
 
       const parentRef = srcRef.parent;
 

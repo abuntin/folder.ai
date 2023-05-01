@@ -1,6 +1,7 @@
 import { ref, getMetadata, FullMetadata, getBytes } from 'firebase/storage';
 import { Folder, Directory } from 'lib/models';
 import { root } from '../models/firebase';
+import { ValidFileTypes } from '../types';
 import { upload } from './upload';
 
 /**
@@ -26,9 +27,13 @@ export const copy = (
 
       if (!dest.isDirectory) reject('Destination Folder is not a Directory');
 
-      const srcRef = ref(root, `${src.path}/`);
+      const srcRef = ref(root, `${src.fullPath}/`);
 
-      const destRef = ref(root, `${dest.path}/${src.name}`);
+      let destPrefix = ValidFileTypes.has(src.metadata.type) ? `.documentai/` : ''
+
+      // TODO: copy .folderai metadata as well
+
+      const destRef = ref(root, `${dest.path}/${destPrefix}${src.name}`);
 
       const parentRef = srcRef.parent;
 

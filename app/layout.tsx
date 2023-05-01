@@ -6,15 +6,15 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: {
-    default: 'Folder.AI',
-    template: '%s | Folder.AI',
+    default: 'FolderAI',
+    template: '%s | FolderAI',
   },
   description: 'AI-powered document management.',
   openGraph: {
-    title: 'Folder.AI',
+    title: 'FolderAI',
     description: 'AI-powered document management.',
     url: 'https://folder.ai',
-    siteName: 'Folder.AI',
+    siteName: 'FolderAI',
     images: [
       {
         url: '/logo_transparent.svg',

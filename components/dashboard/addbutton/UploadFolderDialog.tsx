@@ -19,14 +19,12 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
 
   const { dragOver, handleDrag, handleDrop, handleAdd } = useUpload();
 
-  const [destination, setDestination] = React.useState<Folder>(
-   null
-  );
+  const [destination, setDestination] = React.useState<Folder>(null);
 
   const hiddenFileInput = React.useRef(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!destination) kernel.trigger('error', 'Select Destination Directory')
+    if (!destination) kernel.trigger('error', 'Select Destination Directory');
     props.handleClose(e);
     handleAdd(e, kernel, destination);
   };
@@ -48,14 +46,14 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
           }}
         >
           <Image
-            alt="Folder.AI Folder Diagram"
+            alt="FolderAI Folder Diagram"
             src={AddFolder}
             width={51}
             height={30}
           />
         </NavAnimation>
         <DText
-          text="Folder.AI uses Folders to organise your data. Each Folder contains your File as well as Folder.AI's thoughts ;)"
+          text="FolderAI uses Folders to organise your data. Each Folder contains your File as well as FolderAI's thoughts ;)"
           variant="h6"
         />
       </Stack>
@@ -63,8 +61,8 @@ export const UploadFolderDialog: React.FC<UploadFolderDialogProps> = props => {
         <DText text="Select Upload Directory" variant="subtitle1" />
         <FolderSelect
           onChange={(e, value, reason) => {
-            if (reason == 'clear') setDestination(null)
-            else if (reason == 'selectOption') setDestination(value.folder)
+            if (reason == 'clear') setDestination(null);
+            else if (reason == 'selectOption') setDestination(value.folder);
           }}
         />
       </Stack>

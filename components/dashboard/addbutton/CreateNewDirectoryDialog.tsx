@@ -26,14 +26,14 @@ export const CreateNewDirectoryDialog: React.FC<
         }}
       >
         <Image
-          alt="Folder.AI Directory Diagram"
+          alt="FolderAI Directory Diagram"
           src={CreateNewDirectory}
           width={86}
           height={50}
         />
       </NavAnimation>
       <DText
-        text="Folder.AI uses Directories to organise your Folders. Once created and indexed, you can perform full text and semantic search, chat to valid* documents, and more!"
+        text="FolderAI uses Directories to organise your Folders. Once created and indexed, you can perform full text and semantic search, chat to valid* documents, and more!"
         variant="h6"
       />
     </Stack>

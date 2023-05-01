@@ -220,6 +220,7 @@ export class Kernel {
             this.currentDirectory = this.folderTree.find(directory.path);
             !this.isRoot && (this.prevDirectory = temp);
           }
+
           this.trigger('idle', `Opened Directory ${directory.name}`);
         }
       } catch (e) {

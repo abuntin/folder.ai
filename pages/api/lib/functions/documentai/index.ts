@@ -3,7 +3,7 @@ import { ref, listAll, StorageReference } from 'firebase/storage';
 import { Directory, Folder } from 'lib/models';
 import { typeToPath } from '../../types';
 import { DefaultProcessor, DocAIClient } from '../../models/documentai';
-import { root } from '../../models/firebase'
+import { root } from '../../models/firebase';
 
 export const processDirectory = async (payload: {
   directory: Directory;
@@ -59,8 +59,7 @@ export const processDocumentType = (payload: {
 }): Promise<true> =>
   new Promise(async (resolve, reject) => {
     try {
-
-        let { type, src, dest } = payload;
+      let { type, src, dest } = payload;
 
       let path = typeToPath(type);
 
@@ -78,26 +77,37 @@ export const processDocumentType = (payload: {
       const request: protos.google.cloud.documentai.v1.IBatchProcessRequest = {
         name: DefaultProcessor,
         inputDocuments: {
-          gcsDocuments: {
-            documents: inputDocuments,
+          gcsPrefix: {
+            gcsUriPrefix: srcRef.toString(),
           },
         },
         documentOutputConfig: {
           gcsOutputConfig: {
             gcsUri: outputRef.toString(),
+            fieldMask: {
+                paths: ['text', 'mimetype', 'shrdInfo', 'pages.formFields', 'error']
+            }
           },
         },
+        skipHumanReview: true,
       };
+
+      console.log('request', request);
+
+      await DocAIClient.initialize();
 
       const [operation] = await DocAIClient.batchProcessDocuments(request);
 
+      console.log('operation', operation);
+
       let [response, metadata, originaloperation] = await operation.promise();
 
+      console.log('metadata', metadata);
 
-      if (metadata.state != 'FAILED') resolve(true)
-
+      if (metadata.state != 'FAILED') resolve(true);
     } catch (e) {
-      reject(e.message);
+        console.log(e.message)
+        reject(e.message);
     }
   });
 

@@ -2,8 +2,8 @@
 import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { ColorModeContext } from './app'
-import { DText,  } from './common';
+import { ColorModeContext } from './app';
+import { DText } from './common';
 import { borderRadius, padding } from 'lib/constants';
 import {
   Box,
@@ -20,7 +20,7 @@ import logo from 'public/logo_transparent.svg';
 
 const navItems = {
   '/': {
-    name: 'Home'
+    name: 'Home',
   },
   '/query': {
     name: 'Query by FolderAI',
@@ -64,21 +64,21 @@ function ToggleThemeMode() {
 
 function Logo() {
   return (
-    <Link aria-label="Folder.AI" href="/">
-      <Image src={logo} alt="Folder.AI" width={110} height={110} />
+    <Link aria-label="FolderAI" href="/">
+      <Image src={logo} alt="FolderAI" width={110} height={110} />
     </Link>
   );
 }
 
 const HeaderItem = ({ active, path, name, ...rest }) => {
-  const [showLine, setShowLine] = React.useState(false);
+  const [hover, setHover] = React.useState(false);
 
   const theme = useTheme();
 
   return (
     <Box
-      onMouseEnter={e => setShowLine(true)}
-      onMouseLeave={e => setShowLine(false)}
+      onMouseEnter={e => setHover(true)}
+      onMouseLeave={e => setHover(false)}
       {...rest}
     >
       <Link
@@ -96,15 +96,13 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
           aria-label="Current Directory"
           whileHover={{
             scale: 1.05,
-            backgroundColor: theme.palette.background.paper,
           }}
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: active
-              ? theme.palette.background.paper
-              : 'transparent',
+            backgroundColor:
+              active || hover ? theme.palette.background.paper : 'transparent',
             borderRadius: borderRadius * 3,
             paddingLeft: padding * 10,
             paddingRight: padding * 10,
@@ -116,7 +114,7 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
             text={name}
             variant="body1"
             fontWeight={active ? 'medium' : 'light'}
-            color={active || showLine ? 'text.disabled' : 'text.primary'}
+            color={active || hover ? 'text.disabled' : 'text.primary'}
           />
         </m.div>
       </Link>

@@ -15,9 +15,13 @@ export class Folder {
    */
   name: string;
   /**
-   * File full path to user root
+   * FolderAI path to user root
    */
   path: string;
+  /**
+   * Fullpath (including wrapper folders '.documentai' '.folderai' )
+   */
+  fullPath: string;
   /**
    * Linked folders
    * This should be present even with empty array
@@ -63,6 +67,8 @@ export class Folder {
     }
   }
 
+  static pathFromFullPath = (path: string) => path.replace(/.documentai\/.*\//g, "");
+
   static nameFromPath = (str: string, isDirectory = false) => {
     let parts = str.split('/');
 
@@ -79,7 +85,8 @@ export class Folder {
   ) =>
     ({
       name: fullMetadata.name,
-      path: fullMetadata.fullPath,
+      path: this.pathFromFullPath(fullMetadata.fullPath),
+      fullPath: fullMetadata.fullPath,
       url: fullMetadata.ref.toString(),
       isDirectory,
       children: [],
@@ -120,7 +127,8 @@ export class Directory extends Folder {
   ) =>
     ({
       name: fullMetadata.name,
-      path: fullMetadata.fullPath,
+      path: this.pathFromFullPath(fullMetadata.fullPath),
+      fullPath: fullMetadata.fullPath,
       url: fullMetadata.ref.toString(),
       isDirectory,
       children: [],
