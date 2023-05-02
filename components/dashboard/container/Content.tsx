@@ -26,7 +26,7 @@ export const Content: React.FC<ContentProps> = props => {
   const theme = useTheme();
   const { view, kernel, selected, useUpload } = useKernel();
 
-  let { currentDirectory, folderTree } = kernel;
+  let { currentDirectory } = kernel;
 
   const { dragOver, handleDrag, handleDrop } = useUpload();
 

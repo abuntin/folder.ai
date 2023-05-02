@@ -1,6 +1,8 @@
 import { ref, deleteObject, StorageReference } from 'firebase/storage';
 import { Folder } from 'lib/models';
 import { root } from '../models/firebase';
+import { ValidFileTypes } from '../types';
+import { getFolderMetadata, getFolderMetadataRef } from './metadata';
 
 /**
  * Deletes single Folder in GCS
@@ -16,15 +18,36 @@ export const deleteFn = (src: Folder): Promise<true> =>
 
       const srcRef = ref(root, `${src.fullPath}`);
 
-      const parentRef = srcRef.parent;
+      const parentRef = ref(root, `${Folder.getParentPath(src)}`);
 
       if (!parentRef) reject('Tried to delete root');
 
-      let value = await deleteFirebaseStorage(srcRef)
+      if (ValidFileTypes.has(src.metadata.type)) {
+        let srcRefDoc = ref(parentRef, `/.documentai/${src.name}`);
 
-      if (value) resolve(true)
-      else throw new Error('Unable to delete from Firebase Storage')
+        let value = await deleteFirebaseStorage(srcRefDoc);
 
+        if (value) {
+          let getMetadataResult = await getFolderMetadataRef({
+            parent: parentRef,
+            name: src.name,
+          });
+
+          if (getMetadataResult.ref) {
+            let valMetadata = await deleteFirebaseStorage(
+              getMetadataResult.ref
+            );
+
+            if (valMetadata) resolve(true);
+            else throw new Error('Unable to delete Folder metadata');
+          } else throw new Error('Unable to get Folder metadata ref');
+        } else throw new Error('Unable to delete Folder document');
+      } else {
+        let value = await deleteFirebaseStorage(srcRef);
+
+        if (value) resolve(true);
+        else throw new Error('Unable to delete from Firebase Storage');
+      }
     } catch (e) {
       reject(e.message);
     }

@@ -3,37 +3,56 @@ import { Folder, Directory } from 'lib/models';
 import { root } from '../models/firebase';
 import { moveFirebaseStorage } from './move';
 
+export const getFolderMetadataRef = async (payload: {
+  parent: StorageReference;
+  name: string;
+}): Promise<{ ref: StorageReference | null }> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      let { parent, name: _name } = payload
 
-export const getFolderMetadata = async (payload: { parent: Directory, name: string }): Promise<{ metadata: string }> => new Promise(async (resolve, reject) => {
-   try {
-        let { parent, name } = payload;
+      let name = _name.replace(/\.[^/.]+$/, "") // remove file extension
 
-        let metadataSrcRef = ref(root, `${parent.fullPath}/.folderai`)
+      let metadataSrcRef = ref(parent, `/.folderai`);
 
-        let metadataRefs = await listAll(metadataSrcRef)
+      let metadataRefs = await listAll(metadataSrcRef);
 
-        let metadataFilter = metadataRefs.items.filter(ref => ref.name.includes(name))
+      let metadataFilter = metadataRefs.items.filter(ref =>
+        ref.name.includes(name)
+      );
 
-        if (metadataFilter.length) {
-            let metadataRef = metadataFilter[0]
+      resolve({ ref: metadataFilter.length ? metadataFilter[0] : null })
+    } catch (e) {
+      reject(e.message);
+    }
+  });
 
-            console.log('metadataRef', metadataRef)
+export const getFolderMetadata = async (payload: {
+  parent: Directory;
+  name: string;
+}): Promise<{ metadata: string }> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      let { parent, name } = payload;
 
-            let arrayBuffer = await getBytes(metadataRef)
+      let parentRef = ref(root, `${parent.fullPath}`)
 
-            let buffer = Buffer.from(arrayBuffer)
+      let result = await getFolderMetadataRef({ parent: parentRef, name })
 
-            let metadata = buffer.toString()
+      if (result.ref) {
 
-            resolve({ metadata })
-        }
+        let arrayBuffer = await getBytes(result.ref);
 
-        else reject('Unable to get Folder metadata')
-   }
-   catch (e) {
-       reject(e.message)
-   }
-})
+        let buffer = Buffer.from(arrayBuffer);
+
+        let metadata = buffer.toString();
+
+        resolve({ metadata });
+      } else reject('Unable to get Folder metadata');
+    } catch (e) {
+      reject(e.message);
+    }
+  });
 // Path to metadata: SourceDirectory -> .folderai -> {docaigeneration} -> {indexFolders}
 export const processDirectoryNewUpload = async (payload: {
   src: Directory;
@@ -62,7 +81,7 @@ export const processDirectoryNewUpload = async (payload: {
 
           let itemRef = itemResult.items.length ? itemResult.items[0] : null;
 
-          let dest = ref(srcRef, `/${itemRef.name}`)
+          let dest = ref(srcRef, `/${itemRef.name}`);
 
           let { url } = await moveFirebaseStorage({
             src: itemRef,
@@ -70,14 +89,13 @@ export const processDirectoryNewUpload = async (payload: {
           });
 
           if (url) continue;
-
-          else throw new Error('Unable to move metadata file')
+          else throw new Error('Unable to move metadata file');
         } catch (e) {
           throw new Error(e.message);
         }
       }
 
-      resolve(true)
+      resolve(true);
     } catch (e) {
       reject(e.message);
     }

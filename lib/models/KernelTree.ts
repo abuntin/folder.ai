@@ -95,6 +95,9 @@ export class Tree {
   insert(parentNodeKey: string, folders: Folder[]) {
     for (let node of this.preOrderTraversal()) {
       if (node.key === parentNodeKey) {
+        // reset before adding children
+        node.directories = {}
+        node.folders = {}
         for (let folder of folders) {
           if (folder.isDirectory) {
             node.directories = {

@@ -1,5 +1,5 @@
-import { FullMetadata } from 'firebase/storage';
-import { PropType } from 'lib/types';
+import { FullMetadata, StorageReference } from 'firebase/storage';
+import short from 'short-uuid';
 
 interface FolderAIMetadata {
   type: FullMetadata['contentType'];
@@ -72,14 +72,19 @@ export class Folder {
   static pathFromFullPath = (path: string) =>
     path.replace(/.documentai\/.*\//g, '');
 
-
   static getParentPath = (src: Folder) => {
-    let pathParts = src.path.split('/')
-    return pathParts.slice(0, pathParts.length - 1).join('/')
-  }
+    let pathParts = src.fullPath.split('/');
 
-  static fromStorageReference = (
-    metadata: { fullMetadata: FullMetadata, metadata: string },
+    if (pathParts.length < 3) return '';
+
+    let lastPart = pathParts[pathParts.length - 2];
+    if (lastPart.includes('.documentai') || lastPart.includes('.folderai'))
+      return pathParts.slice(0, pathParts.length - 2).join('/');
+    else return pathParts.slice(0, pathParts.length - 1).join('/');
+  };
+
+  static fromGStorageMetadata = (
+    metadata: { fullMetadata: FullMetadata; metadata: string },
     isDirectory = false
   ) =>
     ({
@@ -90,13 +95,23 @@ export class Folder {
       isDirectory,
       children: [],
       linkedFolders: [],
-      metadata: { type: metadata.fullMetadata.contentType, size: metadata.fullMetadata.size, json: metadata.metadata },
+      metadata: {
+        type: metadata.fullMetadata.contentType,
+        size: metadata.fullMetadata.size,
+        json: metadata.metadata,
+      },
       id: metadata.fullMetadata.generation,
     } as Folder);
 }
 
 export class Directory extends Folder {
   isDirectory: boolean;
+
+  metadata: FolderAIMetadata = {
+    type: 'Directory',
+    size: -1,
+    json: '',
+  };
 
   constructor(data: any) {
     super(data);
@@ -120,19 +135,19 @@ export class Directory extends Folder {
     }
   }
 
-  static fromStorageReference = (
-    metadata: { fullMetadata: FullMetadata, metadata: string },
-    isDirectory = true
-  ) =>
+  static fromStorageReference = (payload: {
+    reference: StorageReference;
+    id: string;
+  }) =>
     ({
-      name: metadata.fullMetadata.name,
-      path: this.pathFromFullPath(metadata.fullMetadata.fullPath),
-      fullPath: metadata.fullMetadata.fullPath,
-      url: metadata.fullMetadata.ref.toString(),
-      isDirectory,
-      children: [],
+      name: payload.reference.name,
+      fullPath: payload.reference.fullPath,
+      path: Folder.pathFromFullPath(payload.reference.fullPath),
+      isDirectory: true,
+      metadata: { type: '', size: -1, json: '' },
+      id: payload.id ?? short.generate(),
+      url: payload.reference.toString(),
       linkedFolders: [],
-      metadata: { type: metadata.fullMetadata.contentType, size: metadata.fullMetadata.size, json: metadata.metadata },
-      id: metadata.fullMetadata.generation,
-    } as Folder);
+      children: [],
+    } as Directory);
 }

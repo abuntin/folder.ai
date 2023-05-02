@@ -37,29 +37,38 @@ export const App: React.FC<AppProps> = props => {
         <ColorModeContext.Provider value={{ mode, toggleColorMode }}>
           <ThemeProvider theme={theme}>
             <AnimationWrapper>
-              <KernelProvider>
-                <m.body
-                  style={{
-                    flex: 'auto',
-                    minHeight: '100%',
-                    //height: '100%',
-                    margin: 0,
-                    background:
-                      mode == 'light' ? `${bgLight} fixed` : `${bgDark} fixed`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundAttachment: 'fixed',
-                    backgroundSize: 'cover\200%',
-                  }}
-                  layout
-                  transition={spring}
-                >
-                  <Header />
-                  <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
-                    {props.children}
-                    <AnalyticsWrapper />
-                  </main>
-                </m.body>
-              </KernelProvider>
+              <m.body
+                style={{
+                  flex: 'auto',
+                  minHeight: '100%',
+                  margin: 0,
+                  background:
+                    mode == 'light' ? `${bgLight} fixed` : `${bgDark} fixed`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundAttachment: 'fixed',
+                  backgroundSize: 'cover\200%',
+                }}
+                layout
+                transition={spring}
+              >
+                <KernelProvider>
+                  <m.div
+                    style={{
+                      flex: 'auto',
+                      minHeight: '100%',
+                      margin: 0,
+                    }}
+                    layout
+                    transition={spring}
+                  >
+                    <Header />
+                    <main className="flex-auto min-w-0 mt-0 md:mt-0 flex flex-col px-0 md:px-0">
+                      {props.children}
+                      <AnalyticsWrapper />
+                    </main>
+                  </m.div>
+                </KernelProvider>
+              </m.body>
             </AnimationWrapper>
           </ThemeProvider>
         </ColorModeContext.Provider>
@@ -69,4 +78,4 @@ export const App: React.FC<AppProps> = props => {
 };
 
 export * from './context';
-export * from './theme'
+export * from './theme';

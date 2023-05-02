@@ -8,14 +8,9 @@ import {
 import { Folder, Directory } from 'lib/models';
 import { root } from '../models/firebase';
 import { ValidFileTypes } from '../types';
+import { getFolderMetadataRef } from './metadata';
 import { upload } from './upload';
 
-/**
- * Copies one Folder to given destination in GCS
- * @param src Folder to copy
- * @param dest Directory to copy to
- * @returns
- */
 export const copy = (payload: {
   src: Folder;
   dest: Directory;
@@ -35,37 +30,86 @@ export const copy = (payload: {
 
       const srcRef = ref(root, `${src.fullPath}/`);
 
-      let destPrefix = ValidFileTypes.has(src.metadata.type)
-        ? `.documentai/`
-        : '';
+      const destRef = ref(root, `${dest.fullPath}`);
 
-      // TODO: copy .folderai metadata as well
+      const parentRef = ref(root, `/${Folder.getParentPath(src)}`);
 
-      const destRef = ref(root, `${dest.path}/${destPrefix}${src.name}`);
+      if (!parentRef) throw new Error('Could not find parent Directory path');
 
-      const parentRef = srcRef.parent;
+      if (ValidFileTypes.has(src.metadata.type)) {
+        if (src.path.split('/').length < 3)
+          // e.g. 'user/' ==> ['user', '']
+          throw new Error('Tried to copy root');
 
-      if (!parentRef) reject('Tried to copy root');
+        let srcRefDoc = ref(parentRef, `/.documentai/${src.name}`);
 
+        let destRefDoc = ref(destRef, `/.documentai/${src.name}`);
 
-      const metadata = await getMetadata(srcRef);
+        const metadata = await getMetadata(srcRef);
 
-      // check if the src Folder is already in the target Directory
+        // check if the src Folder is already in the target Directory
 
-      let newMetadata = {
-        ...metadata,
-        name: src.path.includes(dest.path)
-          ? `${metadata.name} ${Date.now().toString()}`
-          : metadata.name,
-        updated: Date.now().toString(),
-      } as FullMetadata;
+        let newMetadata = {
+          ...metadata,
+          name: src.path.includes(dest.path)
+            ? `${metadata.name} ${Date.now().toString()}`
+            : metadata.name,
+          updated: Date.now().toString(),
+        } as FullMetadata;
 
-      let result = await copyFirebaseStorage({ src: srcRef, dest: destRef, metadata: newMetadata });
+        let result = await copyFirebaseStorage({
+          src: srcRefDoc,
+          dest: destRefDoc,
+          metadata: newMetadata,
+        });
 
+        if (result.url) {
+          // Copy folder.ai metadata
 
-      if (result.url) resolve({url: result.url })
+          let getMetadataResult = await getFolderMetadataRef({
+            parent: parentRef,
+            name: src.name,
+          });
 
-      else throw new Error('Unable to copy Folder: FolderManagerInterface.copy helper')
+          if (getMetadataResult.ref) {
+            let srcRefMetadata = getMetadataResult.ref;
+
+            let destRefMetadata = ref(destRef, `/.folderai/${src.name}`);
+
+            let copyRes = await copyFirebaseStorage({
+              src: srcRefMetadata,
+              dest: destRefMetadata,
+            });
+
+            if (copyRes.url) resolve({ url: result.url });
+            else throw new Error('Unable to copy metadata');
+
+          } else throw new Error('Unable to find Folder metadata ref');
+        }
+      } else {
+        const metadata = await getMetadata(srcRef);
+
+        let newMetadata = {
+          ...metadata,
+          name: src.path.includes(dest.path)
+            ? `${metadata.name} ${Date.now().toString()}`
+            : metadata.name,
+          updated: Date.now().toString(),
+        } as FullMetadata;
+
+        let result = await copyFirebaseStorage({
+          src: srcRef,
+          dest: destRef,
+          metadata: newMetadata,
+        });
+
+        if (result.url) {
+          resolve({ url: result.url });
+        } else
+          throw new Error(
+            'Unable to copy Folder: FolderManagerInterface.copy helper'
+          );
+      }
     } catch (e) {
       reject(e.message);
     }
@@ -85,8 +129,7 @@ export const copyFirebaseStorage = async (payload: {
 
         let result = await upload(buffer, metadata, dest);
 
-        if (result.url) resolve({ url: result.url });
-
+        resolve({ url: result.url });
       } else {
         const metadata = await getMetadata(src);
 
@@ -101,12 +144,10 @@ export const copyFirebaseStorage = async (payload: {
         let result = await upload(buffer, newMetadata, dest);
 
         if (result.url) resolve({ url: result.url });
-
-        else throw new Error('Unable to upload: copyFirebaseStorage')
-
+        else throw new Error('Unable to upload: copyFirebaseStorage');
       }
     } catch (e) {
-      console.error(e.message)
+      console.error(e.message);
       reject(e.message);
     }
   });

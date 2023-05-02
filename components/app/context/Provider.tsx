@@ -281,7 +281,6 @@ export const KernelProvider = ({ children, ...rest }) => {
       }} // Provide filesystem service (kernel) & UI properties as context
       {...rest}
     >
-      <>
       <Snackbar
         open={error !== '' || warning !== '' || success !== '' || info !== ''}
         //autoHideDuration={6000}
@@ -320,7 +319,6 @@ export const KernelProvider = ({ children, ...rest }) => {
           </Stack>
         </Alert>
       </Snackbar>
-      </>
       <KernelApiProvider>{children}</KernelApiProvider>
     </KernelContext.Provider>
   );
