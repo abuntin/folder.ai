@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
-import { deleteFn, copy } from '../../functions';
+import { move } from '../../functions';
 
 export const moveFolders: PropType<FolderManagerInterface, 'move'> = async (
   req,
@@ -44,18 +44,11 @@ export const moveFolders: PropType<FolderManagerInterface, 'move'> = async (
     let urls = [];
 
     for (let src of srcList) {
-      let url = await copy(src, dest);
 
-      if (url) {
-        let value = await deleteFn(src);
+      let result = await move({src, dest});
 
-        if (value) {
-          urls.push(url);
-        } else
-          return res.status(500).json({
-            data: null,
-            error: 'Unable to delete src Folder after copy',
-          });
+      if (result.url) {
+          urls.push(result.url);
       } else
         return res
           .status(500)

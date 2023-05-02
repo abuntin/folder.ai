@@ -1,11 +1,11 @@
-import { ref } from 'firebase/storage';
+import { ref, StorageReference } from 'firebase/storage';
 import fs_extra from 'fs-extra';
 import { Folder } from 'lib/models';
 import { PropType } from 'lib/types';
 import { uniqueId } from 'lodash';
 import { inngest } from 'pages/api/inngest';
-import { parseForm, upload } from '../../functions';
-import { processDocumentType } from '../../functions/documentai';
+import { parseForm, processDirectoryNewUpload, upload } from '../../functions';
+import { processDocuments, processDocumentType } from '../../functions/documentai';
 import {
   FolderManagerInterface,
   typeToPath,
@@ -40,7 +40,9 @@ export const uploadFolders: PropType<FolderManagerInterface, 'upload'> = async (
 
     let urls = [] as string[];
 
-    let documents = new Set<Folder['metadata']['type']>();
+    //let documents = new Set<Folder['metadata']['type']>();
+
+    let documents = {} as { [k: Folder['metadata']['type']]: StorageReference[] }
 
     for (let file of files) {
       let buffer = await fs_extra.readFile(file.filepath);
@@ -48,7 +50,7 @@ export const uploadFolders: PropType<FolderManagerInterface, 'upload'> = async (
       let type = file.mimetype;
 
       let uploadPrefix = ValidFileTypes.has(type)
-        ? `.documentai/${typeToPath(type)}/`
+        ? `.documentai/`
         : '';
 
       let destinationRef = ref(
@@ -62,9 +64,9 @@ export const uploadFolders: PropType<FolderManagerInterface, 'upload'> = async (
         contentType: type,
       };
 
-      let url = await upload(buffer, metadata, destinationRef);
+      let result = await upload(buffer, metadata, destinationRef);
 
-      urls.push(url);
+      if (result.url) urls.push(result.url);
 
       // Only process successful uploads
 
@@ -72,7 +74,8 @@ export const uploadFolders: PropType<FolderManagerInterface, 'upload'> = async (
 
       if (isDoc) {
         console.log(isDoc)
-        documents.add(type);
+        let typeList = documents[type] ?? null
+        documents = { ...documents, [type]: typeList ? typeList.concat([destinationRef]) : [destinationRef] }
       }
     }
 
@@ -80,19 +83,19 @@ export const uploadFolders: PropType<FolderManagerInterface, 'upload'> = async (
       console.log(`Uploaded ${files.length} Folders to ${directory.name}`);
 
       try {
-        let _srcRef = ref(root, `${directory.path}/.documentai`);
+        let processResult = await processDocuments({ documents, directory })
 
-        let _outputRef = ref(root, `${directory.path}/.folderai`);
+        if (processResult) {
 
-        let types = Array.from(documents)
+          console.log('DocumentAI Processing Result', processResult)
 
-        for (let type of types) {
-          let _typeres = await processDocumentType({
-            type,
-            src: _srcRef,
-            dest: _outputRef,
-          });
+          let moveMetadataResult = processDirectoryNewUpload({ src: directory })
+
+          if (moveMetadataResult) return res.status(200).json({ data: { urls }, error: null }); // Send response back to UI
+
+          else throw new Error('Error moving metadata: FolderManager.upload')
         }
+
       } catch (e) {
         console.error(e.message)
         throw new Error(e.message);
@@ -108,8 +111,6 @@ export const uploadFolders: PropType<FolderManagerInterface, 'upload'> = async (
       //     }
       //   }
       // })
-
-      return res.status(200).json({ data: { urls }, error: null }); // Send response back to UI
     } else
       return res
         .status(500)

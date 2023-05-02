@@ -34,7 +34,7 @@ export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
     let urls = [];
 
     for (let src of srcList) {
-      let url = await copy(src, dest);
+      let {url} = await copy({src, dest});
 
       urls.push(url);
     }

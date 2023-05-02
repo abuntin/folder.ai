@@ -9,7 +9,7 @@ export const upload = (
   data: Buffer | Blob | ArrayBuffer,
   metadata,
   destinationRef: StorageReference
-): Promise<string> =>
+): Promise<{ url: string }> =>
   new Promise(async (resolve, reject) => {
     try {
       const uploadTask = uploadBytesResumable(
@@ -37,7 +37,7 @@ export const upload = (
 
           unsubscribe()
 
-          resolve(url)
+          resolve({url})
         }
       );
 

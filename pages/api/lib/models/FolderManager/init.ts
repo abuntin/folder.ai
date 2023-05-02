@@ -1,5 +1,5 @@
 import { root } from '../firebase';
-import { getMetadata, listAll } from 'firebase/storage';
+import { getMetadata, listAll, ref } from 'firebase/storage';
 import { PropType } from 'lib/types';
 import { Directory, Folder } from 'lib/models';
 import { FolderManagerInterface } from '../../types';
@@ -13,14 +13,15 @@ export const initFolderManager: PropType<
 
     let listRes = await listAll(root);
 
-    let ref = listRes.prefixes[0];
+    let rootRef = listRes.prefixes[0];
 
     let rootDirectory = {
-      name: ref.name,
-      path: ref.fullPath,
+      name: rootRef.name,
+      path: Folder.pathFromFullPath(rootRef.fullPath),
+      fullPath: rootRef.fullPath,
       isDirectory: true,
       id: 'rootID',
-      url: ref.toString(),
+      url: rootRef.toString(),
     } as Directory;
 
     console.log('Obtained root folder');

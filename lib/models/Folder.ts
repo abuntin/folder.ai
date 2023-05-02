@@ -3,8 +3,10 @@ import { PropType } from 'lib/types';
 
 interface FolderAIMetadata {
   type: FullMetadata['contentType'];
-  size: FullMetadata['size']
+  size: FullMetadata['size'];
+  json: string;
 }
+
 export class Folder {
   /**
    * File id
@@ -67,32 +69,29 @@ export class Folder {
     }
   }
 
-  static pathFromFullPath = (path: string) => path.replace(/.documentai\/.*\//g, "");
+  static pathFromFullPath = (path: string) =>
+    path.replace(/.documentai\/.*\//g, '');
 
-  static nameFromPath = (str: string, isDirectory = false) => {
-    let parts = str.split('/');
 
-    return parts[parts.length - 2] == ''
-      ? parts[0]
-      : isDirectory
-      ? parts[parts.length - 2]
-      : parts[parts.length - 1];
-  };
+  static getParentPath = (src: Folder) => {
+    let pathParts = src.path.split('/')
+    return pathParts.slice(0, pathParts.length - 1).join('/')
+  }
 
   static fromStorageReference = (
-    fullMetadata: FullMetadata,
+    metadata: { fullMetadata: FullMetadata, metadata: string },
     isDirectory = false
   ) =>
     ({
-      name: fullMetadata.name,
-      path: this.pathFromFullPath(fullMetadata.fullPath),
-      fullPath: fullMetadata.fullPath,
-      url: fullMetadata.ref.toString(),
+      name: metadata.fullMetadata.name,
+      path: this.pathFromFullPath(metadata.fullMetadata.fullPath),
+      fullPath: metadata.fullMetadata.fullPath,
+      url: metadata.fullMetadata.ref.toString(),
       isDirectory,
       children: [],
       linkedFolders: [],
-      metadata: { type: fullMetadata.contentType, size: fullMetadata.size },
-      id: fullMetadata.generation,
+      metadata: { type: metadata.fullMetadata.contentType, size: metadata.fullMetadata.size, json: metadata.metadata },
+      id: metadata.fullMetadata.generation,
     } as Folder);
 }
 
@@ -122,18 +121,18 @@ export class Directory extends Folder {
   }
 
   static fromStorageReference = (
-    fullMetadata: FullMetadata,
+    metadata: { fullMetadata: FullMetadata, metadata: string },
     isDirectory = true
   ) =>
     ({
-      name: fullMetadata.name,
-      path: this.pathFromFullPath(fullMetadata.fullPath),
-      fullPath: fullMetadata.fullPath,
-      url: fullMetadata.ref.toString(),
+      name: metadata.fullMetadata.name,
+      path: this.pathFromFullPath(metadata.fullMetadata.fullPath),
+      fullPath: metadata.fullMetadata.fullPath,
+      url: metadata.fullMetadata.ref.toString(),
       isDirectory,
       children: [],
       linkedFolders: [],
-      metadata: { type: fullMetadata.contentType, size: fullMetadata.size },
-      id: fullMetadata.generation,
+      metadata: { type: metadata.fullMetadata.contentType, size: metadata.fullMetadata.size, json: metadata.metadata },
+      id: metadata.fullMetadata.generation,
     } as Folder);
 }

@@ -52,6 +52,76 @@ export const processDirectory = async (payload: {
     }
   });
 
+export const processDocuments = async (payload: {
+  documents: {
+    [k: Folder['metadata']['type']]: StorageReference[];
+  };
+  directory: Directory;
+}): Promise<true> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      let { documents, directory } = payload;
+
+      let types = Object.keys(documents);
+
+      let srcRef = ref(root, `${directory.path}/.documentai`);
+
+      let outputRef = ref(root, `${directory.path}/.folderai`);
+
+      let inputDocuments =
+        [] as protos.google.cloud.documentai.v1.IGcsDocument[];
+
+      for (let type of types) {
+        let references = documents[type];
+
+        let typeDocs = references.map(
+          ref =>
+            ({
+              gcsUri: ref.toString(),
+              mimeType: type,
+            } as protos.google.cloud.documentai.v1.IGcsDocument)
+        );
+
+        inputDocuments = inputDocuments.concat(typeDocs);
+      }
+
+      const request: protos.google.cloud.documentai.v1.IBatchProcessRequest = {
+        name: DefaultProcessor,
+        inputDocuments: {
+          gcsDocuments: {
+            documents: inputDocuments
+          }
+        },
+        documentOutputConfig: {
+          gcsOutputConfig: {
+            gcsUri: outputRef.toString(),
+            fieldMask: {
+              paths: [
+                'text',
+                'mimetype',
+                'shrdInfo',
+                'pages.formFields',
+                'error',
+              ],
+            },
+          },
+        },
+        skipHumanReview: true,
+      };
+
+      await DocAIClient.initialize();
+
+      const [operation] = await DocAIClient.batchProcessDocuments(request);
+
+      let [response, metadata, originaloperation] = await operation.promise();
+
+      if (metadata.state != 'FAILED') resolve(true);
+
+    } catch (e) {
+      reject(e.message);
+    }
+  });
+
 export const processDocumentType = (payload: {
   type: Folder['metadata']['type'];
   src: StorageReference;
@@ -85,8 +155,14 @@ export const processDocumentType = (payload: {
           gcsOutputConfig: {
             gcsUri: outputRef.toString(),
             fieldMask: {
-                paths: ['text', 'mimetype', 'shrdInfo', 'pages.formFields', 'error']
-            }
+              paths: [
+                'text',
+                'mimetype',
+                'shrdInfo',
+                'pages.formFields',
+                'error',
+              ],
+            },
           },
         },
         skipHumanReview: true,
@@ -106,8 +182,8 @@ export const processDocumentType = (payload: {
 
       if (metadata.state != 'FAILED') resolve(true);
     } catch (e) {
-        console.log(e.message)
-        reject(e.message);
+      console.log(e.message);
+      reject(e.message);
     }
   });
 

@@ -31,6 +31,7 @@ export const Content: React.FC<ContentProps> = props => {
   const { dragOver, handleDrag, handleDrop } = useUpload();
 
   const handleSelect = (e: React.SyntheticEvent, folder: Folder) => {
+    console.log(folder.metadata.json)
     kernel.trigger('select', folder);
   };
 
