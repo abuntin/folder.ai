@@ -50,7 +50,7 @@ export const LocationChangeDialog: React.FC<
     >
       <Stack spacing={4}>
         <DText
-          text={`${action} ${selected.name} to:`}
+          text={`${action} ${selected?.name ?? ''} to:`}
           variant="h6"
           fontWeight="regular"
         />
