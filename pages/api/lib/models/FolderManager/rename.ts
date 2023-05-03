@@ -38,21 +38,21 @@ export const renameFolder: PropType<FolderManagerInterface, 'rename'> = async (
         .status(400)
         .json({ data: null, error: 'Destination Folder is not a Directory' });
 
-    let parts = _src.path.split('/');
+    let parts = _src.fullPath.split('/');
 
     let newPath = parts.slice(0, parts.length - 1).join('/') + `/${name}`;
 
-    let src = { ..._src, name, path: newPath } as Folder;
+    let src = { ..._src, name, path: Folder.pathFromFullPath(newPath), fullPath: newPath } as Folder;
 
-    let url = await copy(src, dest);
+    let result = await copy({src, dest});
 
-    if (url) {
+    if (result.url) {
       let value = await deleteFn(_src);
 
       if (value) {
         console.log(`Renamed ${_src.name} to ${name} in ${directory.name}`);
 
-        return res.status(200).json({ data: { url }, error: null });
+        return res.status(200).json({ data: { url: result.url }, error: null });
       } else
         return res.status(500).json({
           data: null,

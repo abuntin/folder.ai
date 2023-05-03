@@ -51,7 +51,7 @@ export class Folder {
    * FolderAI + GCS Metadata
    */
 
-  metadata?: FolderAIMetadata = null;
+  metadata: FolderAIMetadata = null;
 
   constructor(data: any) {
     const keys = Object.keys(this);
