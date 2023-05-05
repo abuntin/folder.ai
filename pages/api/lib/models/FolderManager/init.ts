@@ -1,8 +1,8 @@
-import { root } from '../firebase';
-import { getMetadata, listAll, ref } from 'firebase/storage';
-import { PropType } from 'lib/types';
+import { listAll } from 'firebase/storage';
 import { Directory, Folder } from 'lib/models';
+import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
+import { root } from '../firebase';
 
 export const initFolderManager: PropType<
   FolderManagerInterface,
@@ -24,7 +24,7 @@ export const initFolderManager: PropType<
       url: rootRef.toString(),
     } as Directory;
 
-    console.log('Obtained root folder');
+    console.log('Obtained root folder')
 
     return res.status(200).json({ data: rootDirectory, error: null });
   } catch (e) {

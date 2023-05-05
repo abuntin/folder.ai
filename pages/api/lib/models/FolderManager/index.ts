@@ -2,7 +2,7 @@ import { ref, StorageReference } from 'firebase/storage';
 import { FolderManagerInterface } from '../../types';
 import { root } from '../firebase';
 import { listFolder } from './list';
-import { uploadFolders } from './upload';
+import { uploadFolder } from './upload';
 import { initFolderManager } from './init';
 import { deleteFolders } from './delete';
 import { copyFolders } from './copy';
@@ -65,5 +65,5 @@ export class FolderManager implements FolderManagerInterface {
   /**
    * {@inheritDoc}
    */
-  public upload = uploadFolders
+  public upload = uploadFolder
 }

@@ -35,12 +35,12 @@ export const list = async (payload: {
       let processed = await Promise.all(
         docsRes.items.map(async _ => {
           let _m = await getMetadata(_);
-          let { metadata } = await getFolderMetadata({
-            parent: src,
-            name: _.name,
-          });
+          // let { metadata } = await getFolderMetadata({
+          //   parent: src,
+          //   name: _.name,
+          // });
 
-          return Folder.fromGStorageMetadata({ fullMetadata: _m, metadata });
+          return Folder.fromGStorageMetadata({ fullMetadata: _m, metadata: '' });
         })
       );
 

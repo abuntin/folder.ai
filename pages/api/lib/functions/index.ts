@@ -13,3 +13,5 @@ export { list } from './list'
 export { fetchDownloadURL } from './download'
 
 export { processDirectoryNewUpload } from './metadata'
+
+export { generateV4UploadSignedUrl } from './uploadPresigned'

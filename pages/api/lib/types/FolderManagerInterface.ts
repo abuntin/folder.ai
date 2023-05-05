@@ -79,12 +79,12 @@ export interface FolderManagerInterface {
 
   /**
    * Upload the given Folders into the given Directory
-   * @param Folders to upload as formidable.FileList, destination Directory TODO: Expand to user ID
-   * @returns S3.PresignedPost[]
+   * @param
+   * @returns
    */
   upload: NextApiHandler<{
     data: {
-      urls: string[];
+      urls: { [name: string]: string };
     } | null;
     error: string | null;
   }>;

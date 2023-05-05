@@ -50,15 +50,21 @@ export class Kernel {
   }
 
   public get folders() {
-    return this.folderTree ? this.folderTree.flatten(this.currentDirectory) : []
+    return this.folderTree
+      ? this.folderTree.flatten(this.currentDirectory)
+      : [];
   }
 
   public get foldersExcl() {
-    return this.folderTree ? this.folderTree.flatten(this.currentDirectory, 'folders') : []
+    return this.folderTree
+      ? this.folderTree.flatten(this.currentDirectory, 'folders')
+      : [];
   }
 
   public get directoriesExcl() {
-    return this.folderTree ? this.folderTree.flatten(this.currentDirectory, 'directories') : []
+    return this.folderTree
+      ? this.folderTree.flatten(this.currentDirectory, 'directories')
+      : [];
   }
 
   public get currentFoldersExcl() {
@@ -123,7 +129,7 @@ export class Kernel {
         throw new Error(error ?? 'Missing Kernel.init() response data');
       else {
         let tree = new Tree(rootDirectory);
-        this.folderTree = tree
+        this.folderTree = tree;
         this.rootDirectory = tree.root;
         this.currentDirectory = tree.root;
         this.trigger('idle', 'Obtained root folder');
@@ -235,7 +241,9 @@ export class Kernel {
    */
 
   public goBack = cache(async () => {
-      !this.currentDirectory.isRoot ? this.load(this.currentDirectory.parent.key, 'folders', true) : null
+    !this.currentDirectory.isRoot
+      ? this.load(this.currentDirectory.parent.key, 'folders', true)
+      : null;
   });
 
   /**
@@ -259,60 +267,88 @@ export class Kernel {
       onUploadProgress = null,
       signal: AbortSignal = null
     ): Promise<string[]> => {
-      const { directory, files } = payload;
+      const { directory, files: _files } = payload;
 
       console.log('Initialised Kernel.upload()');
+
       try {
+
+        let buffers = {} as { [name: string]: Promise<ArrayBuffer> }
+
+        let files = _files.reduce(
+          (prev, curr) => {
+            buffers = { ...buffers, [curr.name]: curr.arrayBuffer() }
+            return { ...prev, [curr.name]: curr.type }
+          },
+          {} as { [name: string]: string }
+        );
+
         this.trigger(
           'info',
           `Uploading ${
-            files.length === 1 ? files[0].name : `${files.length} files`
+            Object.keys(files).length === 1
+              ? Object.entries(files)[0][0]
+              : `${Object.keys(files).length} files`
           } to ${directory.name}...`
         );
 
-        let formData = new FormData();
+        // Get Presigned URLs
 
-        formData.append('type', 'upload');
-        formData.append('directory', JSON.stringify(directory));
-        files.forEach((file, i) => formData.append(`media`, file));
-
-        const res = await fetch(this.folderManagerUrl('upload'), {
+        const presignedResult = await fetch(this.folderManagerUrl('upload'), {
           method: 'POST',
-          body: formData,
+          body: JSON.stringify({
+            files,
+            directory,
+            type: 'upload',
+          }),
+          signal,
         });
 
-        // let { data: _data } = await axios.post(
-        //   this.folderManagerUrl('upload'),
-        //   formData,
-        //   // {
-        //   //   onUploadProgress,
-        //   // }
-        // );
+        let {
+          data,
+          error,
+        }: {
+          data: { urls: { [name: string]: string } };
+          error: string;
+        } = await presignedResult.json();
 
-        // const {
-        //   data,
-        //   error,
-        // }: {
-        //   data: {
-        //     urls: string[];
-        //   } | null;
-        //   error: string | null;
-        // } = JSON.parse(await res.text());
+        if (error || !data)
+          throw new Error(error ?? 'Missing presigned response data');
 
-        // if (error || !data)
-        //   throw new Error(error ?? 'Missing Kernel.upload() response data');
+        console.log(data.urls);
+
+        let urls = Object.entries(data.urls);
+
+        for (let [name, url] of urls) {
+          let type = files[name];
+
+          let buffer = Buffer.from(await buffers[name])
+
+          let uploadResult = await fetch(url, {
+            method: 'PUT',
+            body: buffer,
+            headers: {
+              'Content-Type': type,
+              'Origin': 'http://localhost:3000',
+              'Access-Control-Request-Method': 'PUT',
+              'Access-Control-Request-Headers': 'Content-Type'
+            }
+          });
+
+          if (uploadResult.status != 200) console.log(uploadResult.statusText)
+        }
 
         this.trigger(
           'idle',
           `Uploaded ${
-            files.length === 1 ? files[0].name : `${files.length} files`
-          }.`
+            Object.keys(files).length === 1
+              ? Object.entries(files)[0][0]
+              : `${Object.keys(files).length} files`
+          } to ${directory.name}`
         );
 
         if (this.currentDirectory.key == directory.path)
           this.trigger('refresh');
-
-        //return data.urls;
       } catch (error) {
         if (signal && signal.aborted) {
           this.trigger('idle');

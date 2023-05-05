@@ -4,7 +4,7 @@ import { folderManagerService } from '../lib/models/firebase';
 
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: true,
   },
 };
 
