@@ -16,16 +16,16 @@ export const Container: React.FC<ContainerProps> = props => {
 
   const BodyComponent = React.useMemo(() => {
     console.log('Component changed, loading...');
-    if (folderTree && currentDirectory && !loading.folders)
+    //if (folderTree && currentDirectory && !loading.folders)
       return dynamic(() => import('./Content').then(_ => _.Content));
-    else
-      return dynamic(() => import('../Loading').then(_ => _.LoadingComponent));
-  }, [loading.folders, currentDirectory]);
+    // else
+    //   return dynamic(() => import('./ContentSkeleton').then(_ => _.ContentSkeleton));
+  }, []) //loading.folders, currentDirectory]);
 
   const HeaderComponent = React.useMemo(() => {
-    if (folderTree && currentDirectory && !loading.folders)
+    if (folderTree && currentDirectory && !loading.folders) // TODO: Change to isAuth
       return dynamic(() => import('../header').then(_ => _.Header));
-    else return React.Fragment;
+    else return dynamic(() => import('../header').then(_ => _.HeaderSkeleton));
   }, [loading.folders, currentDirectory]);
 
   return (

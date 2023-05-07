@@ -1,11 +1,11 @@
 'use client' 
 
 
-import { StandardTextFieldProps, TextField } from '@mui/material'
+import { TextFieldProps, TextField } from '@mui/material'
 import * as React from 'react' 
 
 
-interface DInputProps extends StandardTextFieldProps {
+type DInputProps = TextFieldProps & {
     number?: boolean
 } 
 

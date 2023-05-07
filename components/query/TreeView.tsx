@@ -17,7 +17,7 @@ export const TreeView: React.FC<TreeViewProps> = props => {
         overflowX: 'hidden',
         overflowY: 'auto',
         borderRadius: borderRadius * 2,
-        minHeight: 400,
+        height: '100%',
         padding: padding * 2
       }}
     >

@@ -6,8 +6,8 @@ import {
   FolderCopySharp,
   DeleteForeverSharp,
 } from '@mui/icons-material';
-import { Unstable_Grid2 as Grid, Stack } from '@mui/material';
-import { ExpandMoreButton, TippedIconButton } from 'components/common';
+import { Unstable_Grid2 as Grid, Stack, Box, IconButton } from '@mui/material';
+import { DText, ExpandMoreButton } from 'components/common';
 import { AnimatePresence, m } from 'framer-motion';
 import { margin } from 'lib/constants';
 import dynamic from 'next/dynamic';
@@ -111,72 +111,100 @@ export const Actions: React.FC<ActionsProps> = props => {
                   flexDirection: 'row',
                 }}
               >
-                <Stack direction="row" spacing={1}>
-                  <TippedIconButton
-                    tooltip="Rename"
-                    color="primary"
-                    disabled={true}
-                    onClick={e => {
-                      setRecentAction('rename');
-                      handleRename(e);
-                    }}
-                    sx={{
-                      backgroundColor:
-                        recentAction == 'rename'
-                          ? 'background.paper'
-                          : 'inherit',
-                    }}
+                <Stack direction="row" spacing={4}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    flexDirection="column"
                   >
-                    <EditSharp />
-                  </TippedIconButton>
-                  <TippedIconButton
-                    tooltip="Copy"
-                    sx={{
-                      backgroundColor:
-                        recentAction == 'copy' ? 'background.paper' : 'inherit',
-                    }}
-                    color="primary"
-                    disabled={selected == null}
-                    onClick={e => {
-                      setRecentAction('copy');
-                      handleCopy(e);
-                    }}
-                  >
-                    <FolderCopySharp />
-                  </TippedIconButton>
-                  <TippedIconButton
-                    tooltip="Move"
-                    color="primary"
-                    disabled={selected == null}
-                    onClick={e => {
-                      setRecentAction('move');
-                      handleCut(e);
-                    }}
-                    sx={{
-                      backgroundColor:
-                        recentAction == 'move' ? 'background.paper' : 'inherit',
-                    }}
-                  >
-                    <DriveFileMoveSharp />
-                  </TippedIconButton>
+                    <IconButton
+                      color="primary"
+                      disabled={true}
+                      onClick={e => {
+                        setRecentAction('rename');
+                        handleRename(e);
+                      }}
+                      sx={{
+                        backgroundColor:
+                          recentAction == 'rename'
+                            ? 'background.paper'
+                            : 'inherit',
+                      }}
+                    >
+                      <EditSharp />
+                    </IconButton>
+                    <DText text="Rename" variant="caption" />
+                  </Box>
 
-                  <TippedIconButton
-                    tooltip="Delete"
-                    color="error"
-                    disabled={selected == null}
-                    onClick={e => {
-                      setRecentAction('delete');
-                      kernel.trigger('cut', []);
-                    }}
-                    sx={{
-                      backgroundColor:
-                        recentAction == 'delete'
-                          ? 'background.paper'
-                          : 'inherit',
-                    }}
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    flexDirection="column"
                   >
-                    <DeleteForeverSharp />
-                  </TippedIconButton>
+                    <IconButton
+                      sx={{
+                        backgroundColor:
+                          recentAction == 'copy'
+                            ? 'background.paper'
+                            : 'inherit',
+                      }}
+                      color="primary"
+                      disabled={selected == null}
+                      onClick={e => {
+                        setRecentAction('copy');
+                        handleCopy(e);
+                      }}
+                    >
+                      <FolderCopySharp />
+                    </IconButton>
+                    <DText text="Copy" variant="caption" />
+                  </Box>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    flexDirection="column"
+                  >
+                    <IconButton
+                      color="primary"
+                      disabled={selected == null}
+                      onClick={e => {
+                        setRecentAction('move');
+                        handleCut(e);
+                      }}
+                      sx={{
+                        backgroundColor:
+                          recentAction == 'move'
+                            ? 'background.paper'
+                            : 'inherit',
+                      }}
+                    >
+                      <DriveFileMoveSharp />
+                    </IconButton>
+                    <DText text="Move" variant="caption" />
+                  </Box>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    flexDirection="column"
+                  >
+                    <IconButton
+                      color="error"
+                      disabled={selected == null}
+                      onClick={e => {
+                        setRecentAction('delete');
+                        kernel.trigger('cut', []);
+                      }}
+                      sx={{
+                        backgroundColor:
+                          recentAction == 'delete'
+                            ? 'background.paper'
+                            : 'inherit',
+                      }}
+                    >
+                      <DeleteForeverSharp />
+                    </IconButton>
+                    <DText text="Delete" variant="caption" />
+                  </Box>
                 </Stack>
               </m.div>
             </AnimatePresence>

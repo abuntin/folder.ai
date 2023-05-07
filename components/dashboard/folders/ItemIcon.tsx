@@ -6,7 +6,7 @@ import {
   FolderOpenSharp,
   SnippetFolderSharp,
 } from '@mui/icons-material';
-import { AppearAnimationChild, FolderAnimation } from 'components/animation';
+import { AppearAnimationChild, FolderAnimation, BlinkAnimation } from 'components/animation';
 import { DText } from 'components/common';
 import { padding, borderRadius, margin } from 'lib/constants';
 import { TreeNode, Folder } from 'lib/models';
@@ -87,5 +87,26 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
         </Box>
       </FolderAnimation>
     </AppearAnimationChild>
+  );
+};
+
+export const ItemIconSkeleton: React.FC = props => {
+  return (
+    <BlinkAnimation style={{ flex: 1 }}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        sx={{
+          paddingBottom: padding,
+          paddingTop: padding,
+          backgroundColor: 'background.paper',
+          borderRadius,
+          flex: 1,
+          minHeight: 75
+        }}
+      />
+    </BlinkAnimation>
   );
 };

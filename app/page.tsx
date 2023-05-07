@@ -1,4 +1,4 @@
-import { Dashboard as Component } from 'components/dashboard'
+import { Container as Component } from 'components/query'
 
 
 export const revalidate = 60;

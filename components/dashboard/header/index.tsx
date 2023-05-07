@@ -5,6 +5,7 @@ import {
   Unstable_Grid2 as Grid,
   ToggleButtonGroup,
   ToggleButton,
+  Box,
 } from '@mui/material';
 import * as React from 'react';
 import { useKernel } from 'components/app';
@@ -56,3 +57,5 @@ export const Header: React.FC<HeaderProps> = props => {
     </Grid>
   );
 };
+
+export { HeaderSkeleton } from './HeaderSkeleton'

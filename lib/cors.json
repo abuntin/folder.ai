@@ -1,6 +1,6 @@
 [
     {
-      "origin": ["http://localhost:3000", "https://folderai*.vercel.app"],
+      "origin": ["http://localhost:3000", "https://folderai-git-query-jjmacakiage.vercel.app", "https://folderai.vercel.app"],
       "method": ["GET", "POST", "PUT"],
       "responseHeader": ["Content-Type"],
       "maxAgeSeconds": 3600

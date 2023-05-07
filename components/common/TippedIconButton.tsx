@@ -29,7 +29,7 @@ export const TippedIconButton: React.FC<TippedIconButtonProps> = props => {
         alignItems="center"
         justifyContent="center"
       >
-        <DText text={tooltip} />
+        <DText text={tooltip ?? ''} />
       </Box>
     </AnimatePresence>
   );
