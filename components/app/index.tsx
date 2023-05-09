@@ -51,7 +51,7 @@ export const App: React.FC<AppProps> = props => {
                 layout
                 transition={spring}
               >
-                {/* <KernelProvider> */}
+                <KernelProvider>
                   <m.div
                     style={{
                       flex: 'auto',
@@ -67,7 +67,7 @@ export const App: React.FC<AppProps> = props => {
                       <AnalyticsWrapper />
                     </main>
                   </m.div>
-                {/* </KernelProvider> */}
+                </KernelProvider>
               </m.body>
             </AnimationWrapper>
           </ThemeProvider>

@@ -4,20 +4,21 @@ import { TreeNode } from 'lib/models';
 import { PropType } from 'lib/types';
 import * as React from 'react';
 import { DText } from '../DText';
-import { LoadingComponent } from '../Loading';
+import { TreeRootSkeleton } from './TreeRoot';
+import { BlinkAnimation } from 'components/animation';
 
 interface TreeContextInterface {
   open: { [k: string]: boolean };
   handleClick: (e: React.SyntheticEvent, node: TreeNode) => void;
   handleOpen: (e: React.SyntheticEvent, node: TreeNode) => void;
-  active: PropType<TreeNode, 'key'>
+  active: PropType<TreeNode, 'key'>;
 }
 
 export const TreeContext = React.createContext<TreeContextInterface>({
   open: {},
   handleClick: null,
   handleOpen: null,
-  active: null
+  active: null,
 });
 
 export const useKernelTree = () => {
@@ -26,7 +27,7 @@ export const useKernelTree = () => {
   if (!context) throw new Error('Tree components only');
 
   return context;
-}
+};
 
 export const TreeProvider = ({ children }) => {
   let { kernel, loading } = useKernel();
@@ -47,7 +48,9 @@ export const TreeProvider = ({ children }) => {
       : {}
   );
 
-  let [active, setActiveState] = React.useState<TreeContextInterface['active']>(currentDirectory ? currentDirectory.key : null)
+  let [active, setActiveState] = React.useState<TreeContextInterface['active']>(
+    currentDirectory ? currentDirectory.key : null
+  );
 
   const setOpen = (state: boolean, key: string) => {
     startTransition(() => setOpenState({ ...open, [key]: state }));
@@ -68,15 +71,17 @@ export const TreeProvider = ({ children }) => {
   };
 
   const handleClick = (e: React.SyntheticEvent, node: TreeNode) => {
-    node.hasChildren && setActive(node.key)
-  }
+    node.hasChildren && setActive(node.key);
+  };
 
   return (
     <TreeContext.Provider value={{ open, active, handleClick, handleOpen }}>
-      {currentFolders.length ? (
+      {currentDirectory && currentFolders.length ? (
         children
       ) : loading.tree ? (
-        <LoadingComponent height={75} width={75} />
+        <BlinkAnimation>
+          <TreeRootSkeleton />
+        </BlinkAnimation>
       ) : (
         <DText text="Nothing to see here yet!" />
       )}

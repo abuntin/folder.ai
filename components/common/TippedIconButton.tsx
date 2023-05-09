@@ -10,18 +10,17 @@ import { borderRadius } from 'lib/constants'
 interface TippedIconButtonProps extends IconButtonProps {
   tooltip?: string;
   tooltipColor?: string;
+  width?: number;
+  height?: number;
 }
 
-export const TippedIconButton: React.FC<TippedIconButtonProps> = props => {
-  const { tooltip, tooltipColor, children, ...rest } = props;
-
-  const Tooltip = () => (
-    <AnimatePresence>
+export const Tooltip: React.FC<TippedIconButtonProps> = ({ width, height, tooltipColor, tooltip }) => (
+  <AnimatePresence>
       <Box
         sx={{
-          width: 80,
-          height: 30,
-          backgroundColor: tooltipColor ?? 'secondary.main',
+          width: width ?? 80,
+          height: height ?? 30,
+          backgroundColor: tooltipColor ?? 'info.main',
           borderRadius
         }}
         display="flex"
@@ -32,9 +31,13 @@ export const TippedIconButton: React.FC<TippedIconButtonProps> = props => {
         <DText text={tooltip ?? ''} />
       </Box>
     </AnimatePresence>
-  );
+)
+
+export const TippedIconButton: React.FC<TippedIconButtonProps> = props => {
+  const { tooltip, tooltipColor, children, width, height, ...rest } = props;
+
   return (
-    <Tippy content={Tooltip()}>
+    <Tippy content={Tooltip({ tooltip, tooltipColor, width, height })}>
       <IconButton {...rest}>{children}</IconButton>
     </Tippy>
   );

@@ -200,7 +200,7 @@ export class Kernel {
       try {
         this.trigger('loading', type);
 
-        let directoryNode = this.folderTree.find(key);
+        let directoryNode = this.folderTree.find({key});
 
         if (!directoryNode)
           throw new Error('Cannot find Directory to load in Tree');
@@ -223,7 +223,7 @@ export class Kernel {
 
           if (navigate && this.currentDirectory.key !== directory.path) {
             let temp = this.currentDirectory;
-            this.currentDirectory = this.folderTree.find(directory.path);
+            this.currentDirectory = this.folderTree.find({ key: directory.path });
             !this.isRoot && (this.prevDirectory = temp);
           }
 

@@ -16,12 +16,54 @@ import { DText } from '../DText';
 import { ExpandMoreButton } from '../ExpandMoreButton';
 import { LoadingComponent } from '../Loading';
 import { useKernelTree } from './context';
-import { Tree } from './Tree';
+import { Tree, TreeSkeleton } from './Tree';
 
 interface TreeNodeProps {
   node: Node;
   level: number;
 }
+
+export const TreeNodeSkeleton: React.FC<Omit<TreeNodeProps, 'node'>> = ({
+  level,
+}) => {
+  return (
+    <m.li
+      variants={itemVariant}
+      style={{ marginBottom: margin * 2, cursor: 'pointer' }}
+    >
+      <div
+        style={{ padding: padding * 3, borderRadius: borderRadius * 2 }}
+      >
+        <Stack
+          spacing={1}
+          direction="row"
+          sx={{ ml: level * margin, display: 'flex', alignItems: 'center' }}
+        >
+          <div
+          >
+            <FolderSharp
+              color='primary'
+              sx={{ fontSize: 18 }}
+            />
+          </div>
+        </Stack>
+      </div>
+      <m.ul
+        initial="hidden"
+        animate="visible"
+        style={{
+          paddingLeft: margin,
+          marginTop: margin * 2,
+          overflow: 'auto',
+          maxHeight: 300,
+        }}
+        variants={listVariant}
+      >
+          <TreeSkeleton level={level + 1} />
+      </m.ul>
+    </m.li>
+  );
+};
 
 export const TreeNode: React.FC<TreeNodeProps> = props => {
   const theme = useTheme();
@@ -65,7 +107,12 @@ export const TreeNode: React.FC<TreeNodeProps> = props => {
           direction="row"
           sx={{ ml: level * margin, display: 'flex', alignItems: 'center' }}
         >
-          <m.div whileHover={{ scale: 1.1 }} onClick={e => handleClick(e, node)}>{getItemIcon}</m.div>
+          <m.div
+            whileHover={{ scale: 1.1 }}
+            onClick={e => handleClick(e, node)}
+          >
+            {getItemIcon}
+          </m.div>
 
           <DText text={name} variant="body2" />
           {isDirectory && (

@@ -1,32 +1,40 @@
 'use client';
 
-import { listVariant } from 'components/animation';
+import { BlinkAnimation, listVariant } from 'components/animation';
 import { useKernel } from 'components/app';
 import { m } from 'framer-motion';
 import * as React from 'react';
 import { TreeProvider } from './context';
-import { TreeNode } from './TreeNode';
+import { TreeNode, TreeNodeSkeleton } from './TreeNode';
+import { TreeNode as Node } from 'lib/models';
+import { useQuery } from 'components/query/context';
 
 interface TreeRootProps {}
 
-export const TreeRoot: React.FC<TreeRootProps> = props => {
-  let { kernel } = useKernel();
+export const TreeRootSkeleton: React.FC<TreeRootProps> = ({ ...rest }) => (
+  <m.ul
+    initial="hidden"
+    animate="visible"
+    variants={listVariant}
+    style={{ maxHeight: '100%' }}
+  >
+    <TreeNodeSkeleton level={0} />
+  </m.ul>
+);
 
-  let { currentDirectory } = kernel
-  
-  return  (
-  <TreeProvider>
-    <m.ul
-      initial="hidden"
-      animate="visible"
-      variants={listVariant}
-      style={{ maxHeight: '100%' }}
-    >
-      <TreeNode
-        level={0}
-        node={currentDirectory}
-      />
-    </m.ul>
-  </TreeProvider>
-  )
+export const TreeRoot: React.FC<TreeRootProps> = ({ ...rest }) => {
+  const { rootDirectory } = useQuery();
+
+  return (
+    <TreeProvider>
+      <m.ul
+        initial="hidden"
+        animate="visible"
+        variants={listVariant}
+        style={{ maxHeight: '100%' }}
+      >
+        <TreeNode level={0} node={rootDirectory} />
+      </m.ul>
+    </TreeProvider>
+  );
 };

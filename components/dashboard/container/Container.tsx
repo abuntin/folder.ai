@@ -15,12 +15,8 @@ export const Container: React.FC<ContainerProps> = props => {
   const { folderTree, currentDirectory } = kernel;
 
   const BodyComponent = React.useMemo(() => {
-    console.log('Component changed, loading...');
-    //if (folderTree && currentDirectory && !loading.folders)
-      return dynamic(() => import('./Content').then(_ => _.Content));
-    // else
-    //   return dynamic(() => import('./ContentSkeleton').then(_ => _.ContentSkeleton));
-  }, []) //loading.folders, currentDirectory]);
+    return dynamic(() => import('./Content').then(_ => _.Content));
+  }, [])
 
   const HeaderComponent = React.useMemo(() => {
     if (folderTree && currentDirectory && !loading.folders) // TODO: Change to isAuth

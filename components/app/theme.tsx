@@ -19,7 +19,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
         primary: { main: '#fafafa', light: '#1b1a22' }, // white
         secondary: { main: '#110010', light: 'a7afb8', dark: '858a94' }, // black and silver
         warning: { main: '#eabb13' }, // yellow
-        info: { main: 'rgba(84, 126, 193,1)' }, // blue
+        info: { main: 'rgba(84, 126, 193,1)', dark: 'rgba(2, 61, 156, 1)' }, // blue
         success: { main: '#578346' }, // green
         disabled: { main: `rgba(229,229,229,0.5)`},
         error: { main: '#ff0033' }, // red 
@@ -27,20 +27,20 @@ export const createCustomTheme = (mode: PaletteMode) => {
         mode,
         grey: 600 as Partial<Color>,
         text:  { secondary: '#110010', primary: '#fafafa', disabled: '#E5E5E5' },
-        background: { default: 'rgba(99,157,201,0.3)', paper: 'rgba(250, 250, 250, 0.3)'}, // gradient light blue, white
+        background: { default: 'rgba(99,157,201,0.3)', paper: 'rgba(255, 255, 255, 0.3)'}, // gradient light blue, white
     }) as PaletteOptions : ({
         common: { black: '#111010', white: '#fafafa'},
         primary: { main: '#fafafa', light: '#1b1a22' },
         secondary: { main: '#110010', light: 'a7afb8', dark: '858a94' }, // black and silver
         error: { main: '#ff0033' }, // red 
         warning: { main: '#fca311' }, // yellow
-        info: { main: 'rgba(32,42,83,1)' }, // blue
+        info: { main: 'rgba(32,42,83,1)', dark: 'rgba(28, 39, 81, 1)' }, // blue
         success: { main: '#4BB543' }, // green
         action: { active: 'rgba(20,27,53,0.85)' }, // darker default bg
         mode,
         grey: 600 as Partial<Color>,
         text:  { primary: '#fafafa', secondary: '#110010', disabled: '#E5E5E5' },
-        background: { default: 'rgba(229,229,229,0.3)', paper: 'rgba(250, 250, 250, 0.3)'}, // gradient dark blue, white
+        background: { default: 'rgba(229,229,229,0.3)', paper: 'rgba(255, 255, 255, 0.3)'}, // gradient dark blue, white
     }) as PaletteOptions
 
 
@@ -48,7 +48,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
         duration: {
             shortest: 150,
             shorter: 200,
-            short: 250,
+            short: 255,
             // most basic recommended timing
             standard: 300,
             // this is to be used in complex animations
@@ -75,6 +75,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
             '"Apple Color Emoji"',
             '"Segoe UI Emoji"',
             '"Segoe UI Symbol"',
+            '"Fira Code"'
             ].join(','),
             fontSize: 10,
             fontWeightBold: 700,

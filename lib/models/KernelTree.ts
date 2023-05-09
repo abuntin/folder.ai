@@ -132,9 +132,12 @@ export class Tree {
     return false;
   }
 
-  find(key: string): TreeNode | undefined {
-    for (let node of this.preOrderTraversal()) {
+  find(payload: {key?: string, name?: string, start?: TreeNode }): TreeNode | undefined {
+    const { key, name, start = this.root } = payload
+    if (!key && !name) return undefined
+    for (let node of this.preOrderTraversal(start)) {
       if (node.key === key) return node;
+      else if (name && node.folder.name == name) return node;
     }
     return undefined;
   }

@@ -16,7 +16,6 @@ export const TreeView: React.FC<TreeViewProps> = props => {
         backgroundColor: theme.palette.background.default,
         overflowX: 'hidden',
         overflowY: 'auto',
-        borderRadius: borderRadius * 2,
         height: '100%',
         padding: padding * 2
       }}
