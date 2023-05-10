@@ -79,7 +79,7 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
       {...rest}
     >
       <Link
-        onClick={e => { if (!path.includes('query') || path.length > 1) { e.preventDefault(); return } }}
+        onClick={e => { if (path != '/query' && path != '/') { e.preventDefault(); return } }}
         key={path}
         href={path}
         className={clsx(
