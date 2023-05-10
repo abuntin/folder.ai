@@ -86,7 +86,7 @@ export const Container: React.FC<ContainerProps> = props => {
               borderBottomRightRadius: borderRadius * 2,
             }}
           >
-            {/* <TreeView /> */}
+            <TreeView />
           </Collapse>
         </Box>
         <Box flexGrow={1} flexShrink={1} flexBasis="100%" sx={{ margin }}>
