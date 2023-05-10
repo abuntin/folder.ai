@@ -18,7 +18,7 @@ export const TreeRootSkeleton: React.FC<TreeRootProps> = ({ ...rest }) => (
     variants={listVariant}
     style={{ maxHeight: '100%' }}
   >
-    <TreeNodeSkeleton level={0} />
+    <TreeNodeSkeleton level={0} range={2} />
   </m.ul>
 );
 

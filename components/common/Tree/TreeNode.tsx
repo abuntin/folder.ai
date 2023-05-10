@@ -23,8 +23,9 @@ interface TreeNodeProps {
   level: number;
 }
 
-export const TreeNodeSkeleton: React.FC<Omit<TreeNodeProps, 'node'>> = ({
+export const TreeNodeSkeleton: React.FC<Omit<TreeNodeProps, 'node'> & { range: number }> = ({
   level,
+  range
 }) => {
   return (
     <m.li
@@ -48,7 +49,8 @@ export const TreeNodeSkeleton: React.FC<Omit<TreeNodeProps, 'node'>> = ({
           </div>
         </Stack>
       </div>
-      <m.ul
+      {range != 0 &&
+      (<m.ul
         initial="hidden"
         animate="visible"
         style={{
@@ -59,8 +61,9 @@ export const TreeNodeSkeleton: React.FC<Omit<TreeNodeProps, 'node'>> = ({
         }}
         variants={listVariant}
       >
-          <TreeSkeleton level={level + 1} />
-      </m.ul>
+          <TreeSkeleton level={level + 1} range={range - 1} />
+      </m.ul>)
+      }
     </m.li>
   );
 };

@@ -92,7 +92,7 @@ export const Container: React.FC<ContainerProps> = props => {
         <Box flexGrow={1} flexShrink={1} flexBasis="100%" sx={{ margin }}>
           <ChatBox />
         </Box>
-        <Box display="flex" flexGrow={1} flexShrink={1} maxWidth='70%'>
+        <Box display="flex" flexGrow={1} flexShrink={1} width='70%'>
           <Collapse
             in={view.console}
             unmountOnExit
@@ -108,6 +108,7 @@ export const Container: React.FC<ContainerProps> = props => {
               marginLeft: margin,
               borderTopLeftRadius: borderRadius * 4,
               borderBottomLeftRadius: borderRadius * 4,
+              width: '100%'
             }}
           >
             <ConsoleView />

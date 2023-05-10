@@ -11,15 +11,15 @@ interface TreeProps {
   level: number;
 }
 
-export const TreeSkeleton: React.FC<Omit<TreeProps, 'nodes'>> = ({ level }) => (
+export const TreeSkeleton: React.FC<Omit<TreeProps, 'nodes'> & { range: number }> = ({ level, range }) => (
   <m.ul
     initial="hidden"
     animate="visible"
     variants={listVariant}
     style={{ overflow: 'auto', maxHeight: 300 }}
   >
-    {Array(Math.floor(Math.random() * 2) + 2).fill(0).map((val, i) => (
-      <TreeNodeSkeleton level={level + 1} key={i} />
+    {Array(3).fill(0).map((val, i) => (
+      <TreeNodeSkeleton level={level + 1} range={range - 1} key={i} />
     ))}
   </m.ul>
 );

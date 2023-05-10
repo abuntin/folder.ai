@@ -1,14 +1,19 @@
 'use client';
 
 import * as React from 'react';
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, CircularProgress } from '@mui/material';
 import { SendSharp, CloseSharp } from '@mui/icons-material';
 import { borderRadius, borderWidth, padding, margin } from 'lib/constants';
-import { DInput, DText } from 'components/common';
+import { DInput, DText, LoadingComponent } from 'components/common';
+import { useQuery } from './context';
+import { BlinkAnimation } from 'components/animation';
 
 interface ChatBoxProps {}
 
 export const ChatBox: React.FC<ChatBoxProps> = props => {
+
+  const { currentDirectory } = useQuery()
+
   const [messages, setMessages] = React.useState<
     {
       text: string;
@@ -66,6 +71,7 @@ export const ChatBox: React.FC<ChatBoxProps> = props => {
   };
 
   return (
+    currentDirectory ? (
     <>
       <Box
         display="flex"
@@ -97,6 +103,7 @@ export const ChatBox: React.FC<ChatBoxProps> = props => {
         <DInput
           fullWidth
           variant="outlined"
+          placeholder='Hey Query! I need your help with...'
           onChange={handleInputChange}
           onKeyDown={e => e.key == 'Enter' && sendQuery(e)}
           sx={{ mr: margin }}
@@ -114,5 +121,53 @@ export const ChatBox: React.FC<ChatBoxProps> = props => {
         </IconButton>
       </Box>
     </>
+    ) : (
+      <>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent='center'
+        flexGrow={1}
+        flexShrink={1}
+        flexBasis="auto"
+        sx={{
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          height: '80%',
+          mb: margin * 2,
+          borderWidth,
+          borderRadius,
+          backgroundColor: 'background.paper'
+        }}
+      >
+        <LoadingComponent width={100} height={100} />
+      </Box>
+      <Box
+        display="flex"
+        flexGrow={0}
+        flexShrink={1}
+        flexBasis="auto"
+        flexDirection="row"
+        justifyContent="center"
+        alignItems="stretch"
+      >
+        <DInput
+          disabled={true}
+          fullWidth
+          placeholder='Preparing...'
+          variant="outlined"
+          sx={{ mr: margin }}
+          InputProps={{
+            endAdornment: (
+              <IconButton>
+                <CloseSharp sx={{ fontSize: 10 }} color="primary" />
+              </IconButton>
+            ),
+          }}
+        />
+        <CircularProgress color='primary' size={16} />
+      </Box>
+    </>
+    )
   );
 };

@@ -1,5 +1,5 @@
 import { AddSharp, GridViewSharp, ViewListSharp } from "@mui/icons-material";
-import { Box, Unstable_Grid2 as Grid, ToggleButtonGroup, ToggleButton } from "@mui/material";
+import { Box, Unstable_Grid2 as Grid, ToggleButtonGroup, ToggleButton, CircularProgress } from "@mui/material";
 import { padding, borderRadius } from "lib/constants";
 import { LoadingComponent } from "components/common";
 
@@ -32,7 +32,7 @@ export const HeaderSkeleton: React.FC<HeaderProps> = props => {
         justifyContent="space-between"
       >
         <Grid xs={6} display="flex" justifyContent="center">
-          <AddSharp sx={{ fontSize: 20 }} color="primary" />
+        <CircularProgress color='primary' size={20} />
         </Grid>
         <Grid xs={6} display="flex" justifyContent="start">
           <ToggleButtonGroup exclusive disabled={true}>

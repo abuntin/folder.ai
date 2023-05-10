@@ -66,7 +66,11 @@ export const Console = React.forwardRef(
             beginCommand(command.toLowerCase());
             let args = tokens.slice(1, tokens.length);
             args = args.length ? args : [];
-            await fn?.apply(this, args);
+            try {
+                await fn?.apply(this, args);
+            } catch (e) {
+                throwError('Error executing command ' + e)
+            }
           } else
             throwError('Unknown command. Type --help for docs and how-tos.');
 
@@ -93,7 +97,8 @@ export const Console = React.forwardRef(
     return (
       <Box
         sx={{
-          overflowY: 'auto',
+          overflowY: 'scroll',
+          maxHeight: '100%',
           backgroundColor: 'transparent',
           color: '#c4c4c4',
           padding: 2,
@@ -106,15 +111,10 @@ export const Console = React.forwardRef(
         <Box sx={{ overflowY: 'scroll' }} flexGrow={0} flexShrink={1} flexBasis='auto'>
           {history.map((line, index) => (
             <Box
-              display="flex"
-              flexDirection="column"
-              flexGrow={1}
-              flexShrink={1}
-              flexBasis="auto"
               mb={margin}
               sx={{
-                overflowY: 'auto',
-                overflowX: 'hidden',
+                overflowY: 'hidden',
+                overflowX: 'auto',
               }}
             >
               {line} {'\n'}
