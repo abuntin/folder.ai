@@ -20,13 +20,10 @@ import logo from 'public/logo_transparent.svg';
 
 const navItems = {
   '/': {
-    name: 'Home',
+    name: 'My Directory',
   },
   '/query': {
     name: 'Query by FolderAI',
-  },
-  '/directory': {
-    name: 'Directory',
   },
   '/subscription': {
     name: 'Account',
@@ -82,6 +79,7 @@ const HeaderItem = ({ active, path, name, ...rest }) => {
       {...rest}
     >
       <Link
+        onClick={e => { if (!path.includes('query') || path.length > 1) { e.preventDefault(); return } }}
         key={path}
         href={path}
         className={clsx(
