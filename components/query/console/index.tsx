@@ -1,7 +1,7 @@
-import React from 'react';
-import { Console } from './Console';
-import { useQuery } from '../context';
 import { DText } from 'components/common';
+import React from 'react';
+import { useQuery } from '../context';
+import { Console } from './Console';
 
 interface ConsoleViewProps {}
 
@@ -17,11 +17,12 @@ export const ConsoleView: React.FC<ConsoleViewProps> = props => {
       pushNotificationDelay,
       commands,
     },
-    currentDirectory,
+    loading,
+    query
   } = useQuery();
 
   React.useEffect(() => {
-    if (currentDirectory) {
+    if (query.currentDirectory && !loading.console) {
       pushNotification({
         severity: 'success',
         text: 'Initialised successfully.',
@@ -36,12 +37,11 @@ export const ConsoleView: React.FC<ConsoleViewProps> = props => {
 
       return () => {}
     }
-  }, [currentDirectory]);
+  }, [query.currentDirectory, loading.console]);
 
   React.useEffect(() => {
     resetConsole();
     pushNotification({ severity: 'info', text: 'Initialising Query...' });
-
   }, []);
 
   return (
@@ -49,9 +49,9 @@ export const ConsoleView: React.FC<ConsoleViewProps> = props => {
       commands={commands}
       history={history}
       ref={setConsoleRef}
-      enabled={currentDirectory != null}
+      disabled={loading.console}
       promptLabel={
-        <DText code text={`${currentDirectory?.folder?.name ?? ''} > `} />
+        <DText code text={`${query.currentDirectory?.folder?.name ?? ''} > `} />
       }
     />
   );

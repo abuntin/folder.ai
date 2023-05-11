@@ -8,10 +8,18 @@ export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
   req,
   res
 ) => {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    res.status(405).json({
+      data: null,
+      error: 'Method Not Allowed',
+    });
+    return;
+  }
   try {
     console.log('Initialised FolderManager.copy()');
 
-    const { folders, directory, type } = JSON.parse(req.body)
+    const { folders, directory, type } = JSON.parse(req.body);
 
     if (!type || type !== 'copy')
       return res
@@ -34,7 +42,7 @@ export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
     let urls = [];
 
     for (let src of srcList) {
-      let {url} = await copy({src, dest});
+      let { url } = await copy({ src, dest });
 
       urls.push(url);
     }

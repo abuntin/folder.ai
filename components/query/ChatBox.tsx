@@ -6,13 +6,11 @@ import { SendSharp, CloseSharp } from '@mui/icons-material';
 import { borderRadius, borderWidth, padding, margin } from 'lib/constants';
 import { DInput, DText, LoadingComponent } from 'components/common';
 import { useQuery } from './context';
-import { BlinkAnimation } from 'components/animation';
 
 interface ChatBoxProps {}
 
 export const ChatBox: React.FC<ChatBoxProps> = props => {
-
-  const { currentDirectory } = useQuery()
+  const { loading } = useQuery();
 
   const [messages, setMessages] = React.useState<
     {
@@ -70,8 +68,7 @@ export const ChatBox: React.FC<ChatBoxProps> = props => {
     setInputText('');
   };
 
-  return (
-    currentDirectory ? (
+  return !loading.query ? (
     <>
       <Box
         display="flex"
@@ -103,7 +100,7 @@ export const ChatBox: React.FC<ChatBoxProps> = props => {
         <DInput
           fullWidth
           variant="outlined"
-          placeholder='Hey Query! I need your help with...'
+          placeholder="Hey Query! I need your help with..."
           onChange={handleInputChange}
           onKeyDown={e => e.key == 'Enter' && sendQuery(e)}
           sx={{ mr: margin }}
@@ -121,12 +118,12 @@ export const ChatBox: React.FC<ChatBoxProps> = props => {
         </IconButton>
       </Box>
     </>
-    ) : (
-      <>
+  ) : (
+    <>
       <Box
         display="flex"
         alignItems="center"
-        justifyContent='center'
+        justifyContent="center"
         flexGrow={1}
         flexShrink={1}
         flexBasis="auto"
@@ -137,7 +134,7 @@ export const ChatBox: React.FC<ChatBoxProps> = props => {
           mb: margin * 2,
           borderWidth,
           borderRadius,
-          backgroundColor: 'background.paper'
+          backgroundColor: 'background.paper',
         }}
       >
         <LoadingComponent width={100} height={100} />
@@ -154,7 +151,7 @@ export const ChatBox: React.FC<ChatBoxProps> = props => {
         <DInput
           disabled={true}
           fullWidth
-          placeholder='Preparing...'
+          placeholder="Preparing..."
           variant="outlined"
           sx={{ mr: margin }}
           InputProps={{
@@ -165,9 +162,12 @@ export const ChatBox: React.FC<ChatBoxProps> = props => {
             ),
           }}
         />
-        <CircularProgress color='primary' size={16} />
+        <CircularProgress
+          color="primary"
+          size={16}
+          sx={{ alignSelf: 'center' }}
+        />
       </Box>
     </>
-    )
   );
 };

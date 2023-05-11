@@ -23,7 +23,11 @@ export const TreeRootSkeleton: React.FC<TreeRootProps> = ({ ...rest }) => (
 );
 
 export const TreeRoot: React.FC<TreeRootProps> = ({ ...rest }) => {
-  const { rootDirectory } = useQuery();
+  const {
+    query: {
+      kernel: { rootDirectory },
+    },
+  } = useQuery();
 
   return (
     <TreeProvider>

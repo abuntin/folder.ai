@@ -10,7 +10,7 @@ export const Console = React.forwardRef(
       history = [],
       promptLabel = '>',
       commands = {},
-      enabled = true,
+      disabled = false,
     } = props;
 
     /**
@@ -123,7 +123,7 @@ export const Console = React.forwardRef(
         </Box>
 
         <Box display="flex" alignItems="center">
-          {enabled && (
+          {!disabled && (
             <>
               <Box flexGrow={0} flexShrink={0} flexBasis="auto">
                 {promptLabel}

@@ -18,7 +18,7 @@ export type ConsoleProps = {
   history: ConsoleHistory;
   promptLabel?: ConsoleHistoryItem;
   commands: ConsoleCommands;
-  enabled?: boolean
+  disabled?: boolean
 };
 
 export interface ConsoleState {

@@ -2,6 +2,8 @@ import { protos } from '@google-cloud/documentai';
 
 export type { FolderManagerInterface } from './FolderManagerInterface';
 
+export type { QueryInterface } from './QueryInterface';
+
 export type IDocument_DocAI = protos.google.cloud.documentai.v1.IDocument;
 
 export {

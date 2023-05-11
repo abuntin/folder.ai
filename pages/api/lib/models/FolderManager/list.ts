@@ -9,6 +9,14 @@ export const listFolder: PropType<FolderManagerInterface, 'list'> = async (
   req,
   res
 ) => {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    res.status(405).json({
+      data: null,
+      error: 'Method Not Allowed',
+    });
+    return;
+  }
   try {
     console.log('Initialised FolderManager.list()');
     const { directory, type } = req.body;

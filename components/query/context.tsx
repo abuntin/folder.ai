@@ -1,6 +1,6 @@
 import { useKernel } from 'components/app';
 import { DText } from 'components/common';
-import { TreeNode } from 'lib/models';
+import { Query, TreeNode } from 'lib/models';
 import * as React from 'react';
 import { useConsole, ConsoleState, ConsoleCommands } from './console/hooks';
 import {
@@ -8,9 +8,11 @@ import {
   ConsoleNotification,
 } from './console/Notification';
 
+type LoadingType = 'query' | 'console'
+
 interface QueryContextInterface {
-  rootDirectory: TreeNode;
-  currentDirectory: TreeNode;
+  loading: { [k in LoadingType]: boolean };
+  query: Query;
   console: ConsoleState & {
     commands: ConsoleCommands;
     pushNotification: (payload: ConsoleNotificationProps) => void;
@@ -37,20 +39,60 @@ export const useQuery = () => {
 };
 
 export const QueryProvider = ({ children, ...rest }) => {
-  const {
-    kernel: { folderTree, rootDirectory },
-  } = useKernel();
+  const { kernel } = useKernel();
 
-  const [currentDirectory, setCurrentDirectory] = React.useState<TreeNode>(
-    rootDirectory ?? null
-  );
+  const { current: query } = React.useRef(new Query(kernel));
+
+  const [isPending, startTransition] = React.useTransition()
+
+  const [loading, setLoadingState] = React.useState<
+    QueryContextInterface['loading']
+  >({
+    query: true,
+    console: true,
+  });
+
+  const setLoading = (state: boolean, type: LoadingType | 'all') =>
+    startTransition(() => {
+      if (type == 'all') setLoadingState({ query: state, console: state })
+      else setLoadingState({ ...loading, [type]: state })
+  });
 
   React.useEffect(() => {
-    if (currentDirectory == null && rootDirectory != null) {
-      setCurrentDirectory(rootDirectory);
-      return () => {};
+    if (kernel.rootDirectory) {
+      query.updateKernel(kernel);
+      try {
+        query.init();
+      } catch (e) {
+        console.error(e);
+      }
     }
-  }, [rootDirectory]);
+  }, [kernel.rootDirectory]);
+
+  // Listen for loading event
+
+  React.useEffect(() => {
+    const loadingEvent = query.on('loading', (type: LoadingType) =>
+      setLoading(true, type)
+    );
+
+    return () => {
+      loadingEvent.unsubscribe();
+    };
+  }, [query]);
+
+   // Listen for idle (success) event
+
+   React.useEffect(() => {
+    const idleEvent = query.on('idle', success =>
+      setLoading(false, 'all')
+    );
+
+    return () => {
+      idleEvent.unsubscribe();
+    };
+  }, [query]);
+
   const {
     history,
     pushToHistory,
@@ -121,13 +163,12 @@ export const QueryProvider = ({ children, ...rest }) => {
           "Change Query working directory. You can specify any Directory you'd like",
         fn: (...args) => {
           let directory = args[0] as string;
-          let result = folderTree.find({ name: directory });
+          let result = query.changeDirectory({ name: directory });
 
           if (result) {
-            setCurrentDirectory(result);
             pushNotification({
               severity: 'info',
-              text: `Changed working Directory. Now in ${result.folder.name}`,
+              text: `Changed working Directory. Now in ${query.currentDirectory.folder.name}`,
             });
           } else
             pushNotification({ severity: 'error', text: 'Unknown Directory' });
@@ -155,6 +196,7 @@ export const QueryProvider = ({ children, ...rest }) => {
   return (
     <QueryContext.Provider
       value={{
+        loading,
         console: {
           history,
           pushToHistory,
@@ -168,8 +210,7 @@ export const QueryProvider = ({ children, ...rest }) => {
           pushTextDelay,
           commands,
         },
-        rootDirectory,
-        currentDirectory,
+        query,
       }}
     >
       {children}

@@ -95,7 +95,7 @@ export const KernelProvider = ({ children, ...rest }) => {
 
   const setLoading = (state: boolean, type: LoadingType | 'all') =>
     startTransition(() => {
-      if (type == 'all') setLoadingState({ folders: false, tree: false })
+      if (type == 'all') setLoadingState({ folders: state, tree: state })
       else setLoadingState({ ...loading, [type]: state })
     });
 

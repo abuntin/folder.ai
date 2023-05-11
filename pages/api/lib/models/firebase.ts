@@ -58,4 +58,4 @@ export const folderManagerService = new FolderManager({
   delete: deleteFolders,
   move: moveFolders,
   copy: copyFolders,
-}, inngest);
+}, inngest)
