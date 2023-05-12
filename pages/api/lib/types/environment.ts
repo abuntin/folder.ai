@@ -10,6 +10,7 @@ export const OAUTH_CLIENT_SECRET = process.env.OAUTH_CLIENT_SECRET
 
 export const PINECONE_ENVIRONMENT = process.env.PINECONE_ENVIRONMENT;
 export const PINECONE_API_KEY = process.env.PINECONE_API_KEY;
+export const PINECONE_INDEX = process.env.PINECONE_INDEX;
 
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 

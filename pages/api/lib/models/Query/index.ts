@@ -1,17 +1,27 @@
 import { PineconeClient as PineClient } from '@pinecone-database/pinecone';
 import { VectorOperationsApi } from '@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
+import { OpenAI } from 'langchain/llms/openai';
+import { PineconeStore } from 'langchain/vectorstores';
+import {
+  VectorStoreToolkit,
+  createVectorStoreAgent,
+  VectorStoreInfo,
+} from 'langchain/agents';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { pineconeConfig, chunkOverlap, chunkSize } from '../langchain';
 import { QueryInterface } from '../../types';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { GCSLoader } from '../DocumentLoader';
 
 export class QueryService implements QueryInterface {
+  Model: OpenAI = null;
   Embeddings: OpenAIEmbeddings = null;
   TextSplitter: RecursiveCharacterTextSplitter = null;
   PineconeClient: PineClient = null;
-
-  index: VectorOperationsApi = null;
+  VectorIndex: VectorOperationsApi = null;
+  VectorStore: PineconeStore = null;
+  Agent: VectorStoreInfo = null;
 
   constructor(data?: Partial<QueryService>) {
     if (data) {
@@ -23,7 +33,13 @@ export class QueryService implements QueryInterface {
       }
     }
 
-    this.PineconeClient = new PineClient()
+    this.PineconeClient = new PineClient();
+
+    this.Model = new OpenAI({
+      modelName: 'text-davinci-003',
+      temperature: 0,
+      openAIApiKey: process.env.OPENAI_API_KEY,
+    });
 
     this.Embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY,
@@ -33,6 +49,8 @@ export class QueryService implements QueryInterface {
       chunkSize,
       chunkOverlap,
     });
+
+
   }
 
   /**
@@ -50,7 +68,7 @@ export class QueryService implements QueryInterface {
 
     try {
       console.log('Initialised QueryService.init()');
-      
+
       const { type } = req.body;
 
       if (!type || type !== 'init')
@@ -60,7 +78,20 @@ export class QueryService implements QueryInterface {
 
       await this.PineconeClient.init(pineconeConfig);
 
-      this.index = this.PineconeClient.Index('root');
+      this.VectorIndex = this.PineconeClient.Index('root');
+
+      this.VectorStore = await PineconeStore.fromExistingIndex(
+        this.Embeddings,
+        {
+          pineconeIndex: this.VectorIndex,
+        }
+      );
+
+      this.Agent = {
+        name: "state_of_union_address",
+        description: "the most recent state of the Union address",
+        vectorStore: this.VectorStore,
+      };
 
       console.log('Initialised Pinecone');
 
@@ -70,5 +101,10 @@ export class QueryService implements QueryInterface {
         .status(500)
         .json({ data: null, error: e?.message ?? 'Error initialising Query' });
     }
+  };
+
+  public startChain = async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
+    } catch (e) {}
   };
 }

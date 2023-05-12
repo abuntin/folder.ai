@@ -11,9 +11,19 @@ import { createDirectory } from './FolderManager/create';
 import { deleteFolders } from './FolderManager/delete';
 import { moveFolders } from './FolderManager/move';
 import { copyFolders } from './FolderManager/copy';
-import { API_KEY, AUTH_DOMAIN, STORAGE_BUCKET, MESSAGING_SENDER_ID, MEASUREMENT_ID, APP_ID, PROJECT_ID } from '../types';
+import {
+  API_KEY,
+  AUTH_DOMAIN,
+  STORAGE_BUCKET,
+  MESSAGING_SENDER_ID,
+  MEASUREMENT_ID,
+  APP_ID,
+  PROJECT_ID,
+  OAUTH_CLIENT_ID,
+  OAUTH_CLIENT_SECRET,
+  SERVICE_ACCOUNT_DOCAI,
+} from '../types';
 import inngest from 'pages/api/inngest';
-import { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, SERVICE_ACCOUNT_DOCAI } from '../types/environment';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -40,22 +50,25 @@ export const StorageClient = new Storage({
   projectId: PROJECT_ID,
   credentials: SERVICE_ACCOUNT_DOCAI,
   clientOptions: {
-      clientId: OAUTH_CLIENT_ID,
-      clientSecret: OAUTH_CLIENT_SECRET,
-      scopes: [
-        'https://www.googleapis.com/auth/devstorage.read_write',
-        'https://www.googleapis.com/auth/cloud-platform'
-      ]
-    }
+    clientId: OAUTH_CLIENT_ID,
+    clientSecret: OAUTH_CLIENT_SECRET,
+    scopes: [
+      'https://www.googleapis.com/auth/devstorage.read_write',
+      'https://www.googleapis.com/auth/cloud-platform',
+    ],
+  },
 });
 
-export const folderManagerService = new FolderManager({
-  init: initFolderManager,
-  upload: uploadFolder,
-  list: listFolder,
-  rename: renameFolder,
-  create: createDirectory,
-  delete: deleteFolders,
-  move: moveFolders,
-  copy: copyFolders,
-}, inngest)
+export const folderManagerService = new FolderManager(
+  {
+    init: initFolderManager,
+    upload: uploadFolder,
+    list: listFolder,
+    rename: renameFolder,
+    create: createDirectory,
+    delete: deleteFolders,
+    move: moveFolders,
+    copy: copyFolders,
+  },
+  inngest
+);
