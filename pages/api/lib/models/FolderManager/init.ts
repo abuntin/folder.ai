@@ -1,44 +1,41 @@
-import { listAll } from 'firebase/storage';
-import { Directory, Folder } from 'lib/models';
-import { PropType } from 'lib/types';
-import { FolderManagerInterface } from '../../types';
-import { root } from '../firebase';
+import { list } from 'firebase/storage';
+import { Directory, FolderAIMetadata } from 'lib/models';
+import { getUserMetadata } from '../../functions';
+import { root as rootStorage } from '../firebase';
 
-export const initFolderManager: PropType<
-  FolderManagerInterface,
-  'init'
-> = async (req, res) => {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    res.status(405).json({
-      data: null,
-      error: 'Method Not Allowed',
-    });
-    return;
-  }
+export const initFolderManager = async (
+  req,
+  res
+): Promise<{
+  data: {
+    root: Directory;
+  };
+  error: string | null;
+}> => {
   try {
+
+    let { type } = req.body
+
+    if (!type || type !== 'init') return { data: null, error: 'Invalid NextApiRequest type'}
+
     console.log('Initialised FolderManager.init()');
 
-    let listRes = await listAll(root);
+    let listRes = await list(rootStorage);
 
     let rootRef = listRes.prefixes[0];
 
-    let rootDirectory = {
-      name: rootRef.name,
-      path: Folder.pathFromFullPath(rootRef.fullPath),
-      fullPath: rootRef.fullPath,
-      isDirectory: true,
-      id: 'rootID',
-      url: rootRef.toString(),
-    } as Directory;
+    let root = Directory.fromStorageReference({
+      reference: rootRef,
+      id: 'root',
+    });
 
-    console.log('Obtained root folder')
+    // let processResult = await indexDirectory({ src: rootDirectory })
 
-    return res.status(200).json({ data: rootDirectory, error: null });
+    console.log('Obtained root folder');
+
+    return { data: { root }, error: null };
   } catch (e) {
     console.error(e);
-    return res
-      .status(500)
-      .json({ data: null, error: 'Unable to fetch root folder' });
+    return { data: null, error: 'Unable to fetch root folder' };
   }
 };

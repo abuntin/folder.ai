@@ -1,49 +1,41 @@
-import { BaseDocumentLoader } from 'langchain/document_loaders';
+import { BaseDocumentLoader } from 'langchain/document_loaders/base';
 import { Document } from 'langchain/dist/document';
 import { TextSplitter } from 'langchain/text_splitter';
+import { root } from '../firebase';
+import { ref, list } from 'firebase/storage';
+import pdf from 'pdf-parse';
+import { parseOfficeAsync } from 'officeparser';
+import { getBytes, getMetadata, StorageReference } from 'firebase/storage';
 
-export interface GCSLoaderParams {
-  bucket: string;
-  src: string | string[];
-  gcsConfig?: GCSConfig;
-  isDirectory?: boolean;
+export interface FirebaseStorageLoaderParams {
+  src?: string[];
+  bucket?: string;
+  firebaseAppConfig?: FirebaseAppConfig;
+  maxResults?: number;
 }
 
-interface GCSConfig {
-  projectId?: string;
-  credentials?: Record<string, any>;
-  clientOptions?: {
-    clientId: string;
-    clientSecret: string;
-    scopes: string[];
-  };
-}
+interface FirebaseAppConfig {}
 
-export class GCSLoader extends BaseDocumentLoader {
+export class FirebaseStorageLoader extends BaseDocumentLoader {
+  private src: string[];
+
   private bucket: string;
 
-  private src: string | string[];
+  private firebaseAppConfig: FirebaseAppConfig;
 
-  private gcsConfig: GCSConfig;
+  private maxResults: number = null;
 
-  private isDirectory: boolean;
-
-  constructor({ bucket, src, gcsConfig = {}, isDirectory }: GCSLoaderParams) {
+  constructor({
+    src = [],
+    bucket = '',
+    firebaseAppConfig = {},
+    maxResults = 100,
+  }: FirebaseStorageLoaderParams) {
     super();
-    this.bucket = bucket;
     this.src = src;
-    this.gcsConfig = {
-      ...gcsConfig,
-      clientOptions: {
-        ...gcsConfig.clientOptions,
-        scopes: [
-          ...gcsConfig.clientOptions.scopes,
-          'https://www.googleapis.com/auth/devstorage.read_write',
-          'https://www.googleapis.com/auth/cloud-platform',
-        ],
-      },
-    };
-    this.isDirectory = isDirectory;
+    this.bucket = bucket;
+    this.firebaseAppConfig = firebaseAppConfig;
+    this.maxResults = maxResults;
   }
 
   private _load = async (): Promise<{
@@ -51,77 +43,36 @@ export class GCSLoader extends BaseDocumentLoader {
     metadatas: Record<string, any>[];
   }> =>
     new Promise(async (resolve, reject) => {
-      const { gcsModule, pdfParse, parseOfficeAsync } =
-        await GCSLoaderImports();
-
-      let { Storage } = gcsModule;
+      if (!this.src.length || this.bucket == '')
+        throw new Error('Missing loader args');
 
       try {
-        const StorageClient = new Storage(this.gcsConfig);
-
-        if (Array.isArray(this.src)) {
-          return null;
-        }
-
-        let [files, {}, metadata] = await StorageClient.bucket(
-          this.bucket
-        ).getFiles({
-          prefix: this.src,
-        });
-
-        type GCSFile = (typeof files)[0];
-
-        if (!files.length) throw new Error('Could not find src file/directory');
-
-        if (files.length > 1 && !this.isDirectory)
-          throw new Error('Multiple files found, is this path a directory?');
-
-        const parseFile = async (file: GCSFile) => {
-          let type = file.metadata?.contentType ?? 'text/plain';
-          let [buffer] = await file.download();
-          let { text } = await parseDocument(
-            { type, buffer },
-            pdfParse,
-            parseOfficeAsync
-          );
-          return text;
-        };
-
         let texts: string[] = [];
 
         let metadatas: Record<string, any>[] = [];
 
-        let p =
-          this.src[this.src.length - 1] == '/'
-            ? this.src.slice(0, this.src.length - 1)
-            : this.src;
+        for (let src of this.src) {
+          let srcRef = ref(root, src);
 
-        let parts = p.split('/');
+          let listResult = await list(srcRef, {
+            maxResults: this.maxResults,
+          });
 
-        let directoryName = parts[parts.length - 1];
+          let { texts: _t, metadatas: _m } = await this.documentFromStorageReference(
+            listResult.items
+          );
 
-        for (let file of files) {
-          try {
-            let text = await parseFile(file);
-            texts.push(text);
+          texts.concat(_t)
 
-            let metadata = this.isDirectory
-              ? {
-                  directory: directoryName,
-                }
-              : {};
-
-            metadatas.push(metadata);
-          } catch (e) {
-            throw new Error(`Error parsing file ${file.name}`);
-          }
+          metadatas.concat(_m)
         }
 
         resolve({ texts, metadatas });
       } catch (e) {
+        console.error(e);
         reject(
           e?.message ??
-            `Failed to download file ${this.src} from GCS bucket ${this.bucket}.`
+            `Failed to download file ${this.src} from FirebaseStorage bucket ${this.bucket}.`
         );
       }
     });
@@ -137,7 +88,9 @@ export class GCSLoader extends BaseDocumentLoader {
 
       return documents;
     } catch (e) {
-      throw new Error(`GCSLoader: ${e?.message ?? 'Unable to load files'}`);
+      throw new Error(
+        `FirebaseStorageLoader: ${e?.message ?? 'Unable to load files'}`
+      );
     }
   };
 
@@ -147,70 +100,124 @@ export class GCSLoader extends BaseDocumentLoader {
     try {
       let { texts, metadatas } = await this._load();
 
+      if (!splitter) throw new Error('No splitter instance provided');
+
       let documents = splitter.createDocuments(texts, metadatas);
 
       return documents;
     } catch (e) {
-      throw new Error(`GCSLoader: ${e?.message ?? 'Unable to load and split files'}`);
+      throw new Error(
+        `FirebaseStorageLoader: ${
+          e?.message ?? 'Unable to load and split files'
+        }`
+      );
     }
   }
+
+  public documentFromStorageReference = async (refs: StorageReference[]) => {
+    let texts = [] as string[],
+      metadatas = [] as Record<string, any>[];
+
+    for (let ref of refs) {
+      let _metadata = await getMetadata(ref);
+      let type = _metadata.contentType;
+      let buffer = await getBytes(ref);
+      let { text } = await this.parseDocument(
+        { type, buffer },
+        pdf,
+        parseOfficeAsync
+      );
+
+      let metadata = {
+        ..._metadata.customMetadata,
+        name: ref.name.replace(/\.[^/.]+$/, ''), // name minus file extension
+        type,
+        directory: this.getParent(ref.fullPath),
+        updated: _metadata.updated,
+        created: _metadata.timeCreated,
+      };
+
+      texts.push(text);
+      metadatas.push(metadata);
+    }
+    return { texts, metadatas };
+  };
+
+  public parseDocument = async (
+    payload: {
+      type: string;
+      buffer: Buffer | ArrayBuffer;
+    },
+    pdfParse,
+    parseOfficeAsync
+  ): Promise<{ text: string }> =>
+    new Promise(async (resolve, reject) => {
+      try {
+        const { type, buffer: _buffer } = payload;
+
+        let buffer = _buffer instanceof Buffer ? _buffer : Buffer.from(_buffer);
+
+        if (type.includes('image'))
+          resolve({ text: '' }); //TODO: Expand with img, video, sound etc
+        else if (type.includes('pdf')) {
+          let pdfResult = await pdfParse(buffer, {
+            max: 10,
+          });
+
+          let { text } = pdfResult;
+
+          resolve({ text });
+        } else if (type.includes('officedocument')) {
+          let text = await parseOfficeAsync(buffer);
+
+          resolve({ text });
+        } else if (type === 'text/plain') {
+          let text = buffer.toString();
+
+          resolve({ text });
+        } else throw new Error('Unknown Mime Type');
+      } catch (e) {
+        console.error(e);
+        reject(e.message);
+      }
+    });
+
+  public getParentPath = (path: string) => {
+    let pathParts = path.split('/');
+
+    if (pathParts.length < 3) return '';
+
+    let lastPart = pathParts[pathParts.length - 2];
+    if (lastPart[0] == '.')
+      return pathParts.slice(0, pathParts.length - 2).join('/');
+    else return pathParts.slice(0, pathParts.length - 1).join('/');
+  };
+  public getParent = (path: string) => {
+    let pathParts = this.getParentPath(path).split('/');
+    return pathParts[pathParts.length - 1];
+  };
 }
 
-const parseDocument = async (
-  payload: {
-    type: string;
-    buffer: Buffer | ArrayBuffer;
-  },
-  pdfParse,
-  parseOfficeAsync
-): Promise<{ text: string }> =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const { type, buffer: _buffer } = payload;
-
-      let buffer = _buffer instanceof Buffer ? _buffer : Buffer.from(_buffer);
-
-      if (type.includes('image'))
-        resolve({ text: '' }); //TODO: Expand with img, video, sound etc
-      else if (type.includes('pdf')) {
-        let pdfResult = await pdfParse(buffer, {
-          max: 10,
-        });
-
-        let { text } = pdfResult;
-
-        resolve({ text });
-      } else if (type.includes('officedocument')) {
-        let text = await parseOfficeAsync(buffer);
-
-        resolve({ text });
-      } else if (type === 'text/plain') {
-        let text = buffer.toString();
-
-        resolve({ text });
-      } else throw new Error('Unknown Mime Type');
-    } catch (e) {
-      reject(e.message);
-    }
-  });
-
-async function GCSLoaderImports() {
+async function FirebaseStorageLoaderImports() {
   try {
-    const gcsModule = await import('@google-cloud/storage');
+    const firebaseAppModule = await import('firebase/app')
+
+    const firebaseStorageModule = await import('firebase/storage')
 
     const pdfParse = await import('pdf-parse');
 
     const { parseOfficeAsync } = await import('officeparser');
 
-    return { gcsModule, pdfParse, parseOfficeAsync } as {
-      gcsModule: typeof gcsModule;
+    return { firebaseAppModule, firebaseStorageModule, pdfParse, parseOfficeAsync } as {
+      firebaseAppModule: typeof firebaseAppModule;
+      firebaseStorageModule: typeof firebaseStorageModule;
       pdfParse: typeof pdfParse;
       parseOfficeAsync: typeof parseOfficeAsync;
     };
   } catch (e) {
     console.error(e);
     throw new Error(
-      "Failed to load GCS Loader Imports'. Please install it eg. `npm i @google-cloud/storage pdf-parse officeparser`."
+      "Failed to load FirebaseStorage Loader Imports'. Please install it eg. `npm i firebase pdf-parse officeparser`."
     );
   }
 }

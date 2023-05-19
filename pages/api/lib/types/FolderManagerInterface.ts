@@ -1,4 +1,5 @@
-import { Directory, Folder } from 'lib/models';
+import { Directory, Folder, FolderAIMetadata } from 'lib/models';
+import { PropType } from 'lib/types';
 import { NextApiHandler } from 'next';
 
 export interface FolderManagerInterface {
@@ -7,7 +8,13 @@ export interface FolderManagerInterface {
    * @param data with no attributes for now TODO: Add User ID
    * @returns Root Directory | Error message
    */
-  init: NextApiHandler<{ data: Directory | null; error: string | null }>;
+  init: NextApiHandler<{
+    data: {
+      root: Directory;
+      metadata: FolderAIMetadata;
+    } | null;
+    error: string | null;
+  }>;
   /**
    *
    * @param data with src Folder attribute
@@ -28,8 +35,8 @@ export interface FolderManagerInterface {
    * second parameter will be the directory path that will be created into.
    */
   create: NextApiHandler<{
-    data: { url: string },
-    error: string | null
+    data: { url: string };
+    error: string | null;
   }>;
 
   /**
@@ -49,8 +56,8 @@ export interface FolderManagerInterface {
    * the second parameter will be the new path.
    */
   rename: NextApiHandler<{
-    data: { url: string },
-    error: string | null
+    data: { url: string };
+    error: string | null;
   }>;
 
   /**
@@ -85,6 +92,18 @@ export interface FolderManagerInterface {
   upload: NextApiHandler<{
     data: {
       urls: { [name: string]: string };
+    } | null;
+    error: string | null;
+  }>;
+
+  /**
+   * Index the given Directory to Pinecone
+   * @param
+   * @returns
+   */
+  index: NextApiHandler<{
+    data: {
+      urls: string[];
     } | null;
     error: string | null;
   }>;

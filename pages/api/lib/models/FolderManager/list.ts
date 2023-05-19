@@ -1,50 +1,34 @@
-import { ref, listAll, getMetadata } from 'firebase/storage';
-import { Directory, Folder } from 'lib/models';
-import { PropType } from 'lib/types';
+import { StorageReference } from 'firebase/storage';
+import { Folder, Directory } from 'lib/models';
 import { list } from '../../functions';
-import { FolderManagerInterface } from '../../types';
-import { root } from '../firebase';
 
-export const listFolder: PropType<FolderManagerInterface, 'list'> = async (
+export const listFolder = async (
   req,
-  res
-) => {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    res.status(405).json({
-      data: null,
-      error: 'Method Not Allowed',
-    });
-    return;
-  }
+  res,
+  root: StorageReference
+): Promise<{ data: { folders: Folder[], directories: Directory[] } | null, error: string | null }> => {
   try {
     console.log('Initialised FolderManager.list()');
     const { directory, type } = req.body;
 
     if (!type || type !== 'list')
-      return res
-        .status(405)
-        .json({ data: null, error: 'Invalid NextApiRequest type' });
+      return { data: null, error: 'Invalid NextApiRequest type' };
 
     let src = directory as Directory;
 
     if (!Object.prototype.hasOwnProperty.call(src, 'path'))
-      return res
-        .status(400)
-        .json({ data: null, error: "Invalid directory: Missing 'path'" });
+      return { data: null, error: "Invalid directory: Missing 'path'" };
 
     if (!src.isDirectory)
-      res.status(400).json({ data: null, error: 'Called list on Folder' });
+      return { data: null, error: 'Called list on Folder' };
 
-    let { folders, directories } = await list({ src })
+    let { folders, directories } = await list({ src, root })
 
     console.log('Obtained Folder children');
 
-    return res
-      .status(200)
-      .json({ data: { folders, directories }, error: null });
+    return { data: { folders, directories }, error: null };
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ data: null, error: 'Unable to load Folder' });
+    return { data: null, error: 'Unable to load Folder' };
   }
 };

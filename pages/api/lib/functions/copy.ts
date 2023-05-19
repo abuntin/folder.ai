@@ -7,9 +7,13 @@ import {
 } from 'firebase/storage';
 import { Folder, Directory } from 'lib/models';
 import { root } from '../models/firebase';
-import { ValidFileTypes } from '../types';
-import { getFolderMetadataRef } from './metadata';
+import { ValidFileTypes, DOCUMENT_PATH } from '../types';
 import { upload } from './upload';
+import { indexToPinecone } from './document';
+import { markAsIndexed } from './metadata';
+import { getDocumentPath } from '.';
+import { Dayjs } from 'dayjs';
+
 
 export const copy = (payload: {
   src: Folder;
@@ -41,20 +45,20 @@ export const copy = (payload: {
           // e.g. 'user/' ==> ['user', '']
           throw new Error('Tried to copy root');
 
-        let srcRefDoc = ref(parentRef, `/.documentai/${src.name}`);
+        let srcRefDoc = ref(parentRef, `/${DOCUMENT_PATH}/${src.name}`);
 
-        let destRefDoc = ref(destRef, `/.documentai/${src.name}`);
+        let destRefDoc = ref(destRef, `/${DOCUMENT_PATH}/${src.name}`);
 
         const metadata = await getMetadata(srcRef);
 
-        // check if the src Folder is already in the target Directory
+        // Update metadata
 
         let newMetadata = {
           ...metadata,
           name: src.path.includes(dest.path)
             ? `${metadata.name} ${Date.now().toString()}`
             : metadata.name,
-          updated: Date.now().toString(),
+          updated: new Dayjs(Date.now()).toISOString(),
         } as FullMetadata;
 
         let result = await copyFirebaseStorage({
@@ -63,29 +67,24 @@ export const copy = (payload: {
           metadata: newMetadata,
         });
 
-        if (result.url) {
-          // Copy folder.ai metadata
+        if (!result.url) throw new Error();
 
-          let getMetadataResult = await getFolderMetadataRef({
-            parent: parentRef,
-            name: src.name,
-          });
+        let pineconeResult = await indexToPinecone({
+          src: dest,
+          refs: [destRefDoc],
+        });
 
-          if (getMetadataResult.ref) {
-            let srcRefMetadata = getMetadataResult.ref;
+        if (!pineconeResult) throw new Error('Error indexing copy to Pinecone');
 
-            let destRefMetadata = ref(destRef, `/.folderai/${src.name}`);
+        let metadataResult = await markAsIndexed({
+          src: [getDocumentPath({ src: dest, name: destRefDoc.name })],
+        });
 
-            let copyRes = await copyFirebaseStorage({
-              src: srcRefMetadata,
-              dest: destRefMetadata,
-            });
+        if (!metadataResult) throw new Error();
 
-            if (copyRes.url) resolve({ url: result.url });
-            else throw new Error('Unable to copy metadata');
+        console.log('Marked as indexed');
 
-          } else throw new Error('Unable to find Folder metadata ref');
-        }
+        resolve({ url: result.url });
       } else {
         const metadata = await getMetadata(srcRef);
 
@@ -125,9 +124,9 @@ export const copyFirebaseStorage = async (payload: {
       let { src, dest, metadata } = payload;
 
       if (metadata) {
-        const buffer = await getBytes(src);
+        const data = await getBytes(src);
 
-        let result = await upload(buffer, metadata, dest);
+        let result = await upload({ data, ref: dest, metadata });
 
         resolve({ url: result.url });
       } else {
@@ -139,9 +138,13 @@ export const copyFirebaseStorage = async (payload: {
           updated: Date.now().toString(),
         } as FullMetadata;
 
-        const buffer = await getBytes(src);
+        const data = await getBytes(src);
 
-        let result = await upload(buffer, newMetadata, dest);
+        let result = await await upload({
+          data,
+          ref: dest,
+          metadata: newMetadata,
+        });
 
         if (result.url) resolve({ url: result.url });
         else throw new Error('Unable to upload: copyFirebaseStorage');

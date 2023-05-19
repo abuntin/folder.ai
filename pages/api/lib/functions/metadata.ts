@@ -1,119 +1,117 @@
-import { getBytes, listAll, ref, StorageReference } from 'firebase/storage';
-import { Folder, Directory } from 'lib/models';
+import {
+  getBytes,
+  getMetadata,
+  ref,
+  StorageReference,
+  updateMetadata,
+  UploadMetadata,
+} from 'firebase/storage';
 import { root } from '../models/firebase';
-import { moveFirebaseStorage } from './move';
+import { METADATA_PATH, DOCUMENT_PATH } from '../types';
+import { Directory, FolderAIMetadata } from 'lib/models';
+import { PropType } from 'lib/types';
+import { upload } from './upload';
+import { ValueOf } from 'next/dist/shared/lib/constants';
 
-export const getFolderMetadataRef = async (payload: {
-  parent: StorageReference;
-  name: string;
-}): Promise<{ ref: StorageReference | null }> =>
+export const getUserMetadata = async (payload: {
+  rootRef: StorageReference;
+}): Promise<{
+  metadata: Record<string, any>;
+}> =>
   new Promise(async (resolve, reject) => {
     try {
-      let { parent, name: _name } = payload
+      let { rootRef } = payload;
 
-      let name = _name.replace(/\.[^/.]+$/, "") // remove file extension
+      let srcRef = ref(rootRef, `/${METADATA_PATH}`);
 
-      let metadataSrcRef = ref(parent, `/.folderai`);
+      let arrayBuffer = await getBytes(srcRef);
 
-      let metadataRefs = await listAll(metadataSrcRef);
-
-      let metadataFilter = metadataRefs.items.filter(ref =>
-        ref.name.includes(name)
+      let metadata = new TextDecoder('utf-8').decode(
+        new Uint8Array(arrayBuffer)
       );
 
-      resolve({ ref: metadataFilter.length ? metadataFilter[0] : null })
+      resolve({ metadata: JSON.parse(metadata) });
     } catch (e) {
+      console.error(e);
       reject(e.message);
     }
   });
 
-export const getFolderMetadata = async (payload: {
-  parent: Directory;
-  name: string;
-}): Promise<{ metadata: string }> =>
+export const setUserMetadata = async (payload: {
+  rootRef: StorageReference;
+  src: Directory;
+  metadata: Partial<ValueOf<FolderAIMetadata>>
+}): Promise<{
+  url: string
+}> =>
   new Promise(async (resolve, reject) => {
     try {
-      let { parent, name } = payload;
+      const { src, metadata, rootRef } = payload;
 
-      let parentRef = ref(root, `${parent.fullPath}`)
+      let { metadata: oldMetadata } = await getUserMetadata({ rootRef });
 
-      let result = await getFolderMetadataRef({ parent: parentRef, name })
+      let metadataJSON = JSON.stringify({
+        ...oldMetadata,
+        [src.name]: {
+          ...src.metadata,
+          ...metadata,
+        },
+      });
 
-      if (result.ref) {
+      let destRef = ref(rootRef, `/${METADATA_PATH}`);
 
-        let arrayBuffer = await getBytes(result.ref);
+      let uploadMetadata: UploadMetadata = {
+        contentType: 'application/json',
+      };
 
-        let buffer = Buffer.from(arrayBuffer);
 
-        let metadata = buffer.toString();
+      let data = new TextEncoder().encode(metadataJSON);
 
-        resolve({ metadata });
-      } else reject('Unable to get Folder metadata');
+      let uploadResult = await upload({
+        data,
+        ref: destRef,
+        metadata: uploadMetadata,
+      });
+
+      if (!uploadResult.url) throw new Error();
+
+      let { url } = uploadResult
+
+      resolve({ url })
     } catch (e) {
       reject(e.message);
     }
   });
-// Path to metadata: SourceDirectory -> .folderai -> {docaigeneration} -> {indexFolders}
-export const processDirectoryNewUpload = async (payload: {
-  src: Directory;
+
+export const markAsIndexed = async (payload: {
+  src: (string | StorageReference)[];
 }): Promise<true> =>
   new Promise(async (resolve, reject) => {
+    const getAndSetMetadata = async (src: string | StorageReference) => {
+      let srcRef = typeof src === 'string' ? ref(root, src) : src;
+
+      let _m = await getMetadata(srcRef);
+
+      let metadata = {
+        customMetadata: { ..._m.customMetadata, indexed: 'true' },
+      };
+
+      let result = await updateMetadata(srcRef, metadata);
+
+      return result.customMetadata.indexed == 'true';
+    };
+
     try {
-      let { src } = payload;
+      const { src } = payload;
 
-      let srcRef = ref(root, `${src.fullPath}/.folderai`);
+      let result = await Promise.all(
+        src.map(async _src => await getAndSetMetadata(_src))
+      );
 
-      // List DocumentAI generation folders
-
-      let generations = await listAll(srcRef);
-
-      if (!generations.prefixes.length) resolve(null);
-
-      let latestGenerationRef = generations.prefixes[0]; // Latest generation first
-
-      let indexFoldersRes = await listAll(latestGenerationRef);
-
-      let indexFoldersRefs = indexFoldersRes.prefixes;
-
-      for (let indexFoldersRef of indexFoldersRefs) {
-        try {
-          let itemResult = await listAll(indexFoldersRef);
-
-          let itemRef = itemResult.items.length ? itemResult.items[0] : null;
-
-          let dest = ref(srcRef, `/${itemRef.name}`);
-
-          let { url } = await moveFirebaseStorage({
-            src: itemRef,
-            dest,
-          });
-
-          if (url) continue;
-          else throw new Error('Unable to move metadata file');
-        } catch (e) {
-          throw new Error(e.message);
-        }
-      }
+      if (result.includes(false)) throw new Error();
 
       resolve(true);
     } catch (e) {
-      reject(e.message);
+      reject(e?.message ?? 'Unable to mark Folder as indexed');
     }
   });
-
-//   let url = await copy(src, dest);
-
-//   if (url) {
-//     let value = await deleteFn(src);
-
-//     if (value) {
-//       urls.push(url);
-//     } else
-//       return res.status(500).json({
-//         data: null,
-//         error: 'Unable to delete src Folder after copy',
-//       });
-//   } else
-//     return res
-//       .status(500)
-//       .json({ data: null, error: 'Unable to copy Folders in move fn' });

@@ -25,7 +25,8 @@ export type KernelEvent =
   | 'delete'
   | 'move'
   | 'rename'
-  | 'create';
+  | 'create'
+  | 'index'
 
 /**
  * @class Kernel
@@ -116,24 +117,26 @@ export class Kernel {
       });
 
       const {
-        data: rootDirectory,
+        data: { root, metadata },
         error,
       }: {
-        data: Directory | null;
+        data:  { root: Directory, metadata: Record<string, PropType<Directory, 'metadata'>>} | null;
         error: string | null;
       } = await res.json();
 
       console.log('Obtained Kernel.getRootFolder() response');
 
-      if (error || !rootDirectory)
+      if (error || !root)
         throw new Error(error ?? 'Missing Kernel.init() response data');
       else {
-        let tree = new Tree(rootDirectory);
+        let tree = new Tree(root);
         this.folderTree = tree;
         this.rootDirectory = tree.root;
         this.currentDirectory = tree.root;
         this.trigger('idle', 'Obtained root folder');
       }
+
+      this.trigger('index', root)
     } catch (e) {
       this.trigger('error', e.message);
       throw e;
@@ -200,7 +203,7 @@ export class Kernel {
       try {
         this.trigger('loading', type);
 
-        let directoryNode = this.folderTree.find({key});
+        let directoryNode = this.folderTree.find({ key });
 
         if (!directoryNode)
           throw new Error('Cannot find Directory to load in Tree');
@@ -223,7 +226,9 @@ export class Kernel {
 
           if (navigate && this.currentDirectory.key !== directory.path) {
             let temp = this.currentDirectory;
-            this.currentDirectory = this.folderTree.find({ key: directory.path });
+            this.currentDirectory = this.folderTree.find({
+              key: directory.path,
+            });
             !this.isRoot && (this.prevDirectory = temp);
           }
 
@@ -257,6 +262,49 @@ export class Kernel {
   });
 
   /**
+   * Indexes given Directory to Pinecone
+   */
+
+  public index = cache(
+    async (
+      payload: { directory: Directory },
+      signal: AbortSignal = null
+    ): Promise<true> => {
+      try {
+        let { directory } = payload;
+
+        let res = await fetch(this.folderManagerUrl('index'), {
+          method: 'POST',
+          body: JSON.stringify({
+            directory,
+            type: 'index',
+          }),
+        });
+
+        let {
+          data,
+          error,
+        }: {
+          data: { urls: string[] };
+          error: string;
+        } = await res.json();
+
+        if (!data || error) throw new Error(error ?? 'Missing index response')
+
+        if (this.currentDirectory.key == directory.path)
+          this.trigger('refresh');
+
+      } catch (e) {
+        if (signal && signal.aborted) {
+          this.trigger('idle');
+          return;
+        }
+        console.error(e);
+        this.trigger('error', e.message);
+      }
+    }
+  );
+  /**
    * Upload files to given Directory
    * @param payload { directory: Directory, files: File[] }
    */
@@ -267,21 +315,16 @@ export class Kernel {
       onUploadProgress = null,
       signal: AbortSignal = null
     ): Promise<string[]> => {
-      const { directory, files: _files } = payload;
-
       console.log('Initialised Kernel.upload()');
-
       try {
+        const { directory, files: _files } = payload;
 
-        let buffers = {} as { [name: string]: Promise<ArrayBuffer> }
+        let buffers = {} as { [name: string]: Promise<ArrayBuffer> };
 
-        let files = _files.reduce(
-          (prev, curr) => {
-            buffers = { ...buffers, [curr.name]: curr.arrayBuffer() }
-            return { ...prev, [curr.name]: curr.type }
-          },
-          {} as { [name: string]: string }
-        );
+        let files = _files.reduce((prev, curr) => {
+          buffers = { ...buffers, [curr.name]: curr.arrayBuffer() };
+          return { ...prev, [curr.name]: curr.type };
+        }, {} as { [name: string]: string });
 
         this.trigger(
           'info',
@@ -315,27 +358,30 @@ export class Kernel {
         if (error || !data)
           throw new Error(error ?? 'Missing presigned response data');
 
-        console.log(data.urls);
-
         let urls = Object.entries(data.urls);
+
+        // Upload to GCS
+
+        let uploaded = {} as { [name: string]: string };
 
         for (let [name, url] of urls) {
           let type = files[name];
 
-          let buffer = Buffer.from(await buffers[name])
+          let buffer = Buffer.from(await buffers[name]);
 
           let uploadResult = await fetch(url, {
             method: 'PUT',
             body: buffer,
             headers: {
               'Content-Type': type,
-              'Origin': 'http://localhost:3000',
+              Origin: 'http://localhost:3000',
               'Access-Control-Request-Method': 'PUT',
-              'Access-Control-Request-Headers': 'Content-Type'
-            }
+              'Access-Control-Request-Headers': 'Content-Type',
+            },
           });
 
-          if (uploadResult.status != 200) console.log(uploadResult.statusText)
+          if (uploadResult.status != 200) console.log(uploadResult.statusText);
+          else uploaded = { ...uploaded, [name]: files[name] };
         }
 
         this.trigger(
@@ -346,6 +392,8 @@ export class Kernel {
               : `${Object.keys(files).length} files`
           } to ${directory.name}`
         );
+
+        this.trigger('index', directory)
 
         if (this.currentDirectory.key == directory.path)
           this.trigger('refresh');

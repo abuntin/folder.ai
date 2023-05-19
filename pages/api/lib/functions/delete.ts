@@ -1,8 +1,8 @@
 import { ref, deleteObject, StorageReference } from 'firebase/storage';
-import { Folder } from 'lib/models';
+import { Folder, Directory } from 'lib/models';
 import { root } from '../models/firebase';
 import { ValidFileTypes } from '../types';
-import { getFolderMetadata, getFolderMetadataRef } from './metadata';
+import { deleteFromPinecone } from './document';
 
 /**
  * Deletes single Folder in GCS
@@ -23,25 +23,24 @@ export const deleteFn = (src: Folder): Promise<true> =>
       if (!parentRef) reject('Tried to delete root');
 
       if (ValidFileTypes.has(src.metadata.type)) {
-        let srcRefDoc = ref(parentRef, `/.documentai/${src.name}`);
+        let srcRefDoc = ref(parentRef, `/${DOCUMENT_PATH}/${src.name}`);
 
         let value = await deleteFirebaseStorage(srcRefDoc);
 
-        if (value) {
-          let getMetadataResult = await getFolderMetadataRef({
-            parent: parentRef,
-            name: src.name,
-          });
+        if (!value) throw new Error('Unable to delete Folder document');
+        let pineconeResult = await deleteFromPinecone({
+          src: Directory.fromStorageReference({
+            reference: parentRef,
+            id: 'temp',
+            indexed: false,
+          }),
+          refs: [srcRef],
+        });
 
-          if (getMetadataResult.ref) {
-            let valMetadata = await deleteFirebaseStorage(
-              getMetadataResult.ref
-            );
+        if (!pineconeResult)
+          throw new Error('Unable to delete Folder index from pinecone');
 
-            if (valMetadata) resolve(true);
-            else throw new Error('Unable to delete Folder metadata');
-          } else throw new Error('Unable to get Folder metadata ref');
-        } else throw new Error('Unable to delete Folder document');
+        resolve(true);
       } else {
         let value = await deleteFirebaseStorage(srcRef);
 

@@ -7,9 +7,14 @@ export type { QueryInterface } from './QueryInterface';
 export type IDocument_DocAI = protos.google.cloud.documentai.v1.IDocument;
 
 export {
+  HUGGINGFACEHUB_API_KEY,
+  DOCUMENT_PATH,
+  METADATA_PATH,
   PINECONE_INDEX,
   PINECONE_API_KEY,
   PINECONE_ENVIRONMENT,
+  OPENAI_API_KEY,
+  OPENAI_ORGANIZATION,
   PROJECT_ID,
   STORAGE_BUCKET,
   PROJECT_LOCATION,
@@ -19,7 +24,7 @@ export {
   AUTH_DOMAIN,
   MEASUREMENT_ID,
   DEFAULT_PROCESSOR_ID,
-  OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, SERVICE_ACCOUNT_DOCAI,
+  OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, SERVICE_ACCOUNT,
 } from './environment';
 
 export const ValidFileTypes = new Set([

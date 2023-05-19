@@ -13,8 +13,15 @@ export const PINECONE_API_KEY = process.env.PINECONE_API_KEY;
 export const PINECONE_INDEX = process.env.PINECONE_INDEX;
 
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+export const OPENAI_ORGANIZATION = process.env.OPENAI_ORGANIZATION;
+
+export const HUGGINGFACEHUB_API_KEY = process.env.HUGGINGFACEHUB_API_KEY
 
 export const PROJECT_LOCATION = process.env.PROJECT_LOCATION;
 export const DEFAULT_PROCESSOR_ID = process.env.DEFAULT_PROCESSOR_ID;
 
-export const SERVICE_ACCOUNT_DOCAI = JSON.parse(process.env.SERVICE_ACCOUNT_DOCAI ?? '')
+export const SERVICE_ACCOUNT = JSON.parse(process.env.SERVICE_ACCOUNT ?? '')
+
+export const METADATA_PATH = '.folderai.json'
+
+export const DOCUMENT_PATH = '.index'

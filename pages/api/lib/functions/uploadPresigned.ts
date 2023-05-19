@@ -22,7 +22,7 @@ export const generateV4UploadSignedUrl = (payload: {
     try {
       const { name, type, directory } = payload;
 
-      const prefix = ValidFileTypes.has(type) ? `/.documentai` : '';
+      const prefix = ValidFileTypes.has(type) ? `/.index` : '';
 
       const path = `${directory.fullPath}${prefix}/${name}`;
 

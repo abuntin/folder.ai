@@ -1,20 +1,23 @@
 import {
+  getDownloadURL,
   StorageReference,
   uploadBytesResumable,
   UploadTask,
-  getDownloadURL,
 } from 'firebase/storage';
 
-export const upload = (
+export const upload = (payload: {
   data: Buffer | Blob | ArrayBuffer,
-  metadata,
-  destinationRef: StorageReference
-): Promise<{ url: string }> =>
+  ref: StorageReference,
+  metadata?
+}): Promise<{ url: string }> =>
   new Promise(async (resolve, reject) => {
     try {
+
+      let { data, ref, metadata } = payload;
+
       const uploadTask = uploadBytesResumable(
-        destinationRef,
-        data instanceof Blob ? data : new Uint8Array(data),
+        ref,
+        (data instanceof Blob || data instanceof Uint8Array) ? data : new Uint8Array(data),
         metadata
       ) as UploadTask;
 
@@ -35,12 +38,11 @@ export const upload = (
           // download url
           let url = await getDownloadURL(uploadTask.snapshot.ref);
 
-          unsubscribe()
+          unsubscribe();
 
-          resolve({url})
+          resolve({ url });
         }
       );
-
     } catch (e) {
       reject(e.message);
     }

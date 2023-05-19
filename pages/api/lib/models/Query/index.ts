@@ -2,17 +2,14 @@ import { PineconeClient as PineClient } from '@pinecone-database/pinecone';
 import { VectorOperationsApi } from '@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { OpenAI } from 'langchain/llms/openai';
-import { PineconeStore } from 'langchain/vectorstores';
+import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import {
-  VectorStoreToolkit,
-  createVectorStoreAgent,
-  VectorStoreInfo,
+  VectorStoreInfo
 } from 'langchain/agents';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { pineconeConfig, chunkOverlap, chunkSize } from '../langchain';
 import { QueryInterface } from '../../types';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { GCSLoader } from '../DocumentLoader';
 
 export class QueryService implements QueryInterface {
   Model: OpenAI = null;
@@ -41,9 +38,9 @@ export class QueryService implements QueryInterface {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    this.Embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.OPENAI_API_KEY,
-    });
+    // this.Embeddings = new OpenAIEmbeddings({
+    //   openAIApiKey: process.env.OPENAI_API_KEY,
+    // });
 
     this.TextSplitter = new RecursiveCharacterTextSplitter({
       chunkSize,

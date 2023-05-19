@@ -1,14 +1,13 @@
-import { Folder, Kernel } from 'lib/models';
-import { AppContextInterface, KernelContext, LoadingType } from './Context';
-import { useKernelApi, useUpload } from './hooks';
-import React from 'react';
-import { Snackbar, Alert, Stack, AlertProps } from '@mui/material';
-import { borderRadius } from 'lib/constants';
-import { KernelApiProvider } from './ApiProvider';
-import { ProgressBar } from 'components/dashboard/ProgressBar';
+import { Alert, AlertProps, Snackbar, Stack } from '@mui/material';
 import { AxiosProgressEvent } from 'axios';
 import { LoadingComponent } from 'components/common';
-import { PropType } from 'lib/types';
+import { ProgressBar } from 'components/dashboard/ProgressBar';
+import { borderRadius } from 'lib/constants';
+import { Directory, Folder, Kernel } from 'lib/models';
+import React from 'react';
+import { KernelApiProvider } from './ApiProvider';
+import { AppContextInterface, KernelContext, LoadingType } from './Context';
+import { useKernelApi, useUpload } from './hooks';
 
 /**
  * Wrapper component defining KernelContext and managing UI state updates
@@ -146,6 +145,19 @@ export const KernelProvider = ({ children, ...rest }) => {
       loadingEvent.unsubscribe();
     };
   }, [kernel]);
+
+  // Listen for index event
+
+  React.useEffect(() => {
+    const indexEvent = kernel.on('index', (directory: Directory) => {
+      if (directory) kernel.index({ directory })
+    })
+
+    return () => {
+      indexEvent.unsubscribe()
+    }
+  }, [kernel])
+
 
   // Listen for load event
 

@@ -2,11 +2,11 @@ import {
   DocumentProcessorServiceClient
 } from '@google-cloud/documentai';
 import { DEFAULT_PROCESSOR_ID, PROJECT_ID, PROJECT_LOCATION } from '../types';
-import { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, SERVICE_ACCOUNT_DOCAI } from '../types/environment';
+import { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, SERVICE_ACCOUNT } from '../types/environment';
 
 export const DocAIClient = new DocumentProcessorServiceClient({
   projectId: PROJECT_ID,
-  credentials: SERVICE_ACCOUNT_DOCAI,
+  credentials: SERVICE_ACCOUNT,
   clientOptions: {
     clientId: OAUTH_CLIENT_ID,
     clientSecret: OAUTH_CLIENT_SECRET,

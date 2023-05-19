@@ -10,6 +10,7 @@ import { renameFolder } from './FolderManager/rename';
 import { createDirectory } from './FolderManager/create';
 import { deleteFolders } from './FolderManager/delete';
 import { moveFolders } from './FolderManager/move';
+import { index } from './FolderManager/pineconeIndex';
 import { copyFolders } from './FolderManager/copy';
 import {
   API_KEY,
@@ -21,7 +22,7 @@ import {
   PROJECT_ID,
   OAUTH_CLIENT_ID,
   OAUTH_CLIENT_SECRET,
-  SERVICE_ACCOUNT_DOCAI,
+  SERVICE_ACCOUNT,
 } from '../types';
 import inngest from 'pages/api/inngest';
 
@@ -48,7 +49,7 @@ export const root = ref(storage);
 // Initialise Google Cloud Storage
 export const StorageClient = new Storage({
   projectId: PROJECT_ID,
-  credentials: SERVICE_ACCOUNT_DOCAI,
+  credentials: SERVICE_ACCOUNT,
   clientOptions: {
     clientId: OAUTH_CLIENT_ID,
     clientSecret: OAUTH_CLIENT_SECRET,
@@ -59,16 +60,4 @@ export const StorageClient = new Storage({
   },
 });
 
-export const folderManagerService = new FolderManager(
-  {
-    init: initFolderManager,
-    upload: uploadFolder,
-    list: listFolder,
-    rename: renameFolder,
-    create: createDirectory,
-    delete: deleteFolders,
-    move: moveFolders,
-    copy: copyFolders,
-  },
-  inngest
-);
+export const folderManagerService = new FolderManager();
