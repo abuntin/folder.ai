@@ -1,22 +1,10 @@
-import { ref, StorageReference } from 'firebase/storage';
-import fs_extra from 'fs-extra';
-import { Folder } from 'lib/models';
 import { PropType } from 'lib/types';
-import { uniqueId } from 'lodash';
-import { inngest } from 'pages/api/inngest';
 import {
-  generateV4UploadSignedUrl,
-  parseForm,
-  processDirectoryNewUpload,
-  upload,
+  generateV4UploadSignedUrl
 } from '../../functions';
-import { processDocuments } from '../../functions/documentai';
 import {
-  FolderManagerInterface,
-  typeToPath,
-  ValidFileTypes,
+  FolderManagerInterface
 } from '../../types';
-import { root } from '../firebase';
 
 export const uploadFolder: PropType<FolderManagerInterface, 'upload'> = async (
   req,

@@ -1,9 +1,8 @@
-import _ from 'lodash';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
-import { FolderManagerInterface } from '../../types';
+import _ from 'lodash';
 import { move } from '../../functions';
-
+import { FolderManagerInterface } from '../../types';
 export const moveFolders: PropType<FolderManagerInterface, 'move'> = async (
   req,
   res

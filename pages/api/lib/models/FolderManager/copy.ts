@@ -1,8 +1,7 @@
-import _ from 'lodash';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
-import { FolderManagerInterface } from '../../types';
 import { copy } from '../../functions';
+import { FolderManagerInterface } from '../../types';
 
 export const copyFolders: PropType<FolderManagerInterface, 'copy'> = async (
   req,

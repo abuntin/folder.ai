@@ -1,7 +1,7 @@
 import { ref, deleteObject, StorageReference } from 'firebase/storage';
 import { Folder, Directory } from 'lib/models';
 import { root } from '../models/firebase';
-import { ValidFileTypes } from '../types';
+import { ValidFileTypes, DOCUMENT_PATH } from '../types';
 import { deleteFromPinecone } from './document';
 
 /**
@@ -32,7 +32,7 @@ export const deleteFn = (src: Folder): Promise<true> =>
           src: Directory.fromStorageReference({
             reference: parentRef,
             id: 'temp',
-            indexed: false,
+            metadata: {},
           }),
           refs: [srcRef],
         });

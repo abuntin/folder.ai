@@ -305,7 +305,7 @@ export class Kernel {
 
         let { node } = payload;
 
-        let res = await fetch(this.folderManagerUrl('index'), {
+        let res = await fetch(this.folderManagerUrl('indices'), {
           method: 'POST',
           body: JSON.stringify({
             folder: node.folder,

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { Directory, Folder } from 'lib/models';
 import { PropType } from 'lib/types';
 import { FolderManagerInterface } from '../../types';
