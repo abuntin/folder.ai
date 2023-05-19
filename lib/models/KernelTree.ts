@@ -7,6 +7,8 @@ export class TreeNode {
   parent: TreeNode = null;
   folders: { [k: PropType<TreeNode, 'key'>]: TreeNode } = null;
   directories: { [k: PropType<TreeNode, 'key'>]: TreeNode } = null;
+  refreshing: boolean = false;
+  indexing: boolean = false;
 
   constructor(folder: Folder, parent = null) {
     this.key = folder.path;
@@ -30,6 +32,14 @@ export class TreeNode {
 
   get children() {
     return { ...this.folders, ...this.directories };
+  }
+
+  set index(val: boolean) {
+    this.indexing = val
+  }
+
+  set refresh(val: boolean) {
+    this.refreshing = val
   }
 
 }

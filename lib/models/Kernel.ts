@@ -98,8 +98,6 @@ export class Kernel {
    */
 
   public init = cache(async (signal: AbortSignal = null): Promise<void> => {
-    console.log('Initialised Kernel.getRootFolder()');
-
     this.trigger('loading', 'folders');
 
     this.trigger('info', 'Initialising...');
@@ -148,14 +146,17 @@ export class Kernel {
    */
   public list = cache(
     async (
-      directory: Directory,
+      payload: { folder: Folder },
       signal: AbortSignal = null
     ): Promise<{ folders: Folder[]; directories: Directory[] }> =>
       new Promise(async (resolve, reject) => {
         try {
+
+          let { folder } = payload;
+
           let res = await fetch(this.folderManagerUrl('list'), {
             body: JSON.stringify({
-              directory,
+              folder,
               type: 'list',
             }),
             headers: {
@@ -193,26 +194,41 @@ export class Kernel {
    * Load the given Directory onto kernel
    */
   public load = cache(
-    async (
-      key: PropType<Folder, 'path'>,
-      type: LoadingType = 'folders',
+    async (payload: {
+      key?: PropType<Folder, 'path'>,
+      node?: TreeNode,
+      type?: LoadingType,
+    },
       navigate = false,
       signal: AbortSignal = null
     ): Promise<void> => {
       console.log('Initialised Kernel.load()');
       try {
-        this.trigger('loading', type);
 
-        let directoryNode = this.folderTree.find({ key });
+        let { key, type = 'folders', node: _node} = payload;
 
-        if (!directoryNode)
-          throw new Error('Cannot find Directory to load in Tree');
+        if (!key && !_node) throw new Error('Missing target node / node key')
 
-        let directory = directoryNode.folder;
+        if (navigate)  this.trigger('loading', type);
 
-        this.trigger('info', `Opening ${directory.name}...`);
+        let node: TreeNode;
 
-        let data = await this.list(directory, signal);
+        if (_node) node = _node
+
+        else {
+          node = this.folderTree.find({ key });
+        }
+
+        if (!node)
+          throw new Error('Cannot find Folder / Directory to load in Tree');
+
+        node.refresh = true;
+
+        let folder = node.folder;
+
+        this.trigger('info', `Loading ${folder.name}...`);
+
+        let data = await this.list({ folder }, signal);
 
         console.log('Obtained Kernel.load() response');
 
@@ -222,17 +238,23 @@ export class Kernel {
 
           // Append children to Kernel
 
-          this.folderTree.insert(directory.path, folders.concat(directories));
+          let path = ''
 
-          if (navigate && this.currentDirectory.key !== directory.path) {
+          if (folder.isDirectory) path = folder.path
+
+          else path = Folder.getParentPath(folder)
+
+          this.folderTree.insert(path, folders.concat(directories));
+
+          if (navigate && folder.isDirectory && this.currentDirectory.key !== path) {
             let temp = this.currentDirectory;
             this.currentDirectory = this.folderTree.find({
-              key: directory.path,
+              key: path,
             });
             !this.isRoot && (this.prevDirectory = temp);
           }
 
-          this.trigger('idle', `Opened Directory ${directory.name}`);
+          this.trigger('idle', `Loaded Directory ${folder.name}`);
         }
       } catch (e) {
         this.trigger('error', e.message);
@@ -247,7 +269,7 @@ export class Kernel {
 
   public goBack = cache(async () => {
     !this.currentDirectory.isRoot
-      ? this.load(this.currentDirectory.parent.key, 'folders', true)
+      ? this.load({ key: this.currentDirectory.parent.key }, true)
       : null;
   });
 
@@ -255,28 +277,38 @@ export class Kernel {
    * Refreshes the current  Directory
    */
 
-  public refresh = cache(async () => {
+  public refreshCurrentDirectory = cache(async () => {
     if (!this.currentDirectory) return;
 
-    return this.load(this.currentDirectory.key);
+    return this.load({ key: this.currentDirectory.key });
   });
 
   /**
-   * Indexes given Directory to Pinecone
+   * Refreshes the given Folder / Directory
+   */
+
+  public refresh = cache(async (payload: { key?: PropType<Folder, 'path'>, node?: TreeNode }) => {
+    let { node, key } = payload
+    return this.load({ node, key });
+  })
+
+  /**
+   * Indexes given Folder / Directory to Pinecone
    */
 
   public index = cache(
     async (
-      payload: { directory: Directory },
+      payload: { node: TreeNode },
       signal: AbortSignal = null
     ): Promise<true> => {
       try {
-        let { directory } = payload;
+
+        let { node } = payload;
 
         let res = await fetch(this.folderManagerUrl('index'), {
           method: 'POST',
           body: JSON.stringify({
-            directory,
+            folder: node.folder,
             type: 'index',
           }),
         });
@@ -285,14 +317,13 @@ export class Kernel {
           data,
           error,
         }: {
-          data: { urls: string[] };
+          data: { indexed: string };
           error: string;
         } = await res.json();
 
         if (!data || error) throw new Error(error ?? 'Missing index response')
 
-        if (this.currentDirectory.key == directory.path)
-          this.trigger('refresh');
+        this.trigger('refresh', node);
 
       } catch (e) {
         if (signal && signal.aborted) {

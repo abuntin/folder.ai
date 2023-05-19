@@ -3,11 +3,12 @@ import { AxiosProgressEvent } from 'axios';
 import { LoadingComponent } from 'components/common';
 import { ProgressBar } from 'components/dashboard/ProgressBar';
 import { borderRadius } from 'lib/constants';
-import { Directory, Folder, Kernel } from 'lib/models';
+import { TreeNode, Folder, Kernel } from 'lib/models';
 import React from 'react';
 import { KernelApiProvider } from './ApiProvider';
 import { AppContextInterface, KernelContext, LoadingType } from './Context';
 import { useKernelApi, useUpload } from './hooks';
+import _ from 'lodash'
 
 /**
  * Wrapper component defining KernelContext and managing UI state updates
@@ -27,9 +28,11 @@ export const KernelProvider = ({ children, ...rest }) => {
 
   const [isPending, startTransition] = React.useTransition();
 
-  const [loading, setLoadingState] = React.useState<AppContextInterface['loading']>({
+  const [loading, setLoadingState] = React.useState<
+    AppContextInterface['loading']
+  >({
     folders: true,
-    tree: true
+    tree: true,
   });
 
   const [snackbarLoading, setSnackbarLoadingState] = React.useState(false);
@@ -94,8 +97,8 @@ export const KernelProvider = ({ children, ...rest }) => {
 
   const setLoading = (state: boolean, type: LoadingType | 'all') =>
     startTransition(() => {
-      if (type == 'all') setLoadingState({ folders: state, tree: state })
-      else setLoadingState({ ...loading, [type]: state })
+      if (type == 'all') setLoadingState({ folders: state, tree: state });
+      else setLoadingState({ ...loading, [type]: state });
     });
 
   const setSnackbarLoading = (state: boolean) =>
@@ -108,7 +111,7 @@ export const KernelProvider = ({ children, ...rest }) => {
 
   React.useEffect(() => {
     try {
-      kernel.init().then(() => kernel.load(kernel.rootDirectory.key));
+      kernel.init().then(() => kernel.load({ key: kernel.rootDirectory.key }));
     } catch (e) {
       manageSnackbar(e.message, 'error');
     }
@@ -149,23 +152,53 @@ export const KernelProvider = ({ children, ...rest }) => {
   // Listen for index event
 
   React.useEffect(() => {
-    const indexEvent = kernel.on('index', (directory: Directory) => {
-      if (directory) kernel.index({ directory })
-    })
+    const indexEvent = kernel.on('index', (node: TreeNode) => {
+      if (node) {
+        node.index = true;
+        kernel.index({
+          node,
+        });
+      }
+    });
 
     return () => {
-      indexEvent.unsubscribe()
-    }
-  }, [kernel])
+      indexEvent.unsubscribe();
+    };
+  }, [kernel]);
 
+  // Listen for refresh event
+
+  React.useEffect(() => {
+    const refreshEvent = kernel.on('refresh', (val: TreeNode | string) => {
+      if (val) {
+        if (_.isString(val)) {
+          kernel.refresh({
+            key: val,
+          });
+        }
+        else kernel.refresh({
+          node: val,
+        });
+      }
+
+      else kernel.refreshCurrentDirectory()
+    });
+
+    return () => {
+      refreshEvent.unsubscribe();
+    };
+  }, [kernel]);
 
   // Listen for load event
 
   React.useEffect(() => {
-    const loadEvent = kernel.on('load', (path: string, type: LoadingType, navigate: boolean) => {
-      kernel.load(path, type, navigate ?? false);
-      selected && setSelectedFolder(null);
-    });
+    const loadEvent = kernel.on(
+      'load',
+      (path: string, type: LoadingType, navigate: boolean) => {
+        kernel.load({ key: path, type }, navigate ?? false);
+        selected && setSelectedFolder(null);
+      }
+    );
 
     return () => {
       loadEvent.unsubscribe();

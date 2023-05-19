@@ -12,6 +12,7 @@ import { padding, borderRadius, margin } from 'lib/constants';
 import { TreeNode, Folder } from 'lib/models';
 import * as React from 'react';
 import { useKernel } from 'components/app';
+import { FolderIconContainer } from './FolderIcon';
 
 interface DashboardItemProps extends BoxProps {
   node: TreeNode;
@@ -23,7 +24,7 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
 
   const { folder } = node;
 
-  const { name, isDirectory, children } = folder;
+  const { name, isDirectory, children, metadata } = folder;
 
   const { useUpload, kernel } = useKernel();
 
@@ -62,22 +63,7 @@ export const DashboardItemIcon: React.FC<DashboardItemProps> = props => {
             />
           </form>
 
-          {isDirectory ? (
-            children ? (
-              <FolderSharp color="info" sx={{ fontSize: 120 }} />
-            ) : (
-              <FolderOpenSharp
-                fontSize="large"
-                color="primary"
-                sx={{ mb: margin * 2, mt: margin * 2, fontSize: 60 }}
-              />
-            )
-          ) : (
-            <SnippetFolderSharp
-              color="primary"
-              sx={{ mb: margin * 2, mt: margin * 2, fontSize: 60 }}
-            />
-          )}
+          <FolderIconContainer node={node} />
           <DText
             text={name}
             variant="subtitle2"

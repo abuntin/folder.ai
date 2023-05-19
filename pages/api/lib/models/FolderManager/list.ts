@@ -9,18 +9,15 @@ export const listFolder = async (
 ): Promise<{ data: { folders: Folder[], directories: Directory[] } | null, error: string | null }> => {
   try {
     console.log('Initialised FolderManager.list()');
-    const { directory, type } = req.body;
+    const { folder, type } = req.body;
 
     if (!type || type !== 'list')
       return { data: null, error: 'Invalid NextApiRequest type' };
 
-    let src = directory as Directory;
+    let src = folder as Folder;
 
     if (!Object.prototype.hasOwnProperty.call(src, 'path'))
       return { data: null, error: "Invalid directory: Missing 'path'" };
-
-    if (!src.isDirectory)
-      return { data: null, error: 'Called list on Folder' };
 
     let { folders, directories } = await list({ src, root })
 

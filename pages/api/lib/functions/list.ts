@@ -9,7 +9,7 @@ import { DOCUMENT_PATH } from '../types';
 import { getUserMetadata } from './metadata';
 
 export const list = async (payload: {
-  src: Directory;
+  src: Folder;
   root: StorageReference;
 }): Promise<{ folders: Folder[]; directories: Directory[] }> =>
   new Promise(async (resolve, reject) => {
@@ -25,7 +25,7 @@ export const list = async (payload: {
 
       // Handle unsupported mimetypes
 
-      let unprocessed = await Promise.all(
+      let folders = await Promise.all(
         listRes.items
           .map(async (ref, i) => {
             if (ref.name[0] == '.') return null;
@@ -38,42 +38,45 @@ export const list = async (payload: {
           .filter(n => n)
       );
 
-      // Get processed folders
+      if (src.isDirectory) {
+        // Get processed folders
 
-      const documentSrcRef = ref(srcRef, DOCUMENT_PATH);
+        const documentSrcRef = ref(srcRef, DOCUMENT_PATH);
 
-      let docsRes = await storageList(documentSrcRef);
+        let docsRes = await storageList(documentSrcRef);
 
-      let processed = await Promise.all(
-        docsRes.items.map(async _ => {
-          let _m = await getMetadata(_);
+        let processed = await Promise.all(
+          docsRes.items.map(async _ => {
+            let _m = await getMetadata(_);
 
-          return Folder.fromGStorageMetadata({
-            metadata: _m,
-            isDirectory: false,
-          });
-        })
-      );
-
-      let folders = processed.concat(unprocessed);
-
-      console.log(metadata);
-      // Get sub-Directories
-
-      let directories = await Promise.all(
-        listRes.prefixes
-          .map(ref => {
-            if (ref.name[0] == '.') return null;
-
-            let _m = metadata[ref.name];
-
-            return Directory.fromStorageReference({
-              reference: ref,
+            return Folder.fromGStorageMetadata({
               metadata: _m,
+              isDirectory: false,
             });
           })
-          .filter(n => n)
-      );
+        );
+
+        folders = processed.concat(folders);
+      }
+
+      // Get sub-Directories
+
+      let directories = !src.isDirectory
+        ? []
+        : await Promise.all(
+            listRes.prefixes
+              .map(ref => {
+                if (ref.name[0] == '.') return null;
+
+                let _m = metadata[ref.name];
+
+                return Directory.fromStorageReference({
+                  reference: ref,
+                  metadata: _m,
+                });
+              })
+              .filter(n => n)
+          );
 
       resolve({ folders, directories });
     } catch (e) {

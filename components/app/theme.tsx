@@ -17,7 +17,7 @@ export const createCustomTheme = (mode: PaletteMode) => {
     let palette = mode === 'light' ? ({
         common: { black: '#111010', white: '#fafafa' },
         primary: { main: '#fafafa', light: '#1b1a22' }, // white
-        secondary: { main: '#110010', light: 'a7afb8', dark: '858a94' }, // black and silver
+        secondary: { main: '#110010', light: '#a7afb8', dark: '#858a94' }, // black and silver
         warning: { main: '#eabb13' }, // yellow
         info: { main: 'rgba(84, 126, 193,1)', dark: 'rgba(2, 61, 156, 1)' }, // blue
         success: { main: '#578346' }, // green
