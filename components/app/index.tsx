@@ -39,14 +39,13 @@ export const App: React.FC<AppProps> = props => {
             <AnimationWrapper>
               <m.body
                 style={{
-                  flex: 'auto',
-                  minHeight: '100%',
+                  flexGrow: 1,
+                  flexShrink: 1,
+                  flexBasis: '100%',
                   margin: 0,
-                  background:
-                    mode == 'light' ? `${bgLight} fixed` : `${bgDark} fixed`,
-                  backgroundRepeat: 'no-repeat',
-                  backgroundAttachment: 'fixed',
-                  backgroundSize: 'cover\200%',
+                  background: mode == 'light' ? `${bgLight}` : `${bgDark}`,
+                  backgroundAttachment: 'scroll, local',
+                  backgroundSize: 'cover',
                 }}
                 layout
                 transition={spring}
