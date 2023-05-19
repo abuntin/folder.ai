@@ -7,22 +7,17 @@ import {
   UploadMetadata,
 } from 'firebase/storage';
 import { root } from '../models/firebase';
-import { METADATA_PATH, DOCUMENT_PATH } from '../types';
+import { METADATA_PATH } from '../types';
 import { Directory, FolderAIMetadata } from 'lib/models';
-import { PropType } from 'lib/types';
 import { upload } from './upload';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 
-export const getUserMetadata = async (payload: {
-  rootRef: StorageReference;
-}): Promise<{
+export const getUserMetadata = async (): Promise<{
   metadata: Record<string, any>;
 }> =>
   new Promise(async (resolve, reject) => {
     try {
-      let { rootRef } = payload;
-
-      let srcRef = ref(rootRef, `/${METADATA_PATH}`);
+      let srcRef = ref(root, `/${METADATA_PATH}`);
 
       let arrayBuffer = await getBytes(srcRef);
 
@@ -38,7 +33,6 @@ export const getUserMetadata = async (payload: {
   });
 
 export const setUserMetadata = async (payload: {
-  rootRef: StorageReference;
   src: Directory;
   metadata: Partial<ValueOf<FolderAIMetadata>>
 }): Promise<{
@@ -46,9 +40,9 @@ export const setUserMetadata = async (payload: {
 }> =>
   new Promise(async (resolve, reject) => {
     try {
-      const { src, metadata, rootRef } = payload;
+      const { src, metadata } = payload;
 
-      let { metadata: oldMetadata } = await getUserMetadata({ rootRef });
+      let { metadata: oldMetadata } = await getUserMetadata();
 
       let metadataJSON = JSON.stringify({
         ...oldMetadata,
@@ -58,7 +52,7 @@ export const setUserMetadata = async (payload: {
         },
       });
 
-      let destRef = ref(rootRef, `/${METADATA_PATH}`);
+      let destRef = ref(root, `/${METADATA_PATH}`);
 
       let uploadMetadata: UploadMetadata = {
         contentType: 'application/json',

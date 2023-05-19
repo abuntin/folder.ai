@@ -4,10 +4,11 @@ import { indexDirectory } from '../../functions/document';
 export const index = async (
   req,
   res,
-  rootRef
 ): Promise<{ data: { indexed: string }; error: string | null }> => {
   try {
     let { folder, type } = req.body;
+
+    console.log(folder, type)
 
     if (!type || type !== 'index')
       return { data: null, error: 'Invalid NextApiRequest type' };
@@ -18,9 +19,8 @@ export const index = async (
       return { data: null, error: "Invalid Folder: Missing 'path'" };
 
     if (src.isDirectory) {
-      let directory = src as Directory
 
-      let pineconeResult = await indexDirectory({ src: directory, rootRef });
+      let pineconeResult = await indexDirectory({ src: src as Directory });
 
       if (!pineconeResult) throw new Error();
       else return { data: { indexed: pineconeResult.indexed }, error: null };

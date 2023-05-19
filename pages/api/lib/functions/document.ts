@@ -20,11 +20,10 @@ import dayjs from 'dayjs';
 
 export const indexDirectory = async (payload: {
   src: Directory;
-  rootRef: StorageReference;
 }): Promise<{ indexed: string }> =>
   new Promise(async (resolve, reject) => {
     try {
-      const { src, rootRef } = payload;
+      const { src } = payload;
 
       let srcRef = ref(root, getDocumentPath({ src, name: '' }));
 
@@ -58,41 +57,43 @@ export const indexDirectory = async (payload: {
 
       let items = filtered.map(val => val.item);
 
-      // Index to Pinecone
-
-      let pineconeResult = await indexToPinecone({
-        src,
-        refs: items,
-      });
-
-      if (!pineconeResult)
-        throw new Error('Unable to index changes to pinecone');
-
-      // Update Folder metadatas
-
       let newIndexed = dayjs(Date.now()).format();
 
-      let folderUpdateResult = await Promise.all(
-        filtered.map(async ({ item, metadata }) => {
-          let _new = {
-            ...metadata,
-            customMetadata: {
-              ...metadata.customMetadata,
-              indexed: newIndexed,
-            },
-          };
+      if (items.length) {
+        // Index to Pinecone
 
-          let _r = await updateMetadata(item, _new);
+        let pineconeResult = await indexToPinecone({
+          src,
+          refs: items,
+        });
 
-          return _r.customMetadata.indexed === newIndexed;
-        })
-      );
+        if (!pineconeResult)
+          throw new Error('Unable to index changes to pinecone');
 
-      if (folderUpdateResult.includes(false))
-        throw new Error('Error updating Folder indexed timestamp');
+        // Update Folder metadatas
 
-      console.log('Updated Folder metadatas');
 
+        let folderUpdateResult = await Promise.all(
+          filtered.map(async ({ item, metadata }) => {
+            let _new = {
+              ...metadata,
+              customMetadata: {
+                ...metadata.customMetadata,
+                indexed: newIndexed,
+              },
+            };
+
+            let _r = await updateMetadata(item, _new);
+
+            return _r.customMetadata.indexed === newIndexed;
+          })
+        );
+
+        if (folderUpdateResult.includes(false))
+          throw new Error('Error updating Folder indexed timestamp');
+
+        console.log('Updated Folder metadatas');
+      }
       // Update Directory metadata
 
       let newMetadata = {
@@ -100,7 +101,6 @@ export const indexDirectory = async (payload: {
       };
 
       let updateResult = await setUserMetadata({
-        rootRef,
         src,
         metadata: newMetadata,
       });
@@ -113,37 +113,6 @@ export const indexDirectory = async (payload: {
       resolve({ indexed: newIndexed });
     } catch (e) {
       reject(e.message + ' : indexDirectory()');
-    }
-  });
-
-export const deleteFromPinecone = (payload: {
-  src: Directory;
-  refs: StorageReference[];
-}): Promise<true> =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const { src, refs } = payload;
-
-      let ids = refs.map(ref => getDocumentId({ src, name: ref.name }));
-
-      let PineconeClient = new PineClient();
-
-      await PineconeClient.init(pineconeConfig);
-
-      let VectorIndex = PineconeClient.Index(PINECONE_INDEX);
-
-      await VectorIndex.delete1({
-        ids,
-        namespace: src.path,
-      });
-
-      resolve(true);
-    } catch (e) {
-      reject(
-        e?.message
-          ? e.message + ' : deleteFromPinecone()'
-          : 'Unable to delete indices from Pinecone'
-      );
     }
   });
 
@@ -246,5 +215,36 @@ export const indexToPinecone = async (payload: {
     } catch (e) {
       console.error(e);
       reject(e?.message ? e.message + ' : indexToPinecone()' : '');
+    }
+  });
+
+export const deleteFromPinecone = (payload: {
+  src: Directory;
+  refs: StorageReference[];
+}): Promise<true> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const { src, refs } = payload;
+
+      let ids = refs.map(ref => getDocumentId({ src, name: ref.name }));
+
+      let PineconeClient = new PineClient();
+
+      await PineconeClient.init(pineconeConfig);
+
+      let VectorIndex = PineconeClient.Index(PINECONE_INDEX);
+
+      await VectorIndex.delete1({
+        ids,
+        namespace: src.path,
+      });
+
+      resolve(true);
+    } catch (e) {
+      reject(
+        e?.message
+          ? e.message + ' : deleteFromPinecone()'
+          : 'Unable to delete indices from Pinecone'
+      );
     }
   });

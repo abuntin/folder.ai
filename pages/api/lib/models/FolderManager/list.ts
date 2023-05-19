@@ -1,11 +1,9 @@
-import { StorageReference } from 'firebase/storage';
 import { Folder, Directory } from 'lib/models';
 import { list } from '../../functions';
 
 export const listFolder = async (
   req,
   res,
-  root: StorageReference
 ): Promise<{ data: { folders: Folder[], directories: Directory[] } | null, error: string | null }> => {
   try {
     console.log('Initialised FolderManager.list()');
@@ -19,7 +17,7 @@ export const listFolder = async (
     if (!Object.prototype.hasOwnProperty.call(src, 'path'))
       return { data: null, error: "Invalid directory: Missing 'path'" };
 
-    let { folders, directories } = await list({ src, root })
+    let { folders, directories } = await list({ src })
 
     console.log('Obtained Folder children');
 

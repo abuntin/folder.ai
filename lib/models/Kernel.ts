@@ -133,8 +133,6 @@ export class Kernel {
         this.currentDirectory = tree.root;
         this.trigger('idle', 'Obtained root folder');
       }
-
-      this.trigger('index', root)
     } catch (e) {
       this.trigger('error', e.message);
       throw e;
@@ -304,6 +302,8 @@ export class Kernel {
       try {
 
         let { node } = payload;
+
+        console.log(node.folder)
 
         let res = await fetch(this.folderManagerUrl('indices'), {
           method: 'POST',

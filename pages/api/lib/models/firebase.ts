@@ -23,6 +23,7 @@ import {
   OAUTH_CLIENT_ID,
   OAUTH_CLIENT_SECRET,
   SERVICE_ACCOUNT,
+  TEST_USER,
 } from '../types';
 import inngest from 'pages/api/inngest';
 
@@ -44,7 +45,7 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const storage = getStorage();
-export const root = ref(storage);
+export const root = ref(storage, TEST_USER);
 
 // Initialise Google Cloud Storage
 export const StorageClient = new Storage({

@@ -7,6 +7,7 @@ export type { QueryInterface } from './QueryInterface';
 export type IDocument_DocAI = protos.google.cloud.documentai.v1.IDocument;
 
 export {
+  TEST_USER,
   HUGGINGFACEHUB_API_KEY,
   DOCUMENT_PATH,
   METADATA_PATH,

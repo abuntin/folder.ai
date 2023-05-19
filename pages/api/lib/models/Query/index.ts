@@ -32,11 +32,11 @@ export class QueryService implements QueryInterface {
 
     this.PineconeClient = new PineClient();
 
-    this.Model = new OpenAI({
-      modelName: 'text-davinci-003',
-      temperature: 0,
-      openAIApiKey: process.env.OPENAI_API_KEY,
-    });
+    // this.Model = new OpenAI({
+    //   modelName: 'text-davinci-003',
+    //   temperature: 0,
+    //   openAIApiKey: process.env.OPENAI_API_KEY,
+    // });
 
     // this.Embeddings = new OpenAIEmbeddings({
     //   openAIApiKey: process.env.OPENAI_API_KEY,

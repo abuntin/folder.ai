@@ -1,6 +1,5 @@
 import { list } from 'firebase/storage';
-import { Directory, FolderAIMetadata } from 'lib/models';
-import { getUserMetadata } from '../../functions';
+import { Directory } from 'lib/models';
 import { root as rootStorage } from '../firebase';
 
 export const initFolderManager = async (
@@ -20,13 +19,9 @@ export const initFolderManager = async (
 
     console.log('Initialised FolderManager.init()');
 
-    let listRes = await list(rootStorage);
-
-    let rootRef = listRes.prefixes[0];
-
     let root = Directory.fromStorageReference({
-      reference: rootRef,
       id: 'root',
+      reference: rootStorage
     });
 
     // let processResult = await indexDirectory({ src: rootDirectory })

@@ -59,7 +59,7 @@ export class Query {
           console.log('Obtained Query.init() response');
     
           if (error || !data)
-            throw new Error(error ?? 'Missing Kernel.init() response data');
+            throw new Error(error ?? 'Missing Query.init() response data');
           else {
             this.trigger('idle', 'Initialised Query');
           }

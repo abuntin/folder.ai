@@ -1,5 +1,3 @@
-import { ref, StorageReference } from 'firebase/storage';
-import { root as rootStorage } from '../firebase';
 import { FolderManagerInterface } from '../../types';
 import { listFolder } from './list';
 import { uploadFolder } from './upload';
@@ -10,12 +8,9 @@ import { moveFolders } from './move';
 import { createDirectory } from './create';
 import { renameFolder } from './rename';
 import { index } from './pineconeIndex';
-import { PropType } from 'lib/types';
-import { Directory } from 'lib/models';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export class FolderManager implements FolderManagerInterface {
-  root: StorageReference;
 
   constructor(data?: Partial<FolderManager>) {
     if (data) {
@@ -47,10 +42,6 @@ export class FolderManager implements FolderManagerInterface {
       if (!response.data || response.error)
         throw new Error(response.error ?? 'Missing root Directory / metadata ');
 
-      let { root } = response.data;
-
-      this.root = ref(rootStorage, `${root.fullPath}`);
-
       return res.status(200).json({ data: response.data, error: null });
     } catch (e) {
       return res.status(500).json({ data: null, error: e.message });
@@ -69,12 +60,11 @@ export class FolderManager implements FolderManagerInterface {
       return;
     }
     try {
-      let response = await listFolder(req, res, this.root);
+
+      let response = await listFolder(req, res);
 
       if (!response.data || response.error)
         throw new Error(response.error ?? 'Missing Folders / Directories ');
-
-      console.log(response.data)
 
       return res.status(200).json(response)
 
@@ -126,7 +116,8 @@ export class FolderManager implements FolderManagerInterface {
       return;
     }
     try {
-      let response = await index(req, res, this.root);
+
+      let response = await index(req, res);
 
       if (!response.data || response.error)
         throw new Error(response.error ?? 'Missing indexed timestamp');

@@ -2,21 +2,20 @@ import {
   getMetadata,
   listAll as storageList,
   ref,
-  StorageReference,
 } from 'firebase/storage';
 import { Directory, Folder } from 'lib/models';
 import { DOCUMENT_PATH } from '../types';
+import { root } from '../models/firebase'
 import { getUserMetadata } from './metadata';
 
 export const list = async (payload: {
   src: Folder;
-  root: StorageReference;
 }): Promise<{ folders: Folder[]; directories: Directory[] }> =>
   new Promise(async (resolve, reject) => {
     try {
-      let { src, root } = payload;
+      let { src } = payload;
 
-      let { metadata } = await getUserMetadata({ rootRef: root });
+      let { metadata } = await getUserMetadata();
 
       const srcRef =
         src.name === root.name ? root : ref(root, `/${src.fullPath}`);
