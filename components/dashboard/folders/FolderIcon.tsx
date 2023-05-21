@@ -62,9 +62,11 @@ export const FolderIconContainer: React.FC<FolderIconProps> = ({ node }) => {
     <div
       style={{
         position: 'relative',
-        width: 'max-content',
         padding: 15,
-        backgroundColor: 'grey',
+        backgroundColor: 'transparent',
+        flexGrow: 1,
+        flexBasis: '100%',
+        flexShrink: 1
       }}
     >
       <FolderIcon folder={folder} />

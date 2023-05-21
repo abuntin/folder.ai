@@ -92,7 +92,7 @@ export const Container: React.FC<ContainerProps> = props => {
         <Box flexGrow={1} flexShrink={1} flexBasis="100%" sx={{ margin }}>
           <ChatBox />
         </Box>
-        <Box display="flex" flexGrow={1} flexShrink={1} width='70%'>
+        <Box display="flex" flexGrow={1} flexShrink={1}>
           <Collapse
             in={view.console}
             unmountOnExit
